@@ -1,0 +1,12 @@
+{
+  "name": "boodschap",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "tailwindcss -i ./Styles/app.tailwind.css -o ./wwwroot/app.css --minify",
+    "watch:css": "tailwindcss -i ./Styles/app.tailwind.css -o ./wwwroot/app.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

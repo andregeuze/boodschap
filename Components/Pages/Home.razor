@@ -1,0 +1,226 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@inject IJSRuntime Js
+
+<PageTitle>Boodschap</PageTitle>
+
+<div class="min-h-screen">
+	<header class="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+		<div class="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3">
+			<button class="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+					@onclick="ToggleQuickAdd">
+				New item
+			</button>
+
+			<button class="rounded-md border border-slate-300 p-2 text-slate-700 transition hover:bg-slate-100"
+					@onclick="ToggleMenu"
+					aria-label="Open navigation menu"
+					aria-expanded="@isMenuOpen">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="4" y1="6" x2="20" y2="6" />
+					<line x1="4" y1="12" x2="20" y2="12" />
+					<line x1="4" y1="18" x2="20" y2="18" />
+				</svg>
+			</button>
+		</div>
+
+		@if (isQuickAddOpen)
+		{
+			<div class="mx-auto w-full max-w-3xl px-4 pb-3">
+				<form class="flex gap-2" @onsubmit="AddItem">
+					<input class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+						   placeholder="Add grocery item"
+						   @bind="newItemName"
+						   @bind:event="oninput"
+						   autofocus />
+					<button type="submit" class="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700">Add</button>
+				</form>
+			</div>
+		}
+
+		@if (isMenuOpen)
+		{
+			<nav class="border-t border-slate-200 bg-white">
+				<div class="mx-auto flex w-full max-w-3xl flex-wrap gap-2 px-4 py-3 text-sm">
+					@foreach (var menuItem in menuItems)
+					{
+						<button class="rounded-md border border-slate-300 px-3 py-1.5 text-slate-700 hover:bg-slate-100" @onclick="() => SelectMenu(menuItem)">
+							@menuItem
+						</button>
+					}
+				</div>
+			</nav>
+		}
+	</header>
+
+	<section class="mx-auto w-full max-w-3xl px-4 py-6">
+		<div class="mb-3 flex items-center justify-between">
+			<h1 class="text-xl font-semibold">Groceries</h1>
+			<p class="text-sm text-slate-500">Drag &#x2807; to reorder</p>
+		</div>
+
+		<ul class="space-y-2">
+			@for (var index = 0; index < VisibleItems.Count; index++)
+			{
+				var item = VisibleItems[index];
+				<li class="reorder-item flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-3 shadow-sm transition-all duration-150"
+					data-index="@index"
+					@key="item.Id">
+					<label class="flex items-center gap-3">
+						<input type="checkbox" checked="@item.IsDone" @onchange="(args) => ToggleDone(item.Id, args.Value)" class="h-4 w-4 accent-slate-900" />
+						<span class="text-sm @(item.IsDone ? "line-through text-slate-400" : "text-slate-800")">@item.Name</span>
+					</label>
+					<div class="flex items-center gap-1">
+						<button class="drag-handle touch-none cursor-grab rounded px-1.5 py-1 text-slate-300 hover:text-slate-500 hover:bg-slate-100 active:cursor-grabbing"
+								aria-label="Drag to reorder">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 16" class="h-4 w-4" fill="currentColor" aria-hidden="true">
+								<circle cx="3" cy="3" r="1.5"/>
+								<circle cx="3" cy="8" r="1.5"/>
+								<circle cx="3" cy="13" r="1.5"/>
+								<circle cx="7" cy="3" r="1.5"/>
+								<circle cx="7" cy="8" r="1.5"/>
+								<circle cx="7" cy="13" r="1.5"/>
+							</svg>
+						</button>
+						<button class="rounded-md px-2 py-1 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+								@onclick="() => RemoveItem(item.Id)">
+							Remove
+						</button>
+					</div>
+				</li>
+			}
+		</ul>
+	</section>
+</div>
+
+@code {
+	private bool isMenuOpen;
+	private bool isQuickAddOpen;
+	private DotNetObjectReference<Home>? dotNetRef;
+	private string selectedMenu = "All";
+	private string newItemName = string.Empty;
+	private int nextId = 7;
+
+	private readonly List<string> menuItems = ["All", "Needed", "Purchased"];
+	private readonly List<GroceryItem> items =
+	[
+		new(1, "Milk", false),
+		new(2, "Eggs", false),
+		new(3, "Bread", false),
+		new(4, "Tomatoes", false),
+		new(5, "Cheese", false),
+		new(6, "Coffee", false)
+	];
+
+	private List<GroceryItem> VisibleItems => selectedMenu switch
+	{
+		"Needed" => items.Where(item => !item.IsDone).ToList(),
+		"Purchased" => items.Where(item => item.IsDone).ToList(),
+		_ => items
+	};
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			dotNetRef = DotNetObjectReference.Create(this);
+		}
+
+		await Js.InvokeVoidAsync("groceryList.initDragHandleReorder", ".reorder-item", ".drag-handle", dotNetRef);
+	}
+
+	private void ToggleQuickAdd()
+	{
+		isQuickAddOpen = !isQuickAddOpen;
+	}
+
+	private void ToggleMenu()
+	{
+		isMenuOpen = !isMenuOpen;
+	}
+
+	private void SelectMenu(string menuItem)
+	{
+		selectedMenu = menuItem;
+		isMenuOpen = false;
+	}
+
+	private void AddItem()
+	{
+		if (string.IsNullOrWhiteSpace(newItemName))
+		{
+			return;
+		}
+
+		items.Add(new GroceryItem(nextId++, newItemName.Trim(), false));
+		newItemName = string.Empty;
+		selectedMenu = "All";
+	}
+
+	private void ToggleDone(int id, object? value)
+	{
+		var item = items.FirstOrDefault(entry => entry.Id == id);
+		if (item is null)
+		{
+			return;
+		}
+
+		item.IsDone = value is bool done && done;
+	}
+
+	private void RemoveItem(int id)
+	{
+		var item = items.FirstOrDefault(entry => entry.Id == id);
+		if (item is null)
+		{
+			return;
+		}
+
+		items.Remove(item);
+	}
+
+	[JSInvokable]
+	public Task ReorderItem(int sourceIndex, int targetIndex)
+	{
+		if (selectedMenu != "All" || sourceIndex == targetIndex)
+		{
+			return Task.CompletedTask;
+		}
+
+		if (sourceIndex < 0 || sourceIndex >= items.Count || targetIndex < 0 || targetIndex >= items.Count)
+		{
+			return Task.CompletedTask;
+		}
+
+		var movedItem = items[sourceIndex];
+		items.RemoveAt(sourceIndex);
+		items.Insert(targetIndex, movedItem);
+
+		StateHasChanged();
+		return Task.CompletedTask;
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		if (dotNetRef is not null)
+		{
+			try
+			{
+				await Js.InvokeVoidAsync("groceryList.dispose", ".reorder-item");
+			}
+			catch
+			{
+			}
+
+			dotNetRef.Dispose();
+		}
+	}
+
+	private sealed class GroceryItem(int id, string name, bool isDone)
+	{
+		public int Id { get; } = id;
+		public string Name { get; set; } = name;
+		public bool IsDone { get; set; } = isDone;
+	}
+}
