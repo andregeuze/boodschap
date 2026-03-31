@@ -16,6 +16,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+
+// With this in place, NPM's X-Forwarded-Proto: https header tells the app
+// the connection is already HTTPS, so UseHttpsRedirection() won't redirect anything.
+app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 
 app.UseAntiforgery();
