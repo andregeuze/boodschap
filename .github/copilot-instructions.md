@@ -8,7 +8,7 @@
 
 - **.NET 10** — Blazor Server with `InteractiveServer` render mode
 - **Tailwind CSS v3** — all styling; no Bootstrap, no inline `style=` attributes
-- **Vanilla JavaScript** — none. All drag-and-drop is handled in C# using Blazor's built-in HTML5 drag-and-drop event handlers (`@ondragstart`, `@ondragend`, `@ondragenter`, `@ondrop`, `@ondragover:preventDefault`). Do not add JavaScript files unless strictly necessary for a browser API unavailable in Blazor.
+- **JavaScript** — none. All drag-and-drop is handled in C# using Blazor's built-in HTML5 drag-and-drop event handlers (`@ondragstart`, `@ondragend`, `@ondragenter`, `@ondrop`, `@ondragover:preventDefault`). Do not add JavaScript files unless strictly necessary for a browser API unavailable in Blazor.
 - **Docker** — multi-stage build: Node (Tailwind) → .NET SDK (publish) → .NET ASP.NET runtime
 
 ## Project Structure
@@ -28,6 +28,7 @@ Dockerfile           Multi-stage container build
 
 - **Razor components**: co-locate `@code { }` blocks at the bottom of `.razor` files; no separate `.razor.cs` code-behind unless the file grows very large.
 - **C# style**: modern C# — primary constructors, collection expressions `[...]`, pattern matching, `var` where the type is obvious, nullable reference types enabled.
+- **JavaScript** — none. Do not add JavaScript files unless strictly necessary for a browser API unavailable in Blazor.
 - **Tailwind**: write utility classes directly in markup. Run `npm run watch:css` during development to auto-rebuild `wwwroot/app.css`. Run `npm run build:css` for a minified production build.
 - **No magic strings for item state** — use the existing filter values `"All"`, `"Needed"`, `"Purchased"`.
 
