@@ -1,7 +1,5 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@implements IAsyncDisposable
-@inject IJSRuntime Js
 
 <PageTitle>Boodschap</PageTitle>
 
@@ -57,37 +55,31 @@
 	<section class="mx-auto w-full max-w-3xl px-4 py-6">
 		<div class="mb-3 flex items-center justify-between">
 			<h1 class="text-xl font-semibold">Groceries</h1>
-			<p class="text-sm text-slate-500">Drag &#x2807; to reorder</p>
+			@if (selectedMenu == "All")
+			{
+				<p class="text-sm text-slate-500">Drag to reorder</p>
+			}
 		</div>
 
 		<ul class="space-y-2">
-			@for (var index = 0; index < VisibleItems.Count; index++)
+			@foreach (var item in VisibleItems)
 			{
-				var item = VisibleItems[index];
-				<li class="reorder-item flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-3 shadow-sm transition-all duration-150"
-					data-index="@index"
+				<li class="flex items-center justify-between rounded-md border px-3 py-3 shadow-sm transition-all duration-150 @(dragOverItem == item ? "border-slate-400 bg-slate-50 ring-2 ring-slate-300" : "border-slate-200 bg-white") @(dragItem == item ? "opacity-50" : "")"
+					draggable="true"
+					@ondragstart="() => HandleDragStart(item)"
+					@ondragend="HandleDragEnd"
+					@ondragenter="() => HandleDragEnter(item)"
+					@ondragover:preventDefault
+					@ondrop="() => HandleDrop(item)"
 					@key="item.Id">
 					<label class="flex items-center gap-3">
 						<input type="checkbox" checked="@item.IsDone" @onchange="(args) => ToggleDone(item.Id, args.Value)" class="h-4 w-4 accent-slate-900" />
 						<span class="text-sm @(item.IsDone ? "line-through text-slate-400" : "text-slate-800")">@item.Name</span>
 					</label>
-					<div class="flex items-center gap-1">
-						<button class="drag-handle touch-none cursor-grab rounded px-1.5 py-1 text-slate-300 hover:text-slate-500 hover:bg-slate-100 active:cursor-grabbing"
-								aria-label="Drag to reorder">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 16" class="h-4 w-4" fill="currentColor" aria-hidden="true">
-								<circle cx="3" cy="3" r="1.5"/>
-								<circle cx="3" cy="8" r="1.5"/>
-								<circle cx="3" cy="13" r="1.5"/>
-								<circle cx="7" cy="3" r="1.5"/>
-								<circle cx="7" cy="8" r="1.5"/>
-								<circle cx="7" cy="13" r="1.5"/>
-							</svg>
-						</button>
-						<button class="rounded-md px-2 py-1 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-								@onclick="() => RemoveItem(item.Id)">
-							Remove
-						</button>
-					</div>
+					<button class="rounded-md px-2 py-1 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+							@onclick="() => RemoveItem(item.Id)">
+						Remove
+					</button>
 				</li>
 			}
 		</ul>
@@ -97,7 +89,8 @@
 @code {
 	private bool isMenuOpen;
 	private bool isQuickAddOpen;
-	private DotNetObjectReference<Home>? dotNetRef;
+	private GroceryItem? dragItem;
+	private GroceryItem? dragOverItem;
 	private string selectedMenu = "All";
 	private string newItemName = string.Empty;
 	private int nextId = 7;
@@ -119,16 +112,6 @@
 		"Purchased" => items.Where(item => item.IsDone).ToList(),
 		_ => items
 	};
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			dotNetRef = DotNetObjectReference.Create(this);
-		}
-
-		await Js.InvokeVoidAsync("groceryList.initDragHandleReorder", ".reorder-item", ".drag-handle", dotNetRef);
-	}
 
 	private void ToggleQuickAdd()
 	{
@@ -180,41 +163,26 @@
 		items.Remove(item);
 	}
 
-	[JSInvokable]
-	public Task ReorderItem(int sourceIndex, int targetIndex)
+	private void HandleDragStart(GroceryItem item) => dragItem = item;
+
+	private void HandleDragEnd()
 	{
-		if (selectedMenu != "All" || sourceIndex == targetIndex)
-		{
-			return Task.CompletedTask;
-		}
-
-		if (sourceIndex < 0 || sourceIndex >= items.Count || targetIndex < 0 || targetIndex >= items.Count)
-		{
-			return Task.CompletedTask;
-		}
-
-		var movedItem = items[sourceIndex];
-		items.RemoveAt(sourceIndex);
-		items.Insert(targetIndex, movedItem);
-
-		StateHasChanged();
-		return Task.CompletedTask;
+		dragItem = null;
+		dragOverItem = null;
 	}
 
-	public async ValueTask DisposeAsync()
-	{
-		if (dotNetRef is not null)
-		{
-			try
-			{
-				await Js.InvokeVoidAsync("groceryList.dispose", ".reorder-item");
-			}
-			catch
-			{
-			}
+	private void HandleDragEnter(GroceryItem item) => dragOverItem = item;
 
-			dotNetRef.Dispose();
-		}
+	private void HandleDrop(GroceryItem target)
+	{
+		if (dragItem is null || dragItem == target || selectedMenu != "All") return;
+
+		var from = items.IndexOf(dragItem);
+		var to = items.IndexOf(target);
+		if (from < 0 || to < 0) return;
+
+		items.RemoveAt(from);
+		items.Insert(to, dragItem);
 	}
 
 	private sealed class GroceryItem(int id, string name, bool isDone)

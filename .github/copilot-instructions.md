@@ -8,7 +8,7 @@
 
 - **.NET 10** — Blazor Server with `InteractiveServer` render mode
 - **Tailwind CSS v3** — all styling; no Bootstrap, no inline `style=` attributes
-- **Vanilla JavaScript** — only for browser APIs unavailable in Blazor (e.g. drag-and-drop via Pointer Events in `wwwroot/js/groceryList.js`)
+- **Vanilla JavaScript** — none. All drag-and-drop is handled in C# using Blazor's built-in HTML5 drag-and-drop event handlers (`@ondragstart`, `@ondragend`, `@ondragenter`, `@ondrop`, `@ondragover:preventDefault`). Do not add JavaScript files unless strictly necessary for a browser API unavailable in Blazor.
 - **Docker** — multi-stage build: Node (Tailwind) → .NET SDK (publish) → .NET ASP.NET runtime
 
 ## Project Structure
@@ -20,7 +20,6 @@ Components/          Blazor components (.razor)
 Styles/              app.tailwind.css  ← Tailwind source (edit this, not app.css)
 wwwroot/
   app.css            ← Tailwind output (generated, do not edit manually)
-  js/                Vanilla JS modules
 Program.cs           ASP.NET host setup
 Dockerfile           Multi-stage container build
 ```
@@ -30,7 +29,6 @@ Dockerfile           Multi-stage container build
 - **Razor components**: co-locate `@code { }` blocks at the bottom of `.razor` files; no separate `.razor.cs` code-behind unless the file grows very large.
 - **C# style**: modern C# — primary constructors, collection expressions `[...]`, pattern matching, `var` where the type is obvious, nullable reference types enabled.
 - **Tailwind**: write utility classes directly in markup. Run `npm run watch:css` during development to auto-rebuild `wwwroot/app.css`. Run `npm run build:css` for a minified production build.
-- **JavaScript**: keep JS minimal and scoped to `window.groceryList.*`. Call JS from Blazor via `IJSRuntime`. Avoid jQuery or external JS libraries.
 - **No magic strings for item state** — use the existing filter values `"All"`, `"Needed"`, `"Purchased"`.
 
 ## Running Locally
@@ -53,6 +51,6 @@ docker run -p 8080:8080 boodschap
 ## What to Keep in Mind
 
 - State is currently **in-memory** (no database). If persistence is added, prefer a lightweight option like SQLite via EF Core.
-- The drag-and-drop logic lives entirely in `wwwroot/js/groceryList.js` and communicates back to Blazor via `[JSInvokable]` methods.
+- Drag-and-drop reordering uses HTML5 DnD entirely in C# via Blazor event handlers on the `<li>` elements in `Home.razor`. There is no JavaScript file for this.
 - Do **not** modify `wwwroot/app.css` directly — it is overwritten by Tailwind on every build.
 - The app runs behind a reverse proxy; `UseForwardedHeaders` is configured in `Program.cs`.
