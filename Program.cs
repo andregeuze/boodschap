@@ -16,7 +16,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 
 // With this in place, NPM's X-Forwarded-Proto: https header tells the app
 // the connection is already HTTPS, so UseHttpsRedirection() won't redirect anything.
@@ -26,6 +25,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 app.UseAntiforgery();
+app.UseStaticFiles();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
