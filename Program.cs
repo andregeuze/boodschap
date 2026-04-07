@@ -24,7 +24,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
-app.UseHttpsRedirection();
+
 app.UseAntiforgery();
 
 app.MapStaticAssets();
