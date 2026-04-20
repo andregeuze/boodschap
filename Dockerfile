@@ -17,7 +17,7 @@ RUN dotnet restore
 COPY . .
 # Overwrite with the Tailwind-compiled CSS
 COPY --from=tailwind /src/wwwroot/app.css ./wwwroot/app.css
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet publish Boodschap.csproj -c Release -o /app/publish --no-restore
 
 # Stage 3: Final runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
