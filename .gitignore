@@ -391,3 +391,4 @@ FodyWeavers.xsd
 /appsettings.Development.json
 *.lscache
 .playwright-mcp/
+wwwroot/app.css
