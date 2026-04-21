@@ -390,3 +390,4 @@ FodyWeavers.xsd
 # Project-specific
 /appsettings.Development.json
 *.lscache
+.playwright-mcp/

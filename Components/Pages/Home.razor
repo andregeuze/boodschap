@@ -61,6 +61,10 @@
 			}
 		</div>
 
+		<div class="mb-4">
+			<FilterBar ActiveFilter="@selectedMenu" OnFilterChanged="SelectMenu" />
+		</div>
+
 		<ul class="space-y-2">
 			@foreach (var item in VisibleItems)
 			{
@@ -95,7 +99,7 @@
 	private string newItemName = string.Empty;
 	private int nextId = 7;
 
-	private readonly List<string> menuItems = ["All", "Needed", "Purchased"];
+	private readonly List<string> menuItems = ["Page1", "Page2", "Page3"];
 	private readonly List<GroceryItem> items =
 	[
 		new(1, "Milk", false),
