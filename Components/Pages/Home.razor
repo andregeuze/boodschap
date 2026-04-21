@@ -62,7 +62,7 @@
 		</div>
 
 		<div class="mb-4">
-			<FilterBar ActiveFilter="@selectedMenu" OnFilterChanged="SelectMenu" />
+			<FilterBar ActiveFilter="@selectedMenu" OnFilterChanged="SelectFilter" />
 		</div>
 
 		<ul class="space-y-2">
@@ -99,7 +99,7 @@
 	private string newItemName = string.Empty;
 	private int nextId = 7;
 
-	private readonly List<string> menuItems = ["Page1", "Page2", "Page3"];
+	private readonly List<string> menuItems = ["Settings", "Import", "Export"];
 	private readonly List<GroceryItem> items =
 	[
 		new(1, "Milk", false),
@@ -127,10 +127,15 @@
 		isMenuOpen = !isMenuOpen;
 	}
 
+	private void SelectFilter(string filter)
+	{
+		selectedMenu = filter;
+	}
+
 	private void SelectMenu(string menuItem)
 	{
-		selectedMenu = menuItem;
 		isMenuOpen = false;
+		// TODO: handle menu actions (Settings, Import, Export)
 	}
 
 	private void AddItem()
@@ -153,7 +158,16 @@
 			return;
 		}
 
-		item.IsDone = value is bool done && done;
+		var isDone = value is bool done && done;
+		item.IsDone = isDone;
+
+		if (!isDone)
+		{
+			return;
+		}
+
+		items.Remove(item);
+		items.Add(item);
 	}
 
 	private void RemoveItem(int id)
