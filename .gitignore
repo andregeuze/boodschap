@@ -392,3 +392,4 @@ FodyWeavers.xsd
 *.lscache
 .playwright-mcp/
 wwwroot/*.css
+/App_Data/

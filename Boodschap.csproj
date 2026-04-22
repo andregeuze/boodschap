@@ -8,6 +8,10 @@
     <RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
+  </ItemGroup>
+
   <Target Name="BuildTailwindCss"
           BeforeTargets="Build"
       Condition="'$(Configuration)' == 'Debug' and '$(DesignTimeBuild)' != 'true' and '$(ContinuousIntegrationBuild)' != 'true'">

@@ -15,13 +15,40 @@ mcp_playwright_browser_snapshot
 ```
 
 Expected:
+- Heading "Pick a list and keep moving."
+- "New list" button
+- Tab group "Shopping list status" with buttons: New, Archived
+- Visible list cards: Weekly groceries and Dinner party
+
+## 3. Test archived tab
+
+```
+mcp_playwright_browser_click → button "Archived"
+mcp_playwright_browser_snapshot
+```
+
+Expected:
+- "Archived" button is `[active]`
+- Archived list card "Camping weekend" is shown
+- New list cards are hidden
+
+## 4. Open a shopping list
+
+```
+mcp_playwright_browser_click → button "Weekly groceries"
+mcp_playwright_browser_snapshot
+```
+
+Expected:
+- URL ends with `/lists/1`
+- "Back" button is visible
+- Heading "Weekly groceries"
 - "New item" button
-- Heading "Groceries"
 - "Drag to reorder" paragraph
 - FilterBar group "Filter groceries" with buttons: All, Needed, Purchased
 - 6 list items: Milk, Eggs, Bread, Tomatoes, Cheese, Coffee (all unchecked)
 
-## 3. Mark items as purchased
+## 5. Mark items as purchased
 
 Click the Milk checkbox, then the Eggs checkbox.
 
@@ -30,7 +57,7 @@ mcp_playwright_browser_click → checkbox "Milk"
 mcp_playwright_browser_click → checkbox "Eggs"
 ```
 
-## 4. Test "Needed" filter
+## 6. Test "Needed" filter
 
 ```
 mcp_playwright_browser_click → button "Needed"
@@ -42,7 +69,7 @@ Expected:
 - Only unchecked items shown: Bread, Tomatoes, Cheese, Coffee
 - "Drag to reorder" hint is hidden
 
-## 5. Test "Purchased" filter
+## 7. Test "Purchased" filter
 
 ```
 mcp_playwright_browser_click → button "Purchased"
@@ -53,7 +80,7 @@ Expected:
 - "Purchased" button is `[active]`
 - Only checked items shown: Milk `[checked]`, Eggs `[checked]`
 
-## 6. Test "All" filter
+## 8. Test "All" filter
 
 ```
 mcp_playwright_browser_click → button "All"
@@ -65,7 +92,7 @@ Expected:
 - All 6 items shown
 - "Drag to reorder" paragraph visible
 
-## 7. Test "New item" quick-add
+## 9. Test "New item" quick-add
 
 ```
 mcp_playwright_browser_click → button "New item"
@@ -88,7 +115,7 @@ Expected:
 - "Bananas" appears in the list
 - Input is cleared
 
-## 8. Test remove
+## 10. Test remove
 
 ```
 mcp_playwright_browser_click → button "Remove" (next to "Bananas")
@@ -98,13 +125,24 @@ mcp_playwright_browser_snapshot
 Expected:
 - "Bananas" is no longer in the list
 
-## 9. Close browser
+## 11. Return to overview
+
+```
+mcp_playwright_browser_click → button "Back"
+mcp_playwright_browser_snapshot
+```
+
+Expected:
+- URL returns to `/`
+- Overview cards are visible again
+
+## 12. Close browser
 
 ```
 mcp_playwright_browser_close
 ```
 
-## 10. Kill the host process
+## 13. Kill the host process
 
 Stop the `dotnet run` process that was started at the beginning.
 

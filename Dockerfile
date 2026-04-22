@@ -24,5 +24,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
+ENV ConnectionStrings__Boodschap=Data Source=/app/App_Data/boodschap.db
+VOLUME ["/app/App_Data"]
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Boodschap.dll"]

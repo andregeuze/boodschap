@@ -1,11 +1,20 @@
 using Boodschap.Components;
+using Boodschap.Data;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var sqliteConnectionString = StoreConfiguration.NormalizeSqliteConnectionString(
+    builder.Configuration.GetConnectionString("Boodschap"),
+    builder.Environment.ContentRootPath);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContextFactory<BoodschapDbContext>(options =>
+    options.UseSqlite(sqliteConnectionString));
+builder.Services.AddScoped<Store>();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -19,6 +28,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 var app = builder.Build();
 
+await StoreInitializer.InitializeAsync(app.Services);
+
 app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
@@ -27,6 +38,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.MapStaticAssets();
+app.UseStaticFiles();
 app.UseWebSockets();
 app.UseAntiforgery();
 app.MapRazorComponents<App>()
