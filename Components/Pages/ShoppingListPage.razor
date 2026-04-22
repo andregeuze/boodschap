@@ -41,6 +41,10 @@ else
 					@if (shoppingList.Archived)
 					{
 						<span class="rounded-full bg-slate-100 px-3 py-2 text-xs font-medium uppercase tracking-[0.2em] text-slate-500">Archived</span>
+						<button class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+								@onclick="UnarchiveList">
+							Unarchive
+						</button>
 					}
 					else
 					{
@@ -153,7 +157,7 @@ else
 
 	private void BackToOverview()
 	{
-		Navigation.NavigateTo("/");
+		Navigation.NavigateTo(shoppingList?.Archived is true ? "/?tab=Archived" : "/");
 	}
 
 	private async Task ArchiveList()
@@ -165,6 +169,16 @@ else
 
 		shoppingList = await Store.ArchiveListAsync(Id) ?? shoppingList;
 		Navigation.NavigateTo("/?tab=Archived");
+	}
+
+	private async Task UnarchiveList()
+	{
+		if (shoppingList is null || !shoppingList.Archived)
+		{
+			return;
+		}
+
+		shoppingList = await Store.UnarchiveListAsync(Id) ?? shoppingList;
 	}
 
 	private void ToggleQuickAdd()

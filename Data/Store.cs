@@ -52,22 +52,12 @@ public sealed class Store(
 
 	public async Task<ShoppingList?> ArchiveListAsync(int listId, CancellationToken cancellationToken = default)
 	{
-		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-		var shoppingList = await dbContext.ShoppingLists
-			.SingleOrDefaultAsync(list => list.Id == listId, cancellationToken);
-		if (shoppingList is null)
-		{
-			return null;
-		}
+		return await SetListArchivedStateAsync(listId, archived: true, cancellationToken);
+	}
 
-		if (!shoppingList.Archived)
-		{
-			shoppingList.Archived = true;
-			await dbContext.SaveChangesAsync(cancellationToken);
-			await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
-		}
-
-		return await GetListAsync(listId, cancellationToken);
+	public async Task<ShoppingList?> UnarchiveListAsync(int listId, CancellationToken cancellationToken = default)
+	{
+		return await SetListArchivedStateAsync(listId, archived: false, cancellationToken);
 	}
 
 	public async Task<ShoppingList?> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default)
@@ -191,6 +181,26 @@ public sealed class Store(
 	{
 		var shoppingList = await GetListAsync(id, cancellationToken);
 		return shoppingList ?? throw new InvalidOperationException($"Shopping list {id} was not found after it was created.");
+	}
+
+	private async Task<ShoppingList?> SetListArchivedStateAsync(int listId, bool archived, CancellationToken cancellationToken)
+	{
+		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+		var shoppingList = await dbContext.ShoppingLists
+			.SingleOrDefaultAsync(list => list.Id == listId, cancellationToken);
+		if (shoppingList is null)
+		{
+			return null;
+		}
+
+		if (shoppingList.Archived != archived)
+		{
+			shoppingList.Archived = archived;
+			await dbContext.SaveChangesAsync(cancellationToken);
+			await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
+		}
+
+		return await GetListAsync(listId, cancellationToken);
 	}
 
 	private static ShoppingList MapList(ShoppingList shoppingList)
