@@ -8,8 +8,7 @@ public static class StoreConfiguration
 
 	public static string NormalizeSqliteConnectionString(string? connectionString, string basePath)
 	{
-		var sqliteConnectionString = string.IsNullOrWhiteSpace(connectionString) ? DefaultConnectionString : connectionString;
-		var builder = new SqliteConnectionStringBuilder(sqliteConnectionString);
+		var builder = CreateSqliteConnectionStringBuilder(connectionString);
 
 		if (string.IsNullOrWhiteSpace(builder.DataSource) || builder.DataSource == ":memory:" || Uri.IsWellFormedUriString(builder.DataSource, UriKind.Absolute))
 		{
@@ -28,5 +27,24 @@ public static class StoreConfiguration
 		}
 
 		return builder.ToString();
+	}
+
+	private static SqliteConnectionStringBuilder CreateSqliteConnectionStringBuilder(string? connectionString)
+	{
+		if (string.IsNullOrWhiteSpace(connectionString))
+		{
+			return new SqliteConnectionStringBuilder(DefaultConnectionString);
+		}
+
+		var trimmedConnectionString = connectionString.Trim();
+		if (!trimmedConnectionString.Contains('='))
+		{
+			return new SqliteConnectionStringBuilder
+			{
+				DataSource = trimmedConnectionString
+			};
+		}
+
+		return new SqliteConnectionStringBuilder(trimmedConnectionString);
 	}
 }

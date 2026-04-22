@@ -10,6 +10,14 @@ Remove-Item .\App_Data\smoke-test.db, .\App_Data\smoke-test.db-shm, .\App_Data\s
 dotnet run --launch-profile http
 ```
 
+For Docker/startup configuration regressions, rerun the same smoke flow once with a raw database path instead of a full SQLite connection string:
+
+```powershell
+$env:ConnectionStrings__Boodschap='App_Data/docker-path-smoke.db'
+Remove-Item .\App_Data\docker-path-smoke.db, .\App_Data\docker-path-smoke.db-shm, .\App_Data\docker-path-smoke.db-wal -ErrorAction SilentlyContinue
+dotnet run --launch-profile http
+```
+
 The app listens on `http://localhost:5091`.
 
 ## 1. Navigate to the app
@@ -209,3 +217,5 @@ Optional cleanup:
 ```powershell
 Remove-Item .\App_Data\smoke-test.db, .\App_Data\smoke-test.db-shm, .\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
 ```
+
+If cleanup runs immediately after stopping the host and SQLite still has the files open, retry the `Remove-Item` command once after the process has fully exited.

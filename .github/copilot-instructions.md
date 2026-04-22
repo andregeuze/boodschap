@@ -52,6 +52,7 @@ docker run -p 8080:8080 boodschap
 ## What to Keep in Mind
 
 - State is persisted in **SQLite** via EF Core.
+- `ConnectionStrings:Boodschap` may be provided either as a full SQLite connection string or as a raw database file path; Docker-related or startup/config changes should be smoke-tested with the raw-path form as well.
 - Blazor Server circuits should stay synchronized across sessions. When a list or item changes, prefer store-level notifications so all connected sessions refresh over the existing SignalR/WebSocket connection.
 - Drag-and-drop reordering uses HTML5 DnD entirely in C# via Blazor event handlers on the `<li>` elements in `Home.razor`. There is no JavaScript file for this.
 - Do **not** modify `wwwroot/app.css` directly — it is overwritten by Tailwind on every build.
