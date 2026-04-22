@@ -8,4 +8,10 @@
     <RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
   </PropertyGroup>
 
+  <Target Name="BuildTailwindCss"
+          BeforeTargets="Build"
+      Condition="'$(Configuration)' == 'Debug' and '$(DesignTimeBuild)' != 'true' and '$(ContinuousIntegrationBuild)' != 'true'">
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css" />
+  </Target>
+
 </Project>
