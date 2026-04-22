@@ -1,7 +1,9 @@
 @page "/lists/{Id:int}"
 @rendermode InteractiveServer
+@implements IDisposable
 @inject NavigationManager Navigation
 @inject Store Store
+@inject StoreChangeNotifier StoreChangeNotifier
 
 @if (shoppingList is null)
 {
@@ -120,9 +122,19 @@ else
 		_ => shoppingList?.Items ?? []
 	};
 
+	protected override void OnInitialized()
+	{
+		StoreChangeNotifier.Changed += HandleStoreChangedAsync;
+	}
+
 	protected override async Task OnParametersSetAsync()
 	{
 		shoppingList = await Store.GetListAsync(Id);
+	}
+
+	public void Dispose()
+	{
+		StoreChangeNotifier.Changed -= HandleStoreChangedAsync;
 	}
 
 	private void BackToOverview()
@@ -192,5 +204,19 @@ else
 
 		shoppingList = await Store.ReorderItemAsync(Id, dragItem.Id, target.Id) ?? shoppingList;
 		HandleDragEnd();
+	}
+
+	private Task HandleStoreChangedAsync(StoreChange change)
+	{
+		if (change.ListId is int listId && listId != Id)
+		{
+			return Task.CompletedTask;
+		}
+
+		return InvokeAsync(async () =>
+		{
+			shoppingList = await Store.GetListAsync(Id);
+			StateHasChanged();
+		});
 	}
 }

@@ -147,13 +147,56 @@ Expected:
 - URL returns to `/`
 - Overview cards are visible again
 
-## 12. Close browser
+## 12. Verify cross-session synchronization
+
+Open a second browser page to the same list while the first page remains open.
+
+```
+mcp_playwright_browser_navigate → http://localhost:5091/lists/1 (page A)
+mcp_playwright_browser_open → http://localhost:5091/lists/1 (page B)
+```
+
+Expected:
+- Both pages show the same current list state
+
+On page A, add a new item:
+
+```
+mcp_playwright_browser_click → button "New item" (page A)
+mcp_playwright_browser_fill_form → input "Add grocery item" with "Oranges" (page A)
+mcp_playwright_browser_click → button "Add" (page A)
+```
+
+Expected:
+- Page A updates immediately
+- Page B updates automatically without manual refresh
+- "Oranges" appears below unchecked items and above checked items on both pages
+
+On page A, remove the new item:
+
+```
+mcp_playwright_browser_click → button "Remove" (next to "Oranges") (page A)
+```
+
+Expected:
+- "Oranges" disappears on both pages without manual refresh
+
+On page A, reorder an item:
+
+```
+mcp_playwright_browser_drag → drag "Coffee" onto "Bread" (page A)
+```
+
+Expected:
+- The reordered item position updates on both pages without manual refresh
+
+## 13. Close browser
 
 ```
 mcp_playwright_browser_close
 ```
 
-## 13. Kill the host process
+## 14. Kill the host process
 
 Stop the `dotnet run` process that was started at the beginning.
 

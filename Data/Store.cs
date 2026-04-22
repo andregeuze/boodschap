@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Boodschap.Data;
 
-public sealed class Store(IDbContextFactory<BoodschapDbContext> dbContextFactory)
+public sealed class Store(
+	IDbContextFactory<BoodschapDbContext> dbContextFactory,
+	StoreChangeNotifier storeChangeNotifier)
 {
 	public async Task<IReadOnlyList<ShoppingList>> GetListsAsync(CancellationToken cancellationToken = default)
 	{
@@ -43,6 +45,7 @@ public sealed class Store(IDbContextFactory<BoodschapDbContext> dbContextFactory
 
 		dbContext.ShoppingLists.Add(shoppingList);
 		await dbContext.SaveChangesAsync(cancellationToken);
+		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(shoppingList.Id));
 
 		return await GetListRequiredAsync(shoppingList.Id, cancellationToken);
 	}
@@ -90,6 +93,7 @@ public sealed class Store(IDbContextFactory<BoodschapDbContext> dbContextFactory
 		dbContext.ShoppingListItems.Add(newItem);
 
 		await dbContext.SaveChangesAsync(cancellationToken);
+		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
 		return await GetListAsync(listId, cancellationToken);
 	}
 
@@ -113,6 +117,7 @@ public sealed class Store(IDbContextFactory<BoodschapDbContext> dbContextFactory
 		}
 
 		await dbContext.SaveChangesAsync(cancellationToken);
+		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
 		return await GetListAsync(listId, cancellationToken);
 	}
 
@@ -128,6 +133,7 @@ public sealed class Store(IDbContextFactory<BoodschapDbContext> dbContextFactory
 
 		dbContext.ShoppingListItems.Remove(item);
 		await dbContext.SaveChangesAsync(cancellationToken);
+		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
 		return await GetListAsync(listId, cancellationToken);
 	}
 
@@ -157,6 +163,7 @@ public sealed class Store(IDbContextFactory<BoodschapDbContext> dbContextFactory
 		}
 
 		await dbContext.SaveChangesAsync(cancellationToken);
+		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
 		return await GetListAsync(listId, cancellationToken);
 	}
 

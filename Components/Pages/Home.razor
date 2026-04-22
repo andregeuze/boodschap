@@ -1,7 +1,9 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@implements IDisposable
 @inject NavigationManager Navigation
 @inject Store Store
+@inject StoreChangeNotifier StoreChangeNotifier
 
 <PageTitle>Boodschap</PageTitle>
 
@@ -68,7 +70,13 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		StoreChangeNotifier.Changed += HandleStoreChangedAsync;
 		shoppingLists = [.. await Store.GetListsAsync()];
+	}
+
+	public void Dispose()
+	{
+		StoreChangeNotifier.Changed -= HandleStoreChangedAsync;
 	}
 
 	private void SelectTab(string tab)
@@ -85,6 +93,15 @@
 	{
 		var list = await Store.CreateListAsync($"Shopping list {DateTime.Now:HHmm}");
 		Navigation.NavigateTo($"/lists/{list.Id}");
+	}
+
+	private Task HandleStoreChangedAsync(StoreChange _)
+	{
+		return InvokeAsync(async () =>
+		{
+			shoppingLists = [.. await Store.GetListsAsync()];
+			StateHasChanged();
+		});
 	}
 
 	private static string GetSummary(ShoppingList list)

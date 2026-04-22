@@ -51,7 +51,9 @@ docker run -p 8080:8080 boodschap
 
 ## What to Keep in Mind
 
-- State is currently **in-memory** (no database). If persistence is added, prefer a lightweight option like SQLite via EF Core.
+- State is persisted in **SQLite** via EF Core.
+- Blazor Server circuits should stay synchronized across sessions. When a list or item changes, prefer store-level notifications so all connected sessions refresh over the existing SignalR/WebSocket connection.
 - Drag-and-drop reordering uses HTML5 DnD entirely in C# via Blazor event handlers on the `<li>` elements in `Home.razor`. There is no JavaScript file for this.
 - Do **not** modify `wwwroot/app.css` directly — it is overwritten by Tailwind on every build.
 - The app runs behind a reverse proxy; `UseForwardedHeaders` is configured in `Program.cs`.
+- After implementing any feature, bugfix, or behavioral change, run the smoke test against the disposable smoke-test database before considering the task complete.

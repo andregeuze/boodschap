@@ -14,6 +14,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddDbContextFactory<BoodschapDbContext>(options =>
     options.UseSqlite(sqliteConnectionString));
+builder.Services.AddSingleton<StoreChangeNotifier>();
 builder.Services.AddScoped<Store>();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
