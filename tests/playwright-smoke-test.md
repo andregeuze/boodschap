@@ -1,6 +1,16 @@
 # Playwright MCP Smoke Test
 
-Run the app first: `dotnet run --launch-profile http` (listens on `http://localhost:5091`).
+Run the app first against a disposable smoke-test database so persisted local changes do not affect the seeded baseline.
+
+PowerShell:
+
+```powershell
+$env:ConnectionStrings__Boodschap='Data Source=App_Data/smoke-test.db'
+Remove-Item .\App_Data\smoke-test.db, .\App_Data\smoke-test.db-shm, .\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
+dotnet run --launch-profile http
+```
+
+The app listens on `http://localhost:5091`.
 
 ## 1. Navigate to the app
 
@@ -112,7 +122,8 @@ mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- "Bananas" appears in the list
+- "Bananas" appears in the list below the existing unchecked items and above the checked items
+- In the seeded smoke run after checking off Milk and Eggs, "Bananas" should appear after Coffee and before Milk/Eggs
 - Input is cleared
 
 ## 10. Test remove
@@ -148,4 +159,10 @@ Stop the `dotnet run` process that was started at the beginning.
 
 ```
 kill_terminal → <terminal-id from step 0>
+```
+
+Optional cleanup:
+
+```powershell
+Remove-Item .\App_Data\smoke-test.db, .\App_Data\smoke-test.db-shm, .\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
 ```

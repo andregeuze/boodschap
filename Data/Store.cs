@@ -55,22 +55,39 @@ public sealed class Store(IDbContextFactory<BoodschapDbContext> dbContextFactory
 		}
 
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-		var shoppingListExists = await dbContext.ShoppingLists.AnyAsync(list => list.Id == listId, cancellationToken);
+		var items = await dbContext.ShoppingListItems
+			.Where(item => item.ShoppingListId == listId)
+			.OrderBy(item => item.SortOrder)
+			.ToListAsync(cancellationToken);
+
+		var shoppingListExists = items.Count > 0
+			|| await dbContext.ShoppingLists.AnyAsync(list => list.Id == listId, cancellationToken);
 		if (!shoppingListExists)
 		{
 			return null;
 		}
 
-		var nextSortOrder = (await dbContext.ShoppingListItems
-			.Where(item => item.ShoppingListId == listId)
-			.MaxAsync(item => (int?)item.SortOrder, cancellationToken) ?? -1) + 1;
+		var insertIndex = items.FindIndex(item => item.IsDone);
+		if (insertIndex < 0)
+		{
+			insertIndex = items.Count;
+		}
 
-		dbContext.ShoppingListItems.Add(new ShoppingListItem
+		var newItem = new ShoppingListItem
 		{
 			ShoppingListId = listId,
 			Name = itemName.Trim(),
-			SortOrder = nextSortOrder
-		});
+			SortOrder = insertIndex
+		};
+
+		items.Insert(insertIndex, newItem);
+
+		for (var index = 0; index < items.Count; index++)
+		{
+			items[index].SortOrder = index;
+		}
+
+		dbContext.ShoppingListItems.Add(newItem);
 
 		await dbContext.SaveChangesAsync(cancellationToken);
 		return await GetListAsync(listId, cancellationToken);
