@@ -10,7 +10,7 @@ public static class StoreInitializer
 		var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<BoodschapDbContext>>();
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-		await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+		await dbContext.Database.MigrateAsync(cancellationToken);
 		if (await dbContext.ShoppingLists.AnyAsync(cancellationToken))
 		{
 			return;
