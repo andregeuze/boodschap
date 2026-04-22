@@ -61,6 +61,10 @@
 	private const string ArchivedTab = "Archived";
 
 	private static readonly string[] Tabs = [NewTab, ArchivedTab];
+
+	[SupplyParameterFromQuery(Name = "tab")]
+	public string? RequestedTab { get; set; }
+
 	private string activeTab = NewTab;
 	private List<ShoppingList> shoppingLists = [];
 
@@ -72,6 +76,11 @@
 	{
 		StoreChangeNotifier.Changed += HandleStoreChangedAsync;
 		shoppingLists = [.. await Store.GetListsAsync()];
+	}
+
+	protected override void OnParametersSet()
+	{
+		activeTab = RequestedTab == ArchivedTab ? ArchivedTab : NewTab;
 	}
 
 	public void Dispose()

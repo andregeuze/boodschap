@@ -50,6 +50,26 @@ public sealed class Store(
 		return await GetListRequiredAsync(shoppingList.Id, cancellationToken);
 	}
 
+	public async Task<ShoppingList?> ArchiveListAsync(int listId, CancellationToken cancellationToken = default)
+	{
+		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+		var shoppingList = await dbContext.ShoppingLists
+			.SingleOrDefaultAsync(list => list.Id == listId, cancellationToken);
+		if (shoppingList is null)
+		{
+			return null;
+		}
+
+		if (!shoppingList.Archived)
+		{
+			shoppingList.Archived = true;
+			await dbContext.SaveChangesAsync(cancellationToken);
+			await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
+		}
+
+		return await GetListAsync(listId, cancellationToken);
+	}
+
 	public async Task<ShoppingList?> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(itemName))
