@@ -1,5 +1,5 @@
 ---
-name: "Quick Smoke Tester"
+name: "Smoke Tester"
 description: "Use when quickly smoke testing the Boodschap project, validating UI behavior with screenshots, checking seeded list flows, archived and active tabs, and quick-add/remove behavior. Best for browser smoke runs that should use the first connection string option from tests/playwright-smoke-test.md."
 tools: [read, search, execute, open_browser_page, navigate_page, read_page, click_element, type_in_page, drag_element, screenshot_page, kill_terminal]
 user-invocable: true
