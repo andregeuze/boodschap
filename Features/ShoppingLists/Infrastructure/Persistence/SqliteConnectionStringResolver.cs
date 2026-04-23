@@ -1,14 +1,14 @@
 using Microsoft.Data.Sqlite;
 
-namespace Boodschap.Data;
+namespace Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 
-public static class StoreConfiguration
+public static class SqliteConnectionStringResolver
 {
 	private const string DefaultConnectionString = "Data Source=App_Data/boodschap.db";
 
-	public static string NormalizeSqliteConnectionString(string? connectionString, string basePath)
+	public static string Normalize(string? connectionString, string basePath)
 	{
-		var builder = CreateSqliteConnectionStringBuilder(connectionString);
+		var builder = CreateBuilder(connectionString);
 
 		if (string.IsNullOrWhiteSpace(builder.DataSource) || builder.DataSource == ":memory:" || Uri.IsWellFormedUriString(builder.DataSource, UriKind.Absolute))
 		{
@@ -29,7 +29,7 @@ public static class StoreConfiguration
 		return builder.ToString();
 	}
 
-	private static SqliteConnectionStringBuilder CreateSqliteConnectionStringBuilder(string? connectionString)
+	private static SqliteConnectionStringBuilder CreateBuilder(string? connectionString)
 	{
 		if (string.IsNullOrWhiteSpace(connectionString))
 		{

@@ -66,7 +66,21 @@ Expected:
 - FilterBar group "Filter groceries" with buttons: All, Needed, Purchased
 - 6 list items: Milk, Eggs, Bread, Tomatoes, Cheese, Coffee (all unchecked)
 
-## 5. Mark items as purchased
+## 5. Test drag and drop reorder
+
+Drag `Coffee` onto `Bread`.
+
+```
+mcp_playwright_browser_snapshot
+mcp_playwright_browser_drag → drag "Coffee" onto "Bread"
+mcp_playwright_browser_snapshot
+```
+
+Expected:
+- Item order becomes: Milk, Eggs, Coffee, Bread, Tomatoes, Cheese
+- "Drag to reorder" paragraph remains visible
+
+## 6. Mark items as purchased
 
 Click the Milk checkbox, then the Eggs checkbox.
 
@@ -75,7 +89,7 @@ mcp_playwright_browser_click → checkbox "Milk"
 mcp_playwright_browser_click → checkbox "Eggs"
 ```
 
-## 6. Test "Needed" filter
+## 7. Test "Needed" filter
 
 ```
 mcp_playwright_browser_click → button "Needed"
@@ -87,7 +101,7 @@ Expected:
 - Only unchecked items shown: Bread, Tomatoes, Cheese, Coffee
 - "Drag to reorder" hint is hidden
 
-## 7. Test "Purchased" filter
+## 8. Test "Purchased" filter
 
 ```
 mcp_playwright_browser_click → button "Purchased"
@@ -98,7 +112,7 @@ Expected:
 - "Purchased" button is `[active]`
 - Only checked items shown: Milk `[checked]`, Eggs `[checked]`
 
-## 8. Test "All" filter
+## 9. Test "All" filter
 
 ```
 mcp_playwright_browser_click → button "All"
@@ -110,7 +124,7 @@ Expected:
 - All 6 items shown
 - "Drag to reorder" paragraph visible
 
-## 9. Test "New item" quick-add
+## 10. Test "New item" quick-add
 
 ```
 mcp_playwright_browser_click → button "New item"
@@ -131,10 +145,10 @@ mcp_playwright_browser_snapshot
 
 Expected:
 - "Bananas" appears in the list below the existing unchecked items and above the checked items
-- In the seeded smoke run after checking off Milk and Eggs, "Bananas" should appear after Coffee and before Milk/Eggs
+- In the seeded smoke run after reordering Coffee before Bread and then checking off Milk and Eggs, "Bananas" should appear after Cheese and before Milk/Eggs
 - Input is cleared
 
-## 10. Test remove
+## 11. Test remove
 
 ```
 mcp_playwright_browser_click → button "Remove" (next to "Bananas")
@@ -144,7 +158,7 @@ mcp_playwright_browser_snapshot
 Expected:
 - "Bananas" is no longer in the list
 
-## 11. Return to overview
+## 12. Return to overview
 
 ```
 mcp_playwright_browser_click → button "Back"
@@ -155,7 +169,7 @@ Expected:
 - URL returns to `/`
 - Overview cards are visible again
 
-## 12. Verify cross-session synchronization
+## 13. Verify cross-session synchronization
 
 Open a second browser page to the same list while the first page remains open.
 
@@ -198,13 +212,13 @@ mcp_playwright_browser_drag → drag "Coffee" onto "Bread" (page A)
 Expected:
 - The reordered item position updates on both pages without manual refresh
 
-## 13. Close browser
+## 14. Close browser
 
 ```
 mcp_playwright_browser_close
 ```
 
-## 14. Kill the host process
+## 15. Kill the host process
 
 Stop the `dotnet run` process that was started at the beginning.
 

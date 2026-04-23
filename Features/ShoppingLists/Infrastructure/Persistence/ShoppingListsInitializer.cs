@@ -1,8 +1,9 @@
+using Boodschap.Features.ShoppingLists.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Boodschap.Data;
+namespace Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 
-public static class StoreInitializer
+public static class ShoppingListsInitializer
 {
 	public static async Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken = default)
 	{

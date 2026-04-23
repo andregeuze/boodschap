@@ -1,4 +1,4 @@
-namespace Boodschap.Data;
+namespace Boodschap.Features.ShoppingLists.Domain;
 
 public sealed class ShoppingList
 {

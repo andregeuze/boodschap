@@ -1,10 +1,10 @@
+using Boodschap.Features.ShoppingLists.Application;
+using Boodschap.Features.ShoppingLists.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Boodschap.Data;
+namespace Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 
-public sealed class Store(
-	IDbContextFactory<BoodschapDbContext> dbContextFactory,
-	StoreChangeNotifier storeChangeNotifier)
+public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext> dbContextFactory) : IShoppingListRepository
 {
 	public async Task<IReadOnlyList<ShoppingList>> GetListsAsync(CancellationToken cancellationToken = default)
 	{
@@ -45,26 +45,36 @@ public sealed class Store(
 
 		dbContext.ShoppingLists.Add(shoppingList);
 		await dbContext.SaveChangesAsync(cancellationToken);
-		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(shoppingList.Id));
 
 		return await GetListRequiredAsync(shoppingList.Id, cancellationToken);
 	}
 
-	public async Task<ShoppingList?> ArchiveListAsync(int listId, CancellationToken cancellationToken = default)
+	public async Task<MutationResult<ShoppingList>> SetListArchivedStateAsync(int listId, bool archived, CancellationToken cancellationToken = default)
 	{
-		return await SetListArchivedStateAsync(listId, archived: true, cancellationToken);
+		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+		var shoppingList = await dbContext.ShoppingLists
+			.SingleOrDefaultAsync(list => list.Id == listId, cancellationToken);
+		if (shoppingList is null)
+		{
+			return new(null, false);
+		}
+
+		if (shoppingList.Archived == archived)
+		{
+			return new(await GetListAsync(listId, cancellationToken), false);
+		}
+
+		shoppingList.Archived = archived;
+		await dbContext.SaveChangesAsync(cancellationToken);
+
+		return new(await GetListAsync(listId, cancellationToken), true);
 	}
 
-	public async Task<ShoppingList?> UnarchiveListAsync(int listId, CancellationToken cancellationToken = default)
-	{
-		return await SetListArchivedStateAsync(listId, archived: false, cancellationToken);
-	}
-
-	public async Task<ShoppingList?> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default)
+	public async Task<MutationResult<ShoppingList>> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(itemName))
 		{
-			return await GetListAsync(listId, cancellationToken);
+			return new(await GetListAsync(listId, cancellationToken), false);
 		}
 
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
@@ -73,11 +83,11 @@ public sealed class Store(
 			.OrderBy(item => item.SortOrder)
 			.ToListAsync(cancellationToken);
 
-		var shoppingListExists = items.Count > 0
+		var shoppingListExists = items.Count != 0
 			|| await dbContext.ShoppingLists.AnyAsync(list => list.Id == listId, cancellationToken);
 		if (!shoppingListExists)
 		{
-			return null;
+			return new(null, false);
 		}
 
 		var insertIndex = items.FindIndex(item => item.IsDone);
@@ -101,20 +111,24 @@ public sealed class Store(
 		}
 
 		dbContext.ShoppingListItems.Add(newItem);
-
 		await dbContext.SaveChangesAsync(cancellationToken);
-		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
-		return await GetListAsync(listId, cancellationToken);
+
+		return new(await GetListAsync(listId, cancellationToken), true);
 	}
 
-	public async Task<ShoppingList?> ToggleDoneAsync(int listId, int itemId, bool isDone, CancellationToken cancellationToken = default)
+	public async Task<MutationResult<ShoppingList>> ToggleDoneAsync(int listId, int itemId, bool isDone, CancellationToken cancellationToken = default)
 	{
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var item = await dbContext.ShoppingListItems
 			.SingleOrDefaultAsync(entry => entry.ShoppingListId == listId && entry.Id == itemId, cancellationToken);
 		if (item is null)
 		{
-			return null;
+			return new(null, false);
+		}
+
+		if (item.IsDone == isDone)
+		{
+			return new(await GetListAsync(listId, cancellationToken), false);
 		}
 
 		item.IsDone = isDone;
@@ -127,27 +141,27 @@ public sealed class Store(
 		}
 
 		await dbContext.SaveChangesAsync(cancellationToken);
-		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
-		return await GetListAsync(listId, cancellationToken);
+
+		return new(await GetListAsync(listId, cancellationToken), true);
 	}
 
-	public async Task<ShoppingList?> RemoveItemAsync(int listId, int itemId, CancellationToken cancellationToken = default)
+	public async Task<MutationResult<ShoppingList>> RemoveItemAsync(int listId, int itemId, CancellationToken cancellationToken = default)
 	{
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var item = await dbContext.ShoppingListItems
 			.SingleOrDefaultAsync(entry => entry.ShoppingListId == listId && entry.Id == itemId, cancellationToken);
 		if (item is null)
 		{
-			return null;
+			return new(null, false);
 		}
 
 		dbContext.ShoppingListItems.Remove(item);
 		await dbContext.SaveChangesAsync(cancellationToken);
-		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
-		return await GetListAsync(listId, cancellationToken);
+
+		return new(await GetListAsync(listId, cancellationToken), true);
 	}
 
-	public async Task<ShoppingList?> ReorderItemAsync(int listId, int itemId, int targetItemId, CancellationToken cancellationToken = default)
+	public async Task<MutationResult<ShoppingList>> ReorderItemAsync(int listId, int itemId, int targetItemId, CancellationToken cancellationToken = default)
 	{
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var items = await dbContext.ShoppingListItems
@@ -159,7 +173,7 @@ public sealed class Store(
 		var targetItem = items.FirstOrDefault(item => item.Id == targetItemId);
 		if (draggedItem is null || targetItem is null || draggedItem.Id == targetItem.Id)
 		{
-			return await GetListAsync(listId, cancellationToken);
+			return new(await GetListAsync(listId, cancellationToken), false);
 		}
 
 		var from = items.IndexOf(draggedItem);
@@ -173,34 +187,14 @@ public sealed class Store(
 		}
 
 		await dbContext.SaveChangesAsync(cancellationToken);
-		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
-		return await GetListAsync(listId, cancellationToken);
+
+		return new(await GetListAsync(listId, cancellationToken), true);
 	}
 
 	private async Task<ShoppingList> GetListRequiredAsync(int id, CancellationToken cancellationToken)
 	{
 		var shoppingList = await GetListAsync(id, cancellationToken);
 		return shoppingList ?? throw new InvalidOperationException($"Shopping list {id} was not found after it was created.");
-	}
-
-	private async Task<ShoppingList?> SetListArchivedStateAsync(int listId, bool archived, CancellationToken cancellationToken)
-	{
-		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-		var shoppingList = await dbContext.ShoppingLists
-			.SingleOrDefaultAsync(list => list.Id == listId, cancellationToken);
-		if (shoppingList is null)
-		{
-			return null;
-		}
-
-		if (shoppingList.Archived != archived)
-		{
-			shoppingList.Archived = archived;
-			await dbContext.SaveChangesAsync(cancellationToken);
-			await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
-		}
-
-		return await GetListAsync(listId, cancellationToken);
 	}
 
 	private static ShoppingList MapList(ShoppingList shoppingList)

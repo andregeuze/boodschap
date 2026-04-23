@@ -1,6 +1,7 @@
+using Boodschap.Features.ShoppingLists.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Boodschap.Data;
+namespace Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 
 public sealed class BoodschapDbContext(DbContextOptions<BoodschapDbContext> options) : DbContext(options)
 {

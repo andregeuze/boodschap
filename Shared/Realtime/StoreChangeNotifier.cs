@@ -1,4 +1,4 @@
-namespace Boodschap.Data;
+namespace Boodschap.Shared.Realtime;
 
 public sealed class StoreChangeNotifier
 {

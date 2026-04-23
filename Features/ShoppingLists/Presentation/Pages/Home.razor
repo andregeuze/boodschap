@@ -1,8 +1,8 @@
-﻿@page "/"
+@page "/"
 @rendermode InteractiveServer
 @implements IDisposable
 @inject NavigationManager Navigation
-@inject Store Store
+@inject IShoppingListService ShoppingLists
 @inject StoreChangeNotifier StoreChangeNotifier
 
 <PageTitle>Boodschap</PageTitle>
@@ -75,7 +75,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		StoreChangeNotifier.Changed += HandleStoreChangedAsync;
-		shoppingLists = [.. await Store.GetListsAsync()];
+		shoppingLists = [.. await ShoppingLists.GetListsAsync()];
 	}
 
 	protected override void OnParametersSet()
@@ -100,7 +100,7 @@
 
 	private async Task CreateList()
 	{
-		var list = await Store.CreateListAsync($"Shopping list {DateTime.Now:HHmm}");
+		var list = await ShoppingLists.CreateListAsync($"Shopping list {DateTime.Now:HHmm}");
 		Navigation.NavigateTo($"/lists/{list.Id}");
 	}
 
@@ -108,7 +108,7 @@
 	{
 		return InvokeAsync(async () =>
 		{
-			shoppingLists = [.. await Store.GetListsAsync()];
+			shoppingLists = [.. await ShoppingLists.GetListsAsync()];
 			StateHasChanged();
 		});
 	}

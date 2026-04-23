@@ -1,0 +1,16 @@
+@rendermode InteractiveServer
+
+<TabBar Tabs="Filters"
+		ActiveTab="@ActiveFilter"
+		OnTabChanged="OnFilterChanged"
+		AriaLabel="Filter groceries" />
+
+@code {
+	private static readonly IReadOnlyList<string> Filters = ShoppingItemFilters.AllValues;
+
+	[Parameter, EditorRequired]
+	public string ActiveFilter { get; set; } = ShoppingItemFilters.All;
+
+	[Parameter, EditorRequired]
+	public EventCallback<string> OnFilterChanged { get; set; }
+}

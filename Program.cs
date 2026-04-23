@@ -1,10 +1,10 @@
 using Boodschap.Components;
-using Boodschap.Data;
+using Boodschap.Features.ShoppingLists;
+using Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var sqliteConnectionString = StoreConfiguration.NormalizeSqliteConnectionString(
+var sqliteConnectionString = SqliteConnectionStringResolver.Normalize(
     builder.Configuration.GetConnectionString("Boodschap"),
     builder.Environment.ContentRootPath);
 
@@ -12,10 +12,7 @@ var sqliteConnectionString = StoreConfiguration.NormalizeSqliteConnectionString(
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddDbContextFactory<BoodschapDbContext>(options =>
-    options.UseSqlite(sqliteConnectionString));
-builder.Services.AddSingleton<StoreChangeNotifier>();
-builder.Services.AddScoped<Store>();
+builder.Services.AddShoppingListsFeature(sqliteConnectionString);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -29,7 +26,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 var app = builder.Build();
 
-await StoreInitializer.InitializeAsync(app.Services);
+await ShoppingListsInitializer.InitializeAsync(app.Services);
 
 app.UseForwardedHeaders();
 

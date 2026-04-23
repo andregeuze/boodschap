@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @implements IDisposable
 @inject NavigationManager Navigation
-@inject Store Store
+@inject IShoppingListService ShoppingLists
 @inject StoreChangeNotifier StoreChangeNotifier
 
 @if (shoppingList is null)
@@ -86,7 +86,7 @@ else
 					}
 				</div>
 
-				@if (selectedFilter == "All")
+				@if (selectedFilter == ShoppingItemFilters.All)
 				{
 					<p class="text-sm text-slate-500">Drag to reorder</p>
 				}
@@ -130,13 +130,13 @@ else
 	private ShoppingListItem? dragItem;
 	private ShoppingListItem? dragOverItem;
 	private bool isQuickAddOpen;
-	private string selectedFilter = "All";
+	private string selectedFilter = ShoppingItemFilters.All;
 	private string newItemName = string.Empty;
 
 	private List<ShoppingListItem> VisibleItems => selectedFilter switch
 	{
-		"Needed" => shoppingList?.Items.Where(item => !item.IsDone).ToList() ?? [],
-		"Purchased" => shoppingList?.Items.Where(item => item.IsDone).ToList() ?? [],
+		ShoppingItemFilters.Needed => shoppingList?.Items.Where(item => !item.IsDone).ToList() ?? [],
+		ShoppingItemFilters.Purchased => shoppingList?.Items.Where(item => item.IsDone).ToList() ?? [],
 		_ => shoppingList?.Items ?? []
 	};
 
@@ -147,7 +147,7 @@ else
 
 	protected override async Task OnParametersSetAsync()
 	{
-		shoppingList = await Store.GetListAsync(Id);
+		shoppingList = await ShoppingLists.GetListAsync(Id);
 	}
 
 	public void Dispose()
@@ -167,7 +167,7 @@ else
 			return;
 		}
 
-		shoppingList = await Store.ArchiveListAsync(Id) ?? shoppingList;
+		shoppingList = await ShoppingLists.ArchiveListAsync(Id) ?? shoppingList;
 		Navigation.NavigateTo("/?tab=Archived");
 	}
 
@@ -178,7 +178,7 @@ else
 			return;
 		}
 
-		shoppingList = await Store.UnarchiveListAsync(Id) ?? shoppingList;
+		shoppingList = await ShoppingLists.UnarchiveListAsync(Id) ?? shoppingList;
 	}
 
 	private void ToggleQuickAdd()
@@ -198,9 +198,9 @@ else
 			return;
 		}
 
-		shoppingList = await Store.AddItemAsync(Id, newItemName);
+		shoppingList = await ShoppingLists.AddItemAsync(Id, newItemName);
 		newItemName = string.Empty;
-		selectedFilter = "All";
+		selectedFilter = ShoppingItemFilters.All;
 	}
 
 	private async Task ToggleDone(int id, object? value)
@@ -211,7 +211,7 @@ else
 		}
 
 		var isDone = value is bool done && done;
-		shoppingList = await Store.ToggleDoneAsync(Id, id, isDone) ?? shoppingList;
+		shoppingList = await ShoppingLists.ToggleDoneAsync(Id, id, isDone) ?? shoppingList;
 	}
 
 	private async Task RemoveItem(int id)
@@ -221,7 +221,7 @@ else
 			return;
 		}
 
-		shoppingList = await Store.RemoveItemAsync(Id, id) ?? shoppingList;
+		shoppingList = await ShoppingLists.RemoveItemAsync(Id, id) ?? shoppingList;
 	}
 
 	private void HandleDragStart(ShoppingListItem item) => dragItem = item;
@@ -236,12 +236,12 @@ else
 
 	private async Task HandleDrop(ShoppingListItem target)
 	{
-		if (shoppingList is null || dragItem is null || dragItem == target || selectedFilter != "All")
+		if (shoppingList is null || dragItem is null || dragItem == target || selectedFilter != ShoppingItemFilters.All)
 		{
 			return;
 		}
 
-		shoppingList = await Store.ReorderItemAsync(Id, dragItem.Id, target.Id) ?? shoppingList;
+		shoppingList = await ShoppingLists.ReorderItemAsync(Id, dragItem.Id, target.Id) ?? shoppingList;
 		HandleDragEnd();
 	}
 
@@ -254,7 +254,7 @@ else
 
 		return InvokeAsync(async () =>
 		{
-			shoppingList = await Store.GetListAsync(Id);
+			shoppingList = await ShoppingLists.GetListAsync(Id);
 			StateHasChanged();
 		});
 	}
