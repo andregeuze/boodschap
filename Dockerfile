@@ -1,11 +1,13 @@
 # Stage 1: Build Tailwind CSS
 FROM node:22-alpine AS tailwind
 WORKDIR /src
-COPY package.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 COPY tailwind.config.js ./
 COPY Styles/ ./Styles/
 COPY Components/ ./Components/
+COPY Features/ ./Features/
+COPY Shared/ ./Shared/
 COPY wwwroot/ ./wwwroot/
 RUN npm run build:css
 
