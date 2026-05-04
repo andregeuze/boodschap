@@ -65,4 +65,54 @@ public sealed class ShoppingListRepositoryTests
 		Assert.Equal(["Eggs", "Milk", "Bread"], persisted.Items.OrderBy(item => item.SortOrder).Select(item => item.Name).ToArray());
 		Assert.Equal([0, 1, 2], persisted.Items.OrderBy(item => item.SortOrder).Select(item => item.SortOrder).ToArray());
 	}
+
+	[Fact]
+	public async Task RemoveArchivedListAsync_RemovesArchivedListAndItems()
+	{
+		await using var harness = await ShoppingListsSqliteTestHarness.CreateAsync();
+		await harness.SeedAsync(
+			new ShoppingList
+			{
+				Name = "Old groceries",
+				Archived = true,
+				SortOrder = 0,
+				Items =
+				[
+					new() { Name = "Tea", SortOrder = 0 },
+					new() { Name = "Sugar", SortOrder = 1 }
+				]
+			});
+
+		var repository = new ShoppingListRepository(harness.DbContextFactory);
+		var list = (await repository.GetListsAsync()).Single();
+
+		var result = await repository.RemoveArchivedListAsync(list.Id);
+
+		Assert.True(result.Changed);
+		Assert.Null(result.Value);
+		Assert.Null(await harness.GetListAsync(list.Id));
+	}
+
+	[Fact]
+	public async Task RemoveArchivedListAsync_DoesNotRemoveActiveList()
+	{
+		await using var harness = await ShoppingListsSqliteTestHarness.CreateAsync();
+		await harness.SeedAsync(
+			new ShoppingList
+			{
+				Name = "Current groceries",
+				Archived = false,
+				SortOrder = 0,
+				Items = []
+			});
+
+		var repository = new ShoppingListRepository(harness.DbContextFactory);
+		var list = (await repository.GetListsAsync()).Single();
+
+		var result = await repository.RemoveArchivedListAsync(list.Id);
+
+		Assert.False(result.Changed);
+		Assert.NotNull(result.Value);
+		Assert.NotNull(await harness.GetListAsync(list.Id));
+	}
 }

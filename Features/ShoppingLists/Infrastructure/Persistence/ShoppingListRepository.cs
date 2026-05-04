@@ -70,6 +70,27 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		return new(await GetListAsync(listId, cancellationToken), true);
 	}
 
+	public async Task<MutationResult<ShoppingList>> RemoveArchivedListAsync(int listId, CancellationToken cancellationToken = default)
+	{
+		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+		var shoppingList = await dbContext.ShoppingLists
+			.SingleOrDefaultAsync(list => list.Id == listId, cancellationToken);
+		if (shoppingList is null)
+		{
+			return new(null, false);
+		}
+
+		if (!shoppingList.Archived)
+		{
+			return new(await GetListAsync(listId, cancellationToken), false);
+		}
+
+		dbContext.ShoppingLists.Remove(shoppingList);
+		await dbContext.SaveChangesAsync(cancellationToken);
+
+		return new(null, true);
+	}
+
 	public async Task<MutationResult<ShoppingList>> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(itemName))

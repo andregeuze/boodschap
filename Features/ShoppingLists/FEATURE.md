@@ -53,6 +53,7 @@ The app shell should only compose this feature through `Program.cs` and `Shoppin
 ## Invariants
 
 - Item filter values are `All`, `Needed`, and `Purchased`, sourced from `ShoppingItemFilters`.
+- Lists may only be permanently removed after they are archived.
 - New items are inserted before the first purchased item when a list contains both needed and purchased items.
 - Marking an item as purchased moves it to the end of the list.
 - Drag-and-drop reordering is only available in the `All` filter view.

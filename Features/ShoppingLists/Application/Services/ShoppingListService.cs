@@ -38,6 +38,11 @@ public sealed class ShoppingListService(
 			listId);
 	}
 
+	public Task<bool> RemoveArchivedListAsync(int listId, CancellationToken cancellationToken = default)
+	{
+		return ExecuteChangeAsync(() => shoppingListRepository.RemoveArchivedListAsync(listId, cancellationToken), listId);
+	}
+
 	public Task<ShoppingList?> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default)
 	{
 		return ExecuteMutationAsync(() => shoppingListRepository.AddItemAsync(listId, itemName, cancellationToken), listId);
@@ -67,5 +72,17 @@ public sealed class ShoppingListService(
 		}
 
 		return result.Value;
+	}
+
+	private async Task<bool> ExecuteChangeAsync(Func<Task<MutationResult<ShoppingList>>> operation, int listId)
+	{
+		var result = await operation();
+		if (!result.Changed)
+		{
+			return false;
+		}
+
+		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(listId));
+		return true;
 	}
 }

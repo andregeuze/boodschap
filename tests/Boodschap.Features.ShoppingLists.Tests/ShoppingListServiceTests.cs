@@ -67,6 +67,30 @@ public sealed class ShoppingListServiceTests
 		Assert.Equal(0, notificationCount);
 	}
 
+	[Fact]
+	public async Task RemoveArchivedListAsync_NotifiesRemovedListId()
+	{
+		var repository = new FakeShoppingListRepository
+		{
+			RemoveArchivedListResult = new MutationResult<ShoppingList>(null, Changed: true)
+		};
+		var notifier = new StoreChangeNotifier();
+		var observedChanges = new List<StoreChange>();
+		notifier.Changed += change =>
+		{
+			observedChanges.Add(change);
+			return Task.CompletedTask;
+		};
+
+		var service = new ShoppingListService(repository, notifier);
+
+		var result = await service.RemoveArchivedListAsync(11);
+
+		Assert.True(result);
+		Assert.Single(observedChanges);
+		Assert.Equal(11, observedChanges[0].ListId);
+	}
+
 	private sealed class FakeShoppingListRepository : IShoppingListRepository
 	{
 		public ShoppingList CreatedList { get; set; } = new()
@@ -77,6 +101,7 @@ public sealed class ShoppingListServiceTests
 		};
 
 		public MutationResult<ShoppingList> ArchiveResult { get; set; }
+		public MutationResult<ShoppingList> RemoveArchivedListResult { get; set; }
 
 		public string? LastCreatedName { get; private set; }
 
@@ -99,6 +124,11 @@ public sealed class ShoppingListServiceTests
 		public Task<MutationResult<ShoppingList>> SetListArchivedStateAsync(int listId, bool archived, CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(ArchiveResult);
+		}
+
+		public Task<MutationResult<ShoppingList>> RemoveArchivedListAsync(int listId, CancellationToken cancellationToken = default)
+		{
+			return Task.FromResult(RemoveArchivedListResult);
 		}
 
 		public Task<MutationResult<ShoppingList>> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default)
