@@ -31,12 +31,14 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 
 	public async Task<ShoppingList> CreateListAsync(string name, CancellationToken cancellationToken = default)
 	{
+		var normalizedName = NormalizeRequiredName(name);
+
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var nextSortOrder = (await dbContext.ShoppingLists.MinAsync(list => (int?)list.SortOrder, cancellationToken) ?? 0) - 1;
 
 		var shoppingList = new ShoppingList
 		{
-			Name = name.Trim(),
+			Name = normalizedName,
 			Description = "A fresh list ready for new items.",
 			Archived = false,
 			SortOrder = nextSortOrder,
@@ -47,6 +49,33 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return await GetListRequiredAsync(shoppingList.Id, cancellationToken);
+	}
+
+	public async Task<MutationResult<ShoppingList>> RenameListAsync(int listId, string name, CancellationToken cancellationToken = default)
+	{
+		var normalizedName = name.Trim();
+		if (string.IsNullOrWhiteSpace(normalizedName))
+		{
+			return new(await GetListAsync(listId, cancellationToken), false);
+		}
+
+		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+		var shoppingList = await dbContext.ShoppingLists
+			.SingleOrDefaultAsync(list => list.Id == listId, cancellationToken);
+		if (shoppingList is null)
+		{
+			return new(null, false);
+		}
+
+		if (string.Equals(shoppingList.Name, normalizedName, StringComparison.Ordinal))
+		{
+			return new(await GetListAsync(listId, cancellationToken), false);
+		}
+
+		shoppingList.Name = normalizedName;
+		await dbContext.SaveChangesAsync(cancellationToken);
+
+		return new(await GetListAsync(listId, cancellationToken), true);
 	}
 
 	public async Task<MutationResult<ShoppingList>> SetListArchivedStateAsync(int listId, bool archived, CancellationToken cancellationToken = default)
@@ -216,6 +245,17 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 	{
 		var shoppingList = await GetListAsync(id, cancellationToken);
 		return shoppingList ?? throw new InvalidOperationException($"Shopping list {id} was not found after it was created.");
+	}
+
+	private static string NormalizeRequiredName(string name)
+	{
+		var normalizedName = name.Trim();
+		if (string.IsNullOrWhiteSpace(normalizedName))
+		{
+			throw new ArgumentException("Shopping list name is required.", nameof(name));
+		}
+
+		return normalizedName;
 	}
 
 	private static ShoppingList MapList(ShoppingList shoppingList)

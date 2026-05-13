@@ -9,17 +9,29 @@
 
 <div class="min-h-screen bg-slate-50">
 	<section class="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8">
-		<div class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-end sm:justify-between">
+		<div class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
 			<div class="space-y-2">
 				<p class="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">Shopping lists</p>
 				<h1 class="text-3xl font-semibold tracking-tight text-slate-900">Pick a list and keep moving.</h1>
 				<p class="max-w-2xl text-sm text-slate-600">Your active lists stay front and center, while archived lists remain easy to revisit.</p>
 			</div>
 
-			<button class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
-					@onclick="CreateList">
-				New list
-			</button>
+			<form class="flex flex-col gap-3 sm:flex-row sm:items-end" @onsubmit="CreateList">
+				<div class="flex-1 space-y-1">
+					<label class="text-sm font-medium text-slate-700" for="new-list-name">List name</label>
+					<input id="new-list-name"
+						   class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+						   placeholder="Weekend groceries"
+						   @bind="newListName"
+						   @bind:event="oninput" />
+				</div>
+
+				<button type="submit"
+						class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+						disabled="@string.IsNullOrWhiteSpace(newListName)">
+					Create list
+				</button>
+			</form>
 		</div>
 
 		<div class="space-y-4">
@@ -76,6 +88,7 @@
 	public string? RequestedTab { get; set; }
 
 	private string activeTab = NewTab;
+	private string newListName = string.Empty;
 	private List<ShoppingList> shoppingLists = [];
 
 	private List<ShoppingList> VisibleLists => shoppingLists
@@ -110,7 +123,13 @@
 
 	private async Task CreateList()
 	{
-		var list = await ShoppingLists.CreateListAsync($"Shopping list {DateTime.Now:HHmm}");
+		if (string.IsNullOrWhiteSpace(newListName))
+		{
+			return;
+		}
+
+		var list = await ShoppingLists.CreateListAsync(newListName);
+		newListName = string.Empty;
 		Navigation.NavigateTo($"/lists/{list.Id}");
 	}
 

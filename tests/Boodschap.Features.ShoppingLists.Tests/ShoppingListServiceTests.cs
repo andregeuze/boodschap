@@ -91,6 +91,38 @@ public sealed class ShoppingListServiceTests
 		Assert.Equal(11, observedChanges[0].ListId);
 	}
 
+	[Fact]
+	public async Task RenameListAsync_NotifiesRenamedListId()
+	{
+		var repository = new FakeShoppingListRepository
+		{
+			RenameListResult = new MutationResult<ShoppingList>(
+				new ShoppingList
+				{
+					Id = 13,
+					Name = "Party supplies",
+					Items = []
+				},
+				Changed: true)
+		};
+		var notifier = new StoreChangeNotifier();
+		var observedChanges = new List<StoreChange>();
+		notifier.Changed += change =>
+		{
+			observedChanges.Add(change);
+			return Task.CompletedTask;
+		};
+
+		var service = new ShoppingListService(repository, notifier);
+
+		var result = await service.RenameListAsync(13, "Party supplies");
+
+		Assert.NotNull(result);
+		Assert.Equal("Party supplies", repository.LastRenamedName);
+		Assert.Single(observedChanges);
+		Assert.Equal(13, observedChanges[0].ListId);
+	}
+
 	private sealed class FakeShoppingListRepository : IShoppingListRepository
 	{
 		public ShoppingList CreatedList { get; set; } = new()
@@ -101,9 +133,11 @@ public sealed class ShoppingListServiceTests
 		};
 
 		public MutationResult<ShoppingList> ArchiveResult { get; set; }
+		public MutationResult<ShoppingList> RenameListResult { get; set; }
 		public MutationResult<ShoppingList> RemoveArchivedListResult { get; set; }
 
 		public string? LastCreatedName { get; private set; }
+		public string? LastRenamedName { get; private set; }
 
 		public Task<IReadOnlyList<ShoppingList>> GetListsAsync(CancellationToken cancellationToken = default)
 		{
@@ -124,6 +158,12 @@ public sealed class ShoppingListServiceTests
 		public Task<MutationResult<ShoppingList>> SetListArchivedStateAsync(int listId, bool archived, CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(ArchiveResult);
+		}
+
+		public Task<MutationResult<ShoppingList>> RenameListAsync(int listId, string name, CancellationToken cancellationToken = default)
+		{
+			LastRenamedName = name;
+			return Task.FromResult(RenameListResult);
 		}
 
 		public Task<MutationResult<ShoppingList>> RemoveArchivedListAsync(int listId, CancellationToken cancellationToken = default)
