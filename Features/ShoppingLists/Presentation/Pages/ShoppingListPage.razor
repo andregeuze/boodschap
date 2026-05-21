@@ -119,10 +119,7 @@ else
 					}
 				</div>
 
-				@if (selectedFilter == ShoppingItemFilters.All)
-				{
-					<p class="text-sm text-slate-500">Drag to reorder</p>
-				}
+				<p class="text-sm text-slate-500">@ItemInteractionHint</p>
 			</div>
 
 			<div class="mb-4">
@@ -132,22 +129,74 @@ else
 			<ul class="space-y-2">
 				@foreach (var item in VisibleItems)
 				{
-					<li class="flex items-center justify-between rounded-md border px-3 py-3 shadow-sm transition-all duration-150 @(dragOverItem == item ? "border-slate-400 bg-slate-50 ring-2 ring-slate-300" : "border-slate-200 bg-white") @(dragItem == item ? "opacity-50" : "")"
-						draggable="true"
+					<li class="rounded-md border px-3 py-3 shadow-sm transition-all duration-150 @(dragOverItem == item ? "border-slate-400 bg-slate-50 ring-2 ring-slate-300" : "border-slate-200 bg-white") @(dragItem == item ? "opacity-50" : "")"
+						draggable="@(CanReorderItems ? "true" : "false")"
 						@ondragstart="() => HandleDragStart(item)"
 						@ondragend="HandleDragEnd"
 						@ondragenter="() => HandleDragEnter(item)"
 						@ondragover:preventDefault
 						@ondrop="() => HandleDrop(item)"
 						@key="item.Id">
-						<label class="flex items-center gap-3">
-							<input type="checkbox" checked="@item.IsDone" @onchange="(args) => ToggleDone(item.Id, args.Value)" class="h-4 w-4 accent-slate-900" />
-							<span class="text-sm @(item.IsDone ? "line-through text-slate-400" : "text-slate-800")">@item.Name</span>
-						</label>
-						<button class="rounded-md px-2 py-1 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-								@onclick="() => RemoveItem(item.Id)">
-							Remove
-						</button>
+						@if (editingItemId == item.Id)
+						{
+							<form class="flex w-full min-w-0 items-center gap-2" @onsubmit="() => RenameItem(item.Id)">
+								<input type="checkbox" checked="@item.IsDone" disabled class="h-4 w-4 shrink-0 accent-slate-900" />
+								<input class="min-w-0 flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+									   placeholder="Rename item"
+									   @bind="editableItemName"
+									   @bind:event="oninput"
+									   autofocus />
+								<div class="flex shrink-0 items-center gap-2">
+									<button type="submit"
+											class="inline-flex h-10 w-10 items-center justify-center rounded-md bg-slate-900 text-white transition hover:bg-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 disabled:cursor-not-allowed disabled:bg-slate-300"
+											aria-label="Save item name"
+											title="Save"
+											disabled="@string.IsNullOrWhiteSpace(editableItemName)">
+										<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M5 12.75 10 17l9-10" />
+										</svg>
+									</button>
+									<button type="button"
+											class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-300 text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+											aria-label="Cancel item rename"
+											title="Cancel"
+											@onclick="CancelItemRename">
+										<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+											<path stroke-linecap="round" stroke-linejoin="round" d="m6.75 6.75 10.5 10.5m0-10.5-10.5 10.5" />
+										</svg>
+									</button>
+								</div>
+							</form>
+						}
+						else
+						{
+							<div class="flex min-w-0 items-center gap-2">
+								<div class="flex min-w-0 flex-1 items-center gap-3">
+									<input type="checkbox" checked="@item.IsDone" @onchange="(args) => ToggleDone(item.Id, args.Value)" class="h-4 w-4 shrink-0 accent-slate-900" />
+									<span class="block min-w-0 flex-1 truncate text-sm @(item.IsDone ? "line-through text-slate-400" : "text-slate-800")">@item.Name</span>
+								</div>
+								<div class="flex shrink-0 items-center gap-2">
+									<button type="button"
+											class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-300 text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+											aria-label="@($"Edit {item.Name}")"
+											title="Edit"
+											@onclick="() => BeginItemRename(item)">
+										<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+											<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 3.487 3.651 3.651M7.5 20.25l-4.5.75.75-4.5L15.8 4.45a2.582 2.582 0 0 1 3.65 0l.413.413a2.582 2.582 0 0 1 0 3.65L7.5 20.25Z" />
+										</svg>
+									</button>
+									<button type="button"
+											class="inline-flex h-10 w-10 items-center justify-center rounded-md text-rose-600 transition hover:bg-rose-50 hover:text-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-200"
+											aria-label="@($"Remove {item.Name}")"
+											title="Remove"
+											@onclick="() => RemoveItem(item.Id)">
+										<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 7.5h15m-10.5 0V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v1.5m-7.5 0v10.125A1.875 1.875 0 0 0 9.375 19.5h5.25a1.875 1.875 0 0 0 1.875-1.875V7.5M10.5 11.25v4.5m3-4.5v4.5" />
+										</svg>
+									</button>
+								</div>
+							</div>
+						}
 					</li>
 				}
 			</ul>
@@ -162,11 +211,17 @@ else
 	private ShoppingList? shoppingList;
 	private ShoppingListItem? dragItem;
 	private ShoppingListItem? dragOverItem;
+	private int? editingItemId;
 	private bool isQuickAddOpen;
 	private bool isRenaming;
 	private string selectedFilter = ShoppingItemFilters.All;
+	private string editableItemName = string.Empty;
 	private string editableListName = string.Empty;
 	private string newItemName = string.Empty;
+	private bool CanReorderItems => selectedFilter == ShoppingItemFilters.All && editingItemId is null;
+	private string ItemInteractionHint => CanReorderItems
+		? "Use the edit icon to rename. Drag to reorder."
+		: "Use the edit icon to rename.";
 	private string PageTitleText => shoppingList?.Name ?? "List not found";
 
 	private List<ShoppingListItem> VisibleItems => selectedFilter switch
@@ -185,6 +240,7 @@ else
 	{
 		shoppingList = await ShoppingLists.GetListAsync(Id);
 		editableListName = shoppingList?.Name ?? string.Empty;
+		CancelItemRename();
 		isRenaming = false;
 	}
 
@@ -205,6 +261,7 @@ else
 			return;
 		}
 
+		CancelItemRename();
 		editableListName = shoppingList.Name;
 		isRenaming = true;
 	}
@@ -276,7 +333,35 @@ else
 
 	private void SelectFilter(string filter)
 	{
+		if (!string.Equals(selectedFilter, filter, StringComparison.Ordinal))
+		{
+			CancelItemRename();
+		}
+
 		selectedFilter = filter;
+	}
+
+	private void BeginItemRename(ShoppingListItem item)
+	{
+		if (shoppingList is null)
+		{
+			return;
+		}
+
+		if (isRenaming)
+		{
+			CancelRename();
+		}
+
+		HandleDragEnd();
+		editingItemId = item.Id;
+		editableItemName = item.Name;
+	}
+
+	private void CancelItemRename()
+	{
+		editingItemId = null;
+		editableItemName = string.Empty;
 	}
 
 	private async Task AddItem()
@@ -289,6 +374,17 @@ else
 		shoppingList = await ShoppingLists.AddItemAsync(Id, newItemName);
 		newItemName = string.Empty;
 		selectedFilter = ShoppingItemFilters.All;
+	}
+
+	private async Task RenameItem(int itemId)
+	{
+		if (shoppingList is null || string.IsNullOrWhiteSpace(editableItemName))
+		{
+			return;
+		}
+
+		shoppingList = await ShoppingLists.RenameItemAsync(Id, itemId, editableItemName) ?? shoppingList;
+		CancelItemRename();
 	}
 
 	private async Task ToggleDone(int id, object? value)
@@ -310,9 +406,21 @@ else
 		}
 
 		shoppingList = await ShoppingLists.RemoveItemAsync(Id, id) ?? shoppingList;
+		if (editingItemId == id)
+		{
+			CancelItemRename();
+		}
 	}
 
-	private void HandleDragStart(ShoppingListItem item) => dragItem = item;
+	private void HandleDragStart(ShoppingListItem item)
+	{
+		if (!CanReorderItems)
+		{
+			return;
+		}
+
+		dragItem = item;
+	}
 
 	private void HandleDragEnd()
 	{
@@ -320,11 +428,19 @@ else
 		dragOverItem = null;
 	}
 
-	private void HandleDragEnter(ShoppingListItem item) => dragOverItem = item;
+	private void HandleDragEnter(ShoppingListItem item)
+	{
+		if (!CanReorderItems)
+		{
+			return;
+		}
+
+		dragOverItem = item;
+	}
 
 	private async Task HandleDrop(ShoppingListItem target)
 	{
-		if (shoppingList is null || dragItem is null || dragItem == target || selectedFilter != ShoppingItemFilters.All)
+		if (shoppingList is null || dragItem is null || dragItem == target || !CanReorderItems)
 		{
 			return;
 		}
@@ -347,6 +463,11 @@ else
 			if (shoppingList is null)
 			{
 				isRenaming = false;
+				CancelItemRename();
+			}
+			else if (editingItemId is int itemId && !shoppingList.Items.Any(item => item.Id == itemId))
+			{
+				CancelItemRename();
 			}
 			StateHasChanged();
 		});

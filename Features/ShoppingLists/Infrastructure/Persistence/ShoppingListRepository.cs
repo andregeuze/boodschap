@@ -166,6 +166,33 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		return new(await GetListAsync(listId, cancellationToken), true);
 	}
 
+	public async Task<MutationResult<ShoppingList>> RenameItemAsync(int listId, int itemId, string name, CancellationToken cancellationToken = default)
+	{
+		var normalizedName = name.Trim();
+		if (string.IsNullOrWhiteSpace(normalizedName))
+		{
+			return new(await GetListAsync(listId, cancellationToken), false);
+		}
+
+		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+		var item = await dbContext.ShoppingListItems
+			.SingleOrDefaultAsync(entry => entry.ShoppingListId == listId && entry.Id == itemId, cancellationToken);
+		if (item is null)
+		{
+			return new(null, false);
+		}
+
+		if (string.Equals(item.Name, normalizedName, StringComparison.Ordinal))
+		{
+			return new(await GetListAsync(listId, cancellationToken), false);
+		}
+
+		item.Name = normalizedName;
+		await dbContext.SaveChangesAsync(cancellationToken);
+
+		return new(await GetListAsync(listId, cancellationToken), true);
+	}
+
 	public async Task<MutationResult<ShoppingList>> ToggleDoneAsync(int listId, int itemId, bool isDone, CancellationToken cancellationToken = default)
 	{
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);

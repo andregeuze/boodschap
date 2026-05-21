@@ -56,6 +56,7 @@ The app shell should only compose this feature through `Program.cs` and `Shoppin
 - Lists may only be permanently removed after they are archived.
 - New items are inserted before the first purchased item when a list contains both needed and purchased items.
 - List names are user-provided at creation time and can be renamed later without leaving the list page.
+- Item names are user-provided and can be renamed inline from the list page without leaving the current list.
 - Marking an item as purchased moves it to the end of the list.
 - Drag-and-drop reordering is only available in the `All` filter view.
 - Drag-and-drop stays implemented in Blazor C# event handlers; do not add JavaScript for it.

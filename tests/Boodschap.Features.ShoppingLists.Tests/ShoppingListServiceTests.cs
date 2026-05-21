@@ -123,6 +123,42 @@ public sealed class ShoppingListServiceTests
 		Assert.Equal(13, observedChanges[0].ListId);
 	}
 
+	[Fact]
+	public async Task RenameItemAsync_NotifiesChangedListId()
+	{
+		var repository = new FakeShoppingListRepository
+		{
+			RenameItemResult = new MutationResult<ShoppingList>(
+				new ShoppingList
+				{
+					Id = 13,
+					Name = "Party supplies",
+					Items =
+					[
+						new() { Id = 8, Name = "Sparkling water" }
+					]
+				},
+				Changed: true)
+		};
+		var notifier = new StoreChangeNotifier();
+		var observedChanges = new List<StoreChange>();
+		notifier.Changed += change =>
+		{
+			observedChanges.Add(change);
+			return Task.CompletedTask;
+		};
+
+		var service = new ShoppingListService(repository, notifier);
+
+		var result = await service.RenameItemAsync(13, 8, "Sparkling water");
+
+		Assert.NotNull(result);
+		Assert.Equal(8, repository.LastRenamedItemId);
+		Assert.Equal("Sparkling water", repository.LastRenamedItemName);
+		Assert.Single(observedChanges);
+		Assert.Equal(13, observedChanges[0].ListId);
+	}
+
 	private sealed class FakeShoppingListRepository : IShoppingListRepository
 	{
 		public ShoppingList CreatedList { get; set; } = new()
@@ -134,10 +170,13 @@ public sealed class ShoppingListServiceTests
 
 		public MutationResult<ShoppingList> ArchiveResult { get; set; }
 		public MutationResult<ShoppingList> RenameListResult { get; set; }
+		public MutationResult<ShoppingList> RenameItemResult { get; set; }
 		public MutationResult<ShoppingList> RemoveArchivedListResult { get; set; }
 
 		public string? LastCreatedName { get; private set; }
 		public string? LastRenamedName { get; private set; }
+		public int? LastRenamedItemId { get; private set; }
+		public string? LastRenamedItemName { get; private set; }
 
 		public Task<IReadOnlyList<ShoppingList>> GetListsAsync(CancellationToken cancellationToken = default)
 		{
@@ -174,6 +213,13 @@ public sealed class ShoppingListServiceTests
 		public Task<MutationResult<ShoppingList>> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default)
 		{
 			throw new NotSupportedException();
+		}
+
+		public Task<MutationResult<ShoppingList>> RenameItemAsync(int listId, int itemId, string name, CancellationToken cancellationToken = default)
+		{
+			LastRenamedItemId = itemId;
+			LastRenamedItemName = name;
+			return Task.FromResult(RenameItemResult);
 		}
 
 		public Task<MutationResult<ShoppingList>> ToggleDoneAsync(int listId, int itemId, bool isDone, CancellationToken cancellationToken = default)

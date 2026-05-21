@@ -12,6 +12,7 @@ public interface IShoppingListService
 	Task<ShoppingList?> UnarchiveListAsync(int listId, CancellationToken cancellationToken = default);
 	Task<bool> RemoveArchivedListAsync(int listId, CancellationToken cancellationToken = default);
 	Task<ShoppingList?> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default);
+	Task<ShoppingList?> RenameItemAsync(int listId, int itemId, string name, CancellationToken cancellationToken = default);
 	Task<ShoppingList?> ToggleDoneAsync(int listId, int itemId, bool isDone, CancellationToken cancellationToken = default);
 	Task<ShoppingList?> RemoveItemAsync(int listId, int itemId, CancellationToken cancellationToken = default);
 	Task<ShoppingList?> ReorderItemAsync(int listId, int itemId, int targetItemId, CancellationToken cancellationToken = default);

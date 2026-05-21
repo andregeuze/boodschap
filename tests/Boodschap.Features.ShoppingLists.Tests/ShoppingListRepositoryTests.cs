@@ -142,4 +142,36 @@ public sealed class ShoppingListRepositoryTests
 		Assert.NotNull(persisted);
 		Assert.Equal("Dinner prep", persisted.Name);
 	}
+
+	[Fact]
+	public async Task RenameItemAsync_UpdatesPersistedTrimmedName()
+	{
+		await using var harness = await ShoppingListsSqliteTestHarness.CreateAsync();
+		await harness.SeedAsync(
+			new ShoppingList
+			{
+				Name = "Weekly groceries",
+				Archived = false,
+				SortOrder = 0,
+				Items =
+				[
+					new() { Name = "Milk", SortOrder = 0 },
+					new() { Name = "Eggs", SortOrder = 1 }
+				]
+			});
+
+		var repository = new ShoppingListRepository(harness.DbContextFactory);
+		var list = (await repository.GetListsAsync()).Single();
+		var item = list.Items.Single(entry => entry.Name == "Milk");
+
+		var result = await repository.RenameItemAsync(list.Id, item.Id, "  Oat milk  ");
+
+		Assert.True(result.Changed);
+		Assert.NotNull(result.Value);
+		Assert.Equal(["Oat milk", "Eggs"], result.Value.Items.Select(entry => entry.Name).ToArray());
+
+		var persisted = await harness.GetListAsync(list.Id);
+		Assert.NotNull(persisted);
+		Assert.Equal("Oat milk", persisted.Items.Single(entry => entry.Id == item.Id).Name);
+	}
 }

@@ -62,13 +62,37 @@ Expected:
 - "Back" button is visible
 - Heading "Weekly groceries"
 - "New item" button
-- "Drag to reorder" paragraph
+- Paragraph: "Use the edit icon to rename. Drag to reorder."
 - FilterBar group "Filter groceries" with buttons: All, Needed, Purchased
+- Each item row shows the edit icon button before the remove icon button
 - 6 list items: Milk, Eggs, Bread, Tomatoes, Cheese, Coffee (all unchecked)
+
+## 4a. Test inline item rename
+
+```
+mcp_playwright_browser_click → button "Edit Bread"
+mcp_playwright_browser_snapshot
+```
+
+Expected:
+- Input with placeholder "Rename item" appears inline in the row
+- Save and cancel icon buttons are visible on the same line as the input
+
+Rename and save:
+
+```
+mcp_playwright_browser_fill_form → input "Rename item" with "Flatbread"
+mcp_playwright_browser_click → button "Save item name"
+mcp_playwright_browser_snapshot
+```
+
+Expected:
+- The item row now shows "Flatbread"
+- Paragraph returns to "Use the edit icon to rename. Drag to reorder."
 
 ## 5. Test drag and drop reorder
 
-Drag `Coffee` onto `Bread`.
+Drag `Coffee` onto `Flatbread`.
 
 ```
 mcp_playwright_browser_snapshot
@@ -77,8 +101,8 @@ mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- Item order becomes: Milk, Eggs, Coffee, Bread, Tomatoes, Cheese
-- "Drag to reorder" paragraph remains visible
+- Item order becomes: Milk, Eggs, Coffee, Flatbread, Tomatoes, Cheese
+- Paragraph remains "Use the edit icon to rename. Drag to reorder."
 
 ## 6. Mark items as purchased
 
@@ -98,8 +122,8 @@ mcp_playwright_browser_snapshot
 
 Expected:
 - "Needed" button is `[active]`
-- Only unchecked items shown: Bread, Tomatoes, Cheese, Coffee
-- "Drag to reorder" hint is hidden
+- Only unchecked items shown: Coffee, Flatbread, Tomatoes, Cheese
+- Paragraph changes to "Use the edit icon to rename."
 
 ## 8. Test "Purchased" filter
 
@@ -111,6 +135,7 @@ mcp_playwright_browser_snapshot
 Expected:
 - "Purchased" button is `[active]`
 - Only checked items shown: Milk `[checked]`, Eggs `[checked]`
+- Paragraph remains "Use the edit icon to rename."
 
 ## 9. Test "All" filter
 
@@ -122,7 +147,7 @@ mcp_playwright_browser_snapshot
 Expected:
 - "All" button is `[active]`
 - All 6 items shown
-- "Drag to reorder" paragraph visible
+- Paragraph returns to "Use the edit icon to rename. Drag to reorder."
 
 ## 10. Test "New item" quick-add
 

@@ -53,6 +53,11 @@ public sealed class ShoppingListService(
 		return ExecuteMutationAsync(() => shoppingListRepository.AddItemAsync(listId, itemName, cancellationToken), listId);
 	}
 
+	public Task<ShoppingList?> RenameItemAsync(int listId, int itemId, string name, CancellationToken cancellationToken = default)
+	{
+		return ExecuteMutationAsync(() => shoppingListRepository.RenameItemAsync(listId, itemId, name, cancellationToken), listId);
+	}
+
 	public Task<ShoppingList?> ToggleDoneAsync(int listId, int itemId, bool isDone, CancellationToken cancellationToken = default)
 	{
 		return ExecuteMutationAsync(() => shoppingListRepository.ToggleDoneAsync(listId, itemId, isDone, cancellationToken), listId);
