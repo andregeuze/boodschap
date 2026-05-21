@@ -106,12 +106,16 @@ Expected:
 
 ## 6. Mark items as purchased
 
-Click the Milk checkbox, then the Eggs checkbox.
+Click the Milk row once, then the Eggs checkbox.
 
 ```
-mcp_playwright_browser_click → checkbox "Milk"
+mcp_playwright_browser_click → text "Milk"
 mcp_playwright_browser_click → checkbox "Eggs"
 ```
+
+Expected:
+- Milk and Eggs are both marked as purchased
+- The row click toggles the same done state change as clicking the checkbox
 
 ## 7. Test "Needed" filter
 
