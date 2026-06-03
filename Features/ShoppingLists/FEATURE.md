@@ -4,6 +4,8 @@
 
 Shopping Lists is the primary user-facing feature in Boodschap. It owns grocery-list creation, list naming, list browsing, archiving, item management, filtering, drag-and-drop ordering, and realtime refresh across connected Blazor Server sessions.
 
+Shopping Lists renders only for authenticated users and depends on the Authentication feature for route protection.
+
 ## Owned Surface
 
 ### Routes
@@ -52,6 +54,7 @@ The app shell should only compose this feature through `Program.cs` and `Shoppin
 
 ## Invariants
 
+- Shopping list routes require an authenticated user.
 - Item filter values are `All`, `Needed`, and `Purchased`, sourced from `ShoppingItemFilters`.
 - Lists may only be permanently removed after they are archived.
 - New items are inserted before the first purchased item when a list contains both needed and purchased items.
@@ -65,6 +68,7 @@ The app shell should only compose this feature through `Program.cs` and `Shoppin
 
 ## Integration Points
 
+- Authentication gate and current user context: `Features/Authentication/`
 - Shared UI: `Shared/Presentation/Components/TabBar.razor`
 - Shared realtime notifications: `Shared/Realtime/StoreChangeNotifier.cs`
 - Host composition: `Program.cs`

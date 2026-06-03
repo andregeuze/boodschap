@@ -4,9 +4,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/tests/">
-    <Project Path="tests/Boodschap.Features.BehaviorTracking.Tests/Boodschap.Features.BehaviorTracking.Tests.csproj" />
-  </Folder>
   <Project Path="Boodschap.csproj" />
   <Project Path="tests/Boodschap.Features.Authentication.Tests/Boodschap.Features.Authentication.Tests.csproj" />
   <Project Path="tests/Boodschap.Features.ShoppingLists.Tests/Boodschap.Features.ShoppingLists.Tests.csproj" />

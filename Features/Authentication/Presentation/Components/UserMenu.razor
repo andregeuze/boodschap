@@ -1,0 +1,43 @@
+@using System.Security.Claims
+@using Boodschap.Features.Authentication.Infrastructure
+
+<AuthorizeView>
+	<Authorized Context="authenticationState">
+		<div class="flex items-center gap-3">
+			<div class="hidden text-right sm:block">
+				<p class="text-sm font-medium text-slate-900">@ResolveDisplayName(authenticationState.User)</p>
+				@if (authenticationState.User.IsInRole(LocalAuthenticationDefaults.AdminRole))
+				{
+					<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">Administrator</p>
+				}
+				@if (!string.IsNullOrWhiteSpace(ResolveEmail(authenticationState.User)))
+				{
+					<p class="text-xs text-slate-500">@ResolveEmail(authenticationState.User)</p>
+				}
+			</div>
+			<a class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+			   href="/account">
+				Account
+			</a>
+			<a class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+			   href="/account/logout?returnUrl=/signed-out">
+				Sign out
+			</a>
+		</div>
+	</Authorized>
+</AuthorizeView>
+
+@code {
+	private static string ResolveDisplayName(ClaimsPrincipal user)
+	{
+		return user.Identity?.Name
+			?? user.FindFirst(ClaimTypes.GivenName)?.Value
+			?? user.FindFirst(ClaimTypes.Email)?.Value
+			?? "Signed in";
+	}
+
+	private static string? ResolveEmail(ClaimsPrincipal user)
+	{
+		return user.FindFirst(ClaimTypes.Email)?.Value;
+	}
+}

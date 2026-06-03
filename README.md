@@ -12,6 +12,8 @@ Data is stored in SQLite, so the app is easy to run locally and in Docker.
 
 ## Local Run
 
+Local username/password authentication is now required before the shopping-list routes render.
+
 From the project root:
 
 ```powershell
@@ -23,6 +25,11 @@ dotnet run --launch-profile http
 ```
 
 The app will be available at `http://localhost:5091`.
+
+When you open the app, Boodschap will prompt for a local username and password before any shopping list content becomes available.
+If no accounts exist yet, use the register form on the sign-in page to create the first account. That first account becomes the administrator. After that, self-service registration closes and administrators create additional accounts from the authenticated account page. Passwords are stored in SQLite as secure password hashes rather than plaintext.
+
+Authenticated users can open `/account` to change their password. Administrators also use `/account` to create additional users and optionally mark them as administrators.
 
 ## Docker
 

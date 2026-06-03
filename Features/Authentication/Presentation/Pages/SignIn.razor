@@ -1,0 +1,31 @@
+@page "/sign-in"
+@attribute [AllowAnonymous]
+@rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Sign in</PageTitle>
+
+<SignInGate ReturnUrl="@ReturnUrl"
+			ErrorCode="@ErrorCode"
+			SuggestedUsername="@Username" />
+
+@code {
+	[SupplyParameterFromQuery(Name = "returnUrl")]
+	public string? ReturnUrl { get; set; }
+
+	[SupplyParameterFromQuery(Name = "error")]
+	public string? ErrorCode { get; set; }
+
+	[SupplyParameterFromQuery(Name = "username")]
+	public string? Username { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+		var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		if (authenticationState.User.Identity?.IsAuthenticated == true)
+		{
+			Navigation.NavigateTo(Boodschap.Features.Authentication.Infrastructure.ReturnUrlSanitizer.Normalize(ReturnUrl), replace: true);
+		}
+	}
+}

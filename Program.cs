@@ -1,4 +1,6 @@
 using Boodschap.Components;
+using Boodschap.Features.Authentication;
+using Boodschap.Features.Authentication.Infrastructure.Persistence;
 using Boodschap.Features.ShoppingLists;
 using Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -12,6 +14,7 @@ var sqliteConnectionString = SqliteConnectionStringResolver.Normalize(
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddAuthenticationFeature(sqliteConnectionString);
 builder.Services.AddShoppingListsFeature(sqliteConnectionString);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -26,6 +29,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 var app = builder.Build();
 
+await AuthenticationStoreInitializer.InitializeAsync(app.Services);
 await ShoppingListsInitializer.InitializeAsync(app.Services);
 
 app.UseForwardedHeaders();
@@ -37,8 +41,11 @@ if (!app.Environment.IsDevelopment())
 
 app.MapStaticAssets();
 app.UseStaticFiles();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseWebSockets();
 app.UseAntiforgery();
+app.MapAuthenticationFeature();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

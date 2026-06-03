@@ -1,0 +1,202 @@
+@page "/account"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject ICurrentUserAccessor CurrentUserAccessor
+@inject ILocalAuthenticationService LocalAuthentication
+
+<PageTitle>Account</PageTitle>
+
+@if (currentUser is null)
+{
+	<div class="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4 text-sm text-slate-500">
+		Loading account settings...
+	</div>
+}
+else
+{
+	<div class="min-h-screen bg-slate-50">
+		<section class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8">
+			<div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+				<p class="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">Account</p>
+				<h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-900">@currentUser.DisplayName</h1>
+				<p class="mt-2 text-sm text-slate-600">Manage your password and, if you are an administrator, create additional accounts.</p>
+			</div>
+
+			<form class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" @onsubmit="ChangePassword">
+				<h2 class="text-xl font-semibold text-slate-900">Change password</h2>
+				<p class="mt-1 text-sm text-slate-600">Update your password without affecting the rest of the shared app state.</p>
+
+				@if (!string.IsNullOrWhiteSpace(passwordStatusMessage))
+				{
+					<div class="mt-4 rounded-2xl px-4 py-3 text-sm @(passwordStatusIsError ? "border border-rose-200 bg-rose-50 text-rose-900" : "border border-emerald-200 bg-emerald-50 text-emerald-900")">
+						@passwordStatusMessage
+					</div>
+				}
+
+				<div class="mt-4 space-y-4">
+					<div class="space-y-1">
+						<label class="text-sm font-medium text-slate-700" for="current-password">Current password</label>
+						<input id="current-password"
+							   class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+							   type="password"
+							   autocomplete="current-password"
+							   @bind="currentPassword" />
+					</div>
+					<div class="space-y-1">
+						<label class="text-sm font-medium text-slate-700" for="new-password">New password</label>
+						<input id="new-password"
+							   class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+							   type="password"
+							   autocomplete="new-password"
+							   @bind="newPassword" />
+					</div>
+					<div class="space-y-1">
+						<label class="text-sm font-medium text-slate-700" for="confirm-new-password">Confirm new password</label>
+						<input id="confirm-new-password"
+							   class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+							   type="password"
+							   autocomplete="new-password"
+							   @bind="confirmNewPassword" />
+					</div>
+				</div>
+
+				<button type="submit" class="mt-5 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700">
+					Update password
+				</button>
+			</form>
+
+			@if (currentUser.IsAdmin)
+			{
+				<form class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" @onsubmit="CreateUser">
+					<h2 class="text-xl font-semibold text-slate-900">Create user</h2>
+					<p class="mt-1 text-sm text-slate-600">Self-service registration is closed after the first account, so administrators create additional users here.</p>
+
+					@if (!string.IsNullOrWhiteSpace(createUserStatusMessage))
+					{
+						<div class="mt-4 rounded-2xl px-4 py-3 text-sm @(createUserStatusIsError ? "border border-rose-200 bg-rose-50 text-rose-900" : "border border-emerald-200 bg-emerald-50 text-emerald-900")">
+							@createUserStatusMessage
+						</div>
+					}
+
+					<div class="mt-4 space-y-4">
+						<div class="space-y-1">
+							<label class="text-sm font-medium text-slate-700" for="new-user-username">Username</label>
+							<input id="new-user-username"
+								   class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+								   autocomplete="username"
+								   @bind="newUserUsername" />
+						</div>
+						<div class="space-y-1">
+							<label class="text-sm font-medium text-slate-700" for="new-user-password">Password</label>
+							<input id="new-user-password"
+								   class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+								   type="password"
+								   autocomplete="new-password"
+								   @bind="newUserPassword" />
+						</div>
+						<div class="space-y-1">
+							<label class="text-sm font-medium text-slate-700" for="new-user-confirm-password">Confirm password</label>
+							<input id="new-user-confirm-password"
+								   class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none ring-slate-300 placeholder:text-slate-400 focus:ring-2"
+								   type="password"
+								   autocomplete="new-password"
+								   @bind="newUserConfirmPassword" />
+						</div>
+						<label class="flex items-center gap-2 text-sm text-slate-700">
+							<input type="checkbox" class="h-4 w-4 rounded border-slate-300 accent-slate-900" @bind="newUserIsAdmin" />
+							Create as administrator
+						</label>
+					</div>
+
+					<button type="submit" class="mt-5 rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 transition hover:bg-slate-100">
+						Create user
+					</button>
+				</form>
+			}
+		</section>
+	</div>
+}
+
+@code {
+	private CurrentUser? currentUser;
+	private string currentPassword = string.Empty;
+	private string newPassword = string.Empty;
+	private string confirmNewPassword = string.Empty;
+	private string passwordStatusMessage = string.Empty;
+	private bool passwordStatusIsError;
+	private string newUserUsername = string.Empty;
+	private string newUserPassword = string.Empty;
+	private string newUserConfirmPassword = string.Empty;
+	private bool newUserIsAdmin;
+	private string createUserStatusMessage = string.Empty;
+	private bool createUserStatusIsError;
+
+	protected override async Task OnInitializedAsync()
+	{
+		currentUser = await CurrentUserAccessor.GetRequiredCurrentUserAsync();
+	}
+
+	private async Task ChangePassword()
+	{
+		if (currentUser is null)
+		{
+			return;
+		}
+
+		var result = await LocalAuthentication.ChangePasswordAsync(currentUser.LocalUserId, currentPassword, newPassword, confirmNewPassword);
+		passwordStatusIsError = !result.Succeeded;
+		passwordStatusMessage = result.Succeeded
+			? "Password updated."
+			: DescribeError(result.ErrorCode);
+
+		if (!result.Succeeded)
+		{
+			return;
+		}
+
+		currentPassword = string.Empty;
+		newPassword = string.Empty;
+		confirmNewPassword = string.Empty;
+	}
+
+	private async Task CreateUser()
+	{
+		if (currentUser is null)
+		{
+			return;
+		}
+
+		var result = await LocalAuthentication.CreateUserAsync(currentUser.LocalUserId, newUserUsername, newUserPassword, newUserConfirmPassword, newUserIsAdmin);
+		createUserStatusIsError = !result.Succeeded;
+		createUserStatusMessage = result.Succeeded
+			? (newUserIsAdmin ? "Administrator account created." : "User account created.")
+			: DescribeError(result.ErrorCode);
+
+		if (!result.Succeeded)
+		{
+			return;
+		}
+
+		newUserUsername = string.Empty;
+		newUserPassword = string.Empty;
+		newUserConfirmPassword = string.Empty;
+		newUserIsAdmin = false;
+	}
+
+	private static string DescribeError(string? errorCode)
+	{
+		return errorCode switch
+		{
+			LocalAuthenticationErrorCodes.AdminRequired => "Only administrators can create additional users.",
+			LocalAuthenticationErrorCodes.BootstrapRegistrationClosed => "Self-service registration is closed. Ask an administrator to create an account for you.",
+			LocalAuthenticationErrorCodes.CurrentPasswordInvalid => "The current password is incorrect.",
+			LocalAuthenticationErrorCodes.CurrentPasswordRequired => "Enter your current password to change it.",
+			LocalAuthenticationErrorCodes.UsernameRequired => "A username is required.",
+			LocalAuthenticationErrorCodes.PasswordRequired => "A password is required.",
+			LocalAuthenticationErrorCodes.PasswordTooShort => "Passwords must be at least 8 characters long.",
+			LocalAuthenticationErrorCodes.PasswordMismatch => "The password confirmation does not match.",
+			LocalAuthenticationErrorCodes.UsernameTaken => "That username is already in use.",
+			_ => "The request could not be completed."
+		};
+	}
+}

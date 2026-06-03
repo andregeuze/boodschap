@@ -393,3 +393,4 @@ FodyWeavers.xsd
 .playwright-mcp/
 wwwroot/*.css
 /App_Data/
+.artifacts/
