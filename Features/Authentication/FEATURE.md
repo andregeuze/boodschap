@@ -26,12 +26,14 @@ Authentication owns sign-in, sign-out, first-user bootstrap registration, local 
 
 ### Application
 
-- `CurrentUser`
-- `ICurrentUserAccessor`
-- `ILocalAuthenticationService`
-- `ILocalUserRepository`
-- `LocalAuthenticationService`
-- `LocalPasswordChangeResult`
+- `Application/Contracts/CurrentUser`
+- `Application/Contracts/ICurrentUserAccessor`
+- `Application/Contracts/ILocalAuthenticationService`
+- `Application/Contracts/ILocalUserRepository`
+- `Application/Contracts/LocalAuthenticationErrorCodes`
+- `Application/Contracts/LocalAuthenticationResult`
+- `Application/Contracts/LocalPasswordChangeResult`
+- `Application/Services/LocalAuthenticationService`
 
 ### Infrastructure
 
