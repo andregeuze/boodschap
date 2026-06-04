@@ -1,14 +1,44 @@
 # Boodschap
 
-Boodschap is a small Blazor Server grocery list app.
+Boodschap is a small Blazor Server grocery list app with local username/password authentication.
 
 It lets you:
+- sign in with a local account and bootstrap the first administrator
 - create and open shopping lists
 - add, remove, check off, and reorder grocery items
 - switch between active and archived lists
 - keep multiple open browser sessions synchronized in real time through Blazor Server updates
 
 Data is stored in SQLite, so the app is easy to run locally and in Docker.
+
+## Project Structure
+
+The repository uses feature-first vertical slices.
+
+```text
+Components/          App shell, routing, and layout only
+Features/
+  Authentication/
+    Application/
+      Contracts/
+      Services/
+    Domain/
+    Infrastructure/
+    Presentation/
+  ShoppingLists/
+    Application/
+      Contracts/
+      Services/
+    Domain/
+    Infrastructure/
+    Presentation/
+Shared/              Cross-feature building blocks
+Styles/              Tailwind source files
+tests/               Feature test projects and smoke-test docs
+Program.cs           Composition root
+```
+
+`Program.cs` composes the current features through `AuthenticationModule` and `ShoppingListsModule`.
 
 ## Local Run
 
