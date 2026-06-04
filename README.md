@@ -11,42 +11,14 @@ It lets you:
 
 Data is stored in SQLite, so the app is easy to run locally and in Docker.
 
-Each feature-owned EF Core `DbContext` keeps its own migration history table in that shared SQLite database:
-- Authentication uses `__AuthenticationMigrationsHistory`
-- Shopping Lists uses `__ShoppingListsMigrationsHistory`
+## Architecture
 
-The repository does not use the default EF Core history table `__EFMigrationsHistory` as part of its intended design.
+The canonical architecture reference lives in [docs/architecture/README.md](docs/architecture/README.md).
 
-## Project Structure
+That document covers the current repository shape, feature boundaries, shared-code rules, host composition, and SQLite persistence conventions. Feature-specific routes, ownership, and invariants live in:
 
-The repository uses feature-first vertical slices.
-
-```text
-Components/          App shell, routing, and layout only
-Features/
-  Authentication/
-    Application/
-      Contracts/
-      Services/
-    Domain/
-    Infrastructure/
-    Presentation/
-  ShoppingLists/
-    Application/
-      Contracts/
-      Services/
-    Domain/
-    Infrastructure/
-    Presentation/
-Shared/              Cross-feature building blocks
-Styles/              Tailwind source files
-tests/               Feature test projects and smoke-test docs
-Program.cs           Composition root
-```
-
-`Program.cs` composes the current features through `AuthenticationModule` and `ShoppingListsModule`.
-
-Because each feature owns its own migration history table, changing that table name is a database-shape change. Existing local databases created against an older history-table convention should be recreated unless you intentionally migrate their history rows yourself.
+- [Features/Authentication/FEATURE.md](Features/Authentication/FEATURE.md)
+- [Features/ShoppingLists/FEATURE.md](Features/ShoppingLists/FEATURE.md)
 
 ## Local Run
 
