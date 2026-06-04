@@ -9,7 +9,9 @@ public static class ShoppingListsModule
 {
 	public static IServiceCollection AddShoppingListsFeature(this IServiceCollection services, string sqliteConnectionString)
 	{
-		services.AddDbContextFactory<BoodschapDbContext>(options => options.UseSqlite(sqliteConnectionString));
+		services.AddDbContextFactory<BoodschapDbContext>(options => options.UseSqlite(
+			sqliteConnectionString,
+			sqlite => sqlite.MigrationsHistoryTable(BoodschapDbContext.MigrationsHistoryTableName)));
 		services.AddSingleton<StoreChangeNotifier>();
 		services.AddScoped<IShoppingListRepository, ShoppingListRepository>();
 		services.AddScoped<IShoppingListService, ShoppingListService>();

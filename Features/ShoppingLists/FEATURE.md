@@ -88,4 +88,5 @@ When adding a new use case, extend tests in the same feature test project before
 
 - Prefer adding a new application use case before expanding page code-behind logic.
 - If the service surface grows significantly, split into commands and queries.
+- Keep shopping-list migrations isolated in the feature-owned history table `__ShoppingListsMigrationsHistory`; do not rely on the default EF Core history table.
 - Keep feature-specific docs in this file updated whenever routes, invariants, or ownership change.

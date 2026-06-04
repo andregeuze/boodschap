@@ -86,4 +86,5 @@ This feature follows the same feature-first boundary as the rest of the app:
 - Keep local credential validation and password hashing inside this feature.
 - Expose authenticated-user data through `ICurrentUserAccessor` instead of reading claims throughout the codebase.
 - Keep EF Core credential persistence in this feature and avoid leaking password-hash details outside it.
+- Keep authentication migrations isolated in the feature-owned history table `__AuthenticationMigrationsHistory`; do not merge feature histories into the default EF Core history table.
 - Prefer administrator-managed account creation over re-opening anonymous registration.

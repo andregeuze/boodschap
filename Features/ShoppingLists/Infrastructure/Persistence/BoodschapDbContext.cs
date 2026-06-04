@@ -5,6 +5,8 @@ namespace Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 
 public sealed class BoodschapDbContext(DbContextOptions<BoodschapDbContext> options) : DbContext(options)
 {
+	public const string MigrationsHistoryTableName = "__ShoppingListsMigrationsHistory";
+
 	public DbSet<ShoppingList> ShoppingLists => Set<ShoppingList>();
 	public DbSet<ShoppingListItem> ShoppingListItems => Set<ShoppingListItem>();
 

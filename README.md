@@ -11,6 +11,12 @@ It lets you:
 
 Data is stored in SQLite, so the app is easy to run locally and in Docker.
 
+Each feature-owned EF Core `DbContext` keeps its own migration history table in that shared SQLite database:
+- Authentication uses `__AuthenticationMigrationsHistory`
+- Shopping Lists uses `__ShoppingListsMigrationsHistory`
+
+The repository does not use the default EF Core history table `__EFMigrationsHistory` as part of its intended design.
+
 ## Project Structure
 
 The repository uses feature-first vertical slices.
@@ -39,6 +45,8 @@ Program.cs           Composition root
 ```
 
 `Program.cs` composes the current features through `AuthenticationModule` and `ShoppingListsModule`.
+
+Because each feature owns its own migration history table, changing that table name is a database-shape change. Existing local databases created against an older history-table convention should be recreated unless you intentionally migrate their history rows yourself.
 
 ## Local Run
 

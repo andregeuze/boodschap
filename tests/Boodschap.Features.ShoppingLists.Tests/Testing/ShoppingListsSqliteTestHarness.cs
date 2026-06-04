@@ -25,7 +25,7 @@ public sealed class ShoppingListsSqliteTestHarness : IAsyncDisposable
 		await connection.OpenAsync();
 
 		var options = new DbContextOptionsBuilder<BoodschapDbContext>()
-			.UseSqlite(connection)
+			.UseSqlite(connection, sqlite => sqlite.MigrationsHistoryTable(BoodschapDbContext.MigrationsHistoryTableName))
 			.Options;
 
 		await using var dbContext = new BoodschapDbContext(options);
