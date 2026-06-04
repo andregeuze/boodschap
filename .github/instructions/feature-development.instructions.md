@@ -1,9 +1,7 @@
 ---
 name: "Feature Development"
 description: "Use when creating or refactoring features, vertical slices, DDD modules, clean architecture layers, application contracts, feature docs, and feature tests in this repository."
-applyTo:
-  - "Features/**"
-  - "tests/**"
+applyTo: "Features/**,tests/**"
 ---
 # Feature Development Guidelines
 

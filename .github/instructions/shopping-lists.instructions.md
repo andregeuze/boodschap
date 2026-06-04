@@ -1,9 +1,7 @@
 ---
 name: "Shopping Lists Feature"
 description: "Use when working on the Shopping Lists feature, including list routes, filters, item add/remove, archiving, reorder behavior, realtime refresh, SQLite persistence, and Shopping Lists feature tests."
-applyTo:
-  - "Features/ShoppingLists/**"
-  - "tests/Boodschap.Features.ShoppingLists.Tests/**"
+applyTo: "Features/ShoppingLists/**,tests/Boodschap.Features.ShoppingLists.Tests/**"
 ---
 # Shopping Lists Feature Guidelines
 
