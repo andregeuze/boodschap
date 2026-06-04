@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
 
-namespace Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
+namespace Boodschap.Shared.Infrastructure.Persistence;
 
 public static class SqliteConnectionStringResolver
 {

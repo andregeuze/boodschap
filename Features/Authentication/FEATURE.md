@@ -40,8 +40,10 @@ Authentication owns sign-in, sign-out, first-user bootstrap registration, local 
 - `AuthenticationStateCurrentUserAccessor`
 - `LocalAuthenticationDefaults`
 - `ReturnUrlSanitizer`
+- `Persistence/AuthenticationDbContext`
 - `Persistence/AuthenticationStoreInitializer`
-- `Persistence/SqliteLocalUserRepository`
+- `Persistence/LocalUserRepository`
+- `Infrastructure/Persistence/Migrations/`
 
 ## Domain Language
 
@@ -83,5 +85,5 @@ This feature follows the same feature-first boundary as the rest of the app:
 
 - Keep local credential validation and password hashing inside this feature.
 - Expose authenticated-user data through `ICurrentUserAccessor` instead of reading claims throughout the codebase.
-- Keep credential persistence in this feature and avoid leaking password-hash details outside it.
+- Keep EF Core credential persistence in this feature and avoid leaking password-hash details outside it.
 - Prefer administrator-managed account creation over re-opening anonymous registration.

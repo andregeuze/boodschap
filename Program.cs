@@ -3,6 +3,7 @@ using Boodschap.Features.Authentication;
 using Boodschap.Features.Authentication.Infrastructure.Persistence;
 using Boodschap.Features.ShoppingLists;
 using Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
+using Boodschap.Shared.Infrastructure.Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);

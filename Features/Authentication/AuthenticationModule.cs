@@ -5,6 +5,7 @@ using Boodschap.Features.Authentication.Infrastructure.Persistence;
 using Boodschap.Features.Authentication.Presentation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Boodschap.Features.Authentication;
 
@@ -12,14 +13,16 @@ public static class AuthenticationModule
 {
 	public static IServiceCollection AddAuthenticationFeature(this IServiceCollection services, string sqliteConnectionString)
 	{
+		services.AddDbContextFactory<AuthenticationDbContext>(options => options.UseSqlite(
+			sqliteConnectionString,
+			sqlite => sqlite.MigrationsHistoryTable(AuthenticationDbContext.MigrationsHistoryTableName)));
 		services.AddCascadingAuthenticationState();
 		services.AddAuthorization();
 		services.AddHttpContextAccessor();
 		services.AddScoped<ICurrentUserAccessor, AuthenticationStateCurrentUserAccessor>();
 		services.AddScoped<ILocalAuthenticationService, LocalAuthenticationService>();
-		services.AddScoped<ILocalUserRepository, SqliteLocalUserRepository>();
+		services.AddScoped<ILocalUserRepository, LocalUserRepository>();
 		services.AddScoped<IPasswordHasher<LocalUser>, PasswordHasher<LocalUser>>();
-		services.AddSingleton(new AuthenticationStoreConfiguration(sqliteConnectionString));
 
 		services.AddAuthentication(options =>
 			{

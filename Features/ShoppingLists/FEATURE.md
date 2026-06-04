@@ -30,7 +30,6 @@ Shopping Lists renders only for authenticated users and depends on the Authentic
 - `BoodschapDbContext`
 - `ShoppingListRepository`
 - `ShoppingListsInitializer`
-- `SqliteConnectionStringResolver`
 - `Infrastructure/Persistence/Migrations/`
 
 ## Domain Language

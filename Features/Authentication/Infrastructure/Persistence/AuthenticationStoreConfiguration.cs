@@ -1,3 +1,0 @@
-namespace Boodschap.Features.Authentication.Infrastructure.Persistence;
-
-public sealed record AuthenticationStoreConfiguration(string ConnectionString);
