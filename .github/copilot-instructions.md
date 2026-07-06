@@ -34,6 +34,7 @@ Dockerfile           Multi-stage container build
 - **C# style**: modern C# — primary constructors, collection expressions `[...]`, pattern matching, `var` where the type is obvious, nullable reference types enabled.
 - **Feature boundaries**: new business functionality belongs under `Features/<FeatureName>/` with `Domain`, `Application`, `Infrastructure`, and `Presentation` folders. Follow the current feature layout by splitting richer application layers into `Application/Contracts/` and `Application/Services/`.
 - **Shared code**: only move code into `Shared/` when it is truly used by multiple features and contains no feature-specific business language.
+- **Language**: write source code, identifiers, comments, documentation, tests, and default user-facing text in English. Treat `Boodschap` as the product name and do not localize it unless the user explicitly asks for another language.
 - **JavaScript** — none. Do not add JavaScript files unless strictly necessary for a browser API unavailable in Blazor.
 - **Tailwind**: write utility classes directly in markup. Run `npm run watch:css` during development to auto-rebuild `wwwroot/app.css`. Run `npm run build:css` for a minified production build.
 - **No magic strings for item state** — use the existing filter values `"All"`, `"Needed"`, `"Purchased"`.

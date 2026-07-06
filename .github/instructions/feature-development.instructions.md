@@ -11,6 +11,7 @@ applyTo: "Features/**,tests/**"
 - Put orchestration and use-case behavior behind `Application` contracts.
 - Put EF Core, SQLite, migrations, and external integration details in `Infrastructure`.
 - Move code into `Shared/` only when multiple features need it and it contains no feature-specific business language.
+- Use English for source code, identifiers, comments, documentation, tests, and default UI copy unless the user explicitly requests another language or an external contract requires it.
 - Add or update a feature-local `FEATURE.md` when a feature's scope, invariants, routes, or dependencies change.
 - Keep tests aligned with the feature boundary rather than the old layer-first structure.
 - Validate with focused tests first, then `dotnet build`, and smoke test visible behavior changes.

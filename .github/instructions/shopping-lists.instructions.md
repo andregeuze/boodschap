@@ -10,5 +10,6 @@ applyTo: "Features/ShoppingLists/**,tests/Boodschap.Features.ShoppingLists.Tests
 - Keep realtime notifications in `ShoppingListService` orchestration through `StoreChangeNotifier`, not in Razor pages or repository code.
 - Keep drag-and-drop reorder behavior implemented with Blazor C# event handlers in `Presentation/Pages/ShoppingListPage.razor`.
 - Keep SQLite persistence behind `IShoppingListRepository` and `IShoppingListService`.
+- Keep shopping list code, documentation, tests, and default user-facing strings in English unless the user explicitly requests another language or an external contract requires it.
 - When adding new workflows, prefer expanding the application layer before expanding page logic.
 - Maintain feature tests for ordering, mutation semantics, and feature invariants when changing repository or application behavior.
