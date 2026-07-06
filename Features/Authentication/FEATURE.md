@@ -44,6 +44,7 @@ Authentication owns sign-in, sign-out, first-user bootstrap registration, local 
 - `Persistence/AuthenticationStoreInitializer`
 - `Persistence/LocalUserRepository`
 - `Infrastructure/Persistence/Migrations/`
+- SQLite-backed ASP.NET Core data-protection key storage for auth cookie and antiforgery continuity across restarts/redeployments
 
 ## Domain Language
 
@@ -67,12 +68,14 @@ This feature follows the same feature-first boundary as the rest of the app:
 ## Invariants
 
 - Shopping list routes require an authenticated local user.
+- Authentication cookies are issued as persistent cookies with a 90-day sliding expiration window, and active use refreshes that window so signed-in sessions survive browser restarts until inactivity exceeds it.
 - Passwords are stored as secure password hashes, never as plaintext.
 - The first registered account becomes an administrator.
 - Self-service registration closes after the first account is created.
 - Additional accounts may only be created by administrators from the authenticated account-management surface.
 - Return URLs must stay local to the application.
 - Signing out clears the local application cookie before returning the user to a signed-out or sign-in surface.
+- The data-protection key ring is persisted in the authentication SQLite store in the `DataProtectionKeys` table so existing valid auth cookies remain decryptable after app restarts or redeployments that keep the database.
 
 ## Integration Points
 
@@ -86,5 +89,6 @@ This feature follows the same feature-first boundary as the rest of the app:
 - Keep local credential validation and password hashing inside this feature.
 - Expose authenticated-user data through `ICurrentUserAccessor` instead of reading claims throughout the codebase.
 - Keep EF Core credential persistence in this feature and avoid leaking password-hash details outside it.
+- Keep persisted data-protection keys in the same durable store as the authentication feature when changing hosting or deployment topology; if the SQLite database is replaced, existing cookies will no longer be valid.
 - Keep authentication migrations isolated in the feature-owned history table `__AuthenticationMigrationsHistory`; do not merge feature histories into the default EF Core history table.
 - Prefer administrator-managed account creation over re-opening anonymous registration.

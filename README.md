@@ -11,6 +11,14 @@ It lets you:
 
 Data is stored in SQLite, so the app is easy to run locally and in Docker.
 
+## Sessions
+
+Authentication uses a persistent cookie with a 90-day sliding expiration window. Active use refreshes that window, while inactive sessions expire once the window is exceeded.
+
+ASP.NET Core data-protection keys are stored in the same SQLite database as the authentication feature, in the `DataProtectionKeys` table. That means existing valid auth cookies can survive app restarts and redeployments as long as the same SQLite database is retained.
+
+If a deployment replaces or loses the database file, users will need to sign in again because the app can no longer decrypt previously issued cookies.
+
 ## Architecture
 
 The canonical architecture reference lives in [docs/architecture/README.md](docs/architecture/README.md).
@@ -90,6 +98,7 @@ In this example:
 - the SQLite database file inside the container stays at the default path: `/app/App_Data/boodschap.db`
 - the host folder `/srv/boodschap/appdata` is mounted directly to `/app/App_Data`
 - everything written to `App_Data` is persisted on the host filesystem
+- that persisted folder now includes both app data and the data-protection key ring used to keep auth cookies valid across container restarts and redeploys
 
 You can replace `/srv/boodschap/appdata` with any path you want to use on your server, NAS, or external storage.
 

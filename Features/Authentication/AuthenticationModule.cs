@@ -4,6 +4,7 @@ using Boodschap.Features.Authentication.Infrastructure;
 using Boodschap.Features.Authentication.Infrastructure.Persistence;
 using Boodschap.Features.Authentication.Presentation;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,9 @@ public static class AuthenticationModule
 		services.AddDbContextFactory<AuthenticationDbContext>(options => options.UseSqlite(
 			sqliteConnectionString,
 			sqlite => sqlite.MigrationsHistoryTable(AuthenticationDbContext.MigrationsHistoryTableName)));
+		services.AddDataProtection()
+			.SetApplicationName(LocalAuthenticationDefaults.DataProtectionApplicationName)
+			.PersistKeysToDbContext<AuthenticationDbContext>();
 		services.AddCascadingAuthenticationState();
 		services.AddAuthorization();
 		services.AddHttpContextAccessor();
@@ -36,6 +40,8 @@ public static class AuthenticationModule
 				options.LoginPath = "/sign-in";
 				options.AccessDeniedPath = "/sign-in";
 				options.LogoutPath = "/account/logout";
+				options.ExpireTimeSpan = LocalAuthenticationDefaults.PersistentSignInLifetime;
+				options.SlidingExpiration = true;
 			});
 
 		return services;

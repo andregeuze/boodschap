@@ -99,8 +99,10 @@ Authentication owns:
 Implementation choices already present in the codebase:
 
 - cookie authentication is configured inside `AuthenticationModule`
+- auth cookies use a persistent 90-day sliding expiration window rather than browser-session-only tickets, so active sessions renew while inactive ones eventually expire
 - authenticated-user access is exposed through `ICurrentUserAccessor`
 - EF Core persistence lives in the feature-owned `AuthenticationDbContext`
+- the ASP.NET Core data-protection key ring is persisted in the authentication SQLite store in the `DataProtectionKeys` table
 - anonymous self-service registration closes after the first account is created
 
 Feature-specific details live in `Features/Authentication/FEATURE.md`.
@@ -149,6 +151,8 @@ Current migration-history ownership:
 - Shopping Lists: `__ShoppingListsMigrationsHistory`
 
 This keeps schema evolution scoped to the feature that owns it, even though both features share the same SQLite file.
+
+The authentication store also persists the ASP.NET Core data-protection key ring in the `DataProtectionKeys` table, which allows existing valid cookies and antiforgery payloads to survive app restarts or redeployments as long as the SQLite database is retained.
 
 ## UI And Runtime Choices
 

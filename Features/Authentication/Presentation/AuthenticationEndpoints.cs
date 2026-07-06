@@ -28,7 +28,8 @@ public static class AuthenticationEndpoints
 
 				await httpContext.SignInAsync(
 					CookieAuthenticationDefaults.AuthenticationScheme,
-					CreatePrincipal(result.User));
+					CreatePrincipal(result.User),
+					CreateAuthenticationProperties());
 
 				return Results.Redirect(returnUrl);
 			})
@@ -55,7 +56,8 @@ public static class AuthenticationEndpoints
 
 				await httpContext.SignInAsync(
 					CookieAuthenticationDefaults.AuthenticationScheme,
-					CreatePrincipal(result.User));
+					CreatePrincipal(result.User),
+					CreateAuthenticationProperties());
 
 				return Results.Redirect(returnUrl);
 			})
@@ -98,5 +100,17 @@ public static class AuthenticationEndpoints
 
 		var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
 		return new ClaimsPrincipal(identity);
+	}
+
+	private static AuthenticationProperties CreateAuthenticationProperties()
+	{
+		var issuedAt = DateTimeOffset.UtcNow;
+
+		return new AuthenticationProperties
+		{
+			IsPersistent = true,
+			IssuedUtc = issuedAt,
+			ExpiresUtc = issuedAt.Add(LocalAuthenticationDefaults.PersistentSignInLifetime)
+		};
 	}
 }
