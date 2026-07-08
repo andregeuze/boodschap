@@ -5,21 +5,21 @@
 	<Authorized Context="authenticationState">
 		<div class="flex items-center gap-3">
 			<div class="hidden text-right sm:block">
-				<p class="text-sm font-medium text-slate-900">@ResolveDisplayName(authenticationState.User)</p>
+				<p class="text-sm font-medium text-neutral-900 dark:text-neutral-100">@ResolveDisplayName(authenticationState.User)</p>
 				@if (authenticationState.User.IsInRole(LocalAuthenticationDefaults.AdminRole))
 				{
-					<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">Administrator</p>
+					<p class="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">Administrator</p>
 				}
 				@if (!string.IsNullOrWhiteSpace(ResolveEmail(authenticationState.User)))
 				{
-					<p class="text-xs text-slate-500">@ResolveEmail(authenticationState.User)</p>
+					<p class="text-xs text-neutral-500 dark:text-neutral-400">@ResolveEmail(authenticationState.User)</p>
 				}
 			</div>
-			<a class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+			<a class="rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition hover:bg-neutral-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
 			   href="/account">
 				Account
 			</a>
-			<a class="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+			<a class="rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition hover:bg-neutral-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
 			   data-enhance-nav="false"
 			   href="/account/logout?returnUrl=/signed-out">
 				Sign out

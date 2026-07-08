@@ -31,6 +31,10 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var app = builder.Build();
 
 await AuthenticationStoreInitializer.InitializeAsync(app.Services);
+if (app.Environment.IsDevelopment())
+{
+    await AuthenticationDevelopmentSeeder.SeedAsync(app.Services);
+}
 await ShoppingListsInitializer.InitializeAsync(app.Services);
 
 app.UseForwardedHeaders();

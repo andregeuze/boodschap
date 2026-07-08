@@ -76,6 +76,7 @@ This feature follows the same feature-first boundary as the rest of the app:
 - Return URLs must stay local to the application.
 - Signing out clears the local application cookie before returning the user to a signed-out or sign-in surface.
 - The data-protection key ring is persisted in the authentication SQLite store in the `DataProtectionKeys` table so existing valid auth cookies remain decryptable after app restarts or redeployments that keep the database.
+- Development startup seeds a local admin login for quick local access when the account is missing.
 
 ## Integration Points
 

@@ -1,0 +1,15 @@
+{
+  "name": "Boodschap",
+  "short_name": "Boodschap",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070708",
+  "theme_color": "#070708",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "1254x1254",
+      "type": "image/png"
+    }
+  ]
+}

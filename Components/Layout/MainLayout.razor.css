@@ -21,6 +21,12 @@ main {
     align-items: center;
 }
 
+.app-logo {
+    background-color: transparent;
+    filter: none;
+    mix-blend-mode: normal;
+}
+
     .top-row ::deep a, .top-row ::deep .btn-link {
         white-space: nowrap;
         margin-left: 1.5rem;
