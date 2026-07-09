@@ -31,6 +31,7 @@ public sealed class HomePageComponentTests
 			Assert.Contains("Weekly groceries", cut.Markup);
 			Assert.Contains("Dinner party", cut.Markup);
 			Assert.DoesNotContain("Camping weekend", cut.Markup);
+			Assert.Single(cut.FindAll("button[aria-label='Add new list']"));
 		});
 
 		FindButton(cut, "Archived").Click();
@@ -40,6 +41,7 @@ public sealed class HomePageComponentTests
 			Assert.DoesNotContain("Weekly groceries", cut.Markup);
 			Assert.DoesNotContain("Dinner party", cut.Markup);
 			Assert.Contains("Camping weekend", cut.Markup);
+			Assert.Empty(cut.FindAll("button[aria-label='Add new list']"));
 		});
 	}
 
@@ -52,6 +54,9 @@ public sealed class HomePageComponentTests
 		var navigation = context.Services.GetRequiredService<NavigationManager>();
 		var cut = context.Render<Home>();
 
+		FindButtonByLabel(cut, "Add new list").Click();
+
+		cut.WaitForElement("#new-list-name");
 		cut.Find("#new-list-name").Input("Weekend groceries");
 		cut.Find("form").Submit();
 
@@ -116,6 +121,12 @@ public sealed class HomePageComponentTests
 		where TComponent : IComponent
 	{
 		return renderedFragment.FindAll("button").Single(button => string.Equals(button.TextContent.Trim(), text, StringComparison.Ordinal));
+	}
+
+	private static IElement FindButtonByLabel<TComponent>(IRenderedComponent<TComponent> renderedFragment, string label)
+		where TComponent : IComponent
+	{
+		return renderedFragment.FindAll("button").Single(button => string.Equals(button.GetAttribute("aria-label"), label, StringComparison.Ordinal));
 	}
 
 	private static ShoppingList CreateList(int id, string name, bool archived)

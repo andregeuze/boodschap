@@ -60,48 +60,59 @@
 			}
 		</div>
 
-		<section class="pt-2">
-			<div class="mx-auto w-full max-w-5xl rounded-[2rem] border border-neutral-200 bg-white p-4 shadow-[0_18px_50px_rgba(0,0,0,0.10)] transition-colors duration-300 dark:border-white/10 dark:bg-neutral-900 sm:p-5">
+		@if (activeTab == NewTab)
+		{
+			<section class="overflow-hidden pt-2">
 				@if (_isAddComposerOpen)
 				{
-					<div class="flex flex-col gap-4 sm:min-h-24 sm:flex-row sm:items-center sm:justify-between">
-						<input class="w-full border-0 border-b border-neutral-300 bg-transparent px-1 py-3 text-2xl font-light tracking-tight text-neutral-950 outline-none placeholder:text-neutral-300 focus:border-emerald-500 focus:ring-0 dark:border-white/15 dark:text-white dark:placeholder:text-neutral-600 dark:focus:border-emerald-400"
-						       placeholder="Title"
-						       @bind="newListName"
-						       @bind:event="oninput"
-						       autofocus />
+					<div class="mx-auto w-full max-w-5xl rounded-[2rem] border border-neutral-200 bg-white p-4 shadow-[0_18px_50px_rgba(0,0,0,0.10)] transition duration-500 ease-out dark:border-white/10 dark:bg-neutral-900 sm:p-5 @(_isAddComposerEntering ? "translate-x-[110vw] opacity-0" : "translate-x-0 opacity-100")">
+						<form class="flex flex-col gap-4 sm:min-h-24 sm:flex-row sm:items-center sm:justify-between"
+						      @onsubmit="CreateList"
+						      @onsubmit:preventDefault>
+							<input id="new-list-name"
+							       class="w-full border-0 border-b border-neutral-300 bg-transparent px-1 py-3 text-2xl font-light tracking-tight text-neutral-950 outline-none placeholder:text-neutral-300 focus:border-emerald-500 focus:ring-0 dark:border-white/15 dark:text-white dark:placeholder:text-neutral-600 dark:focus:border-emerald-400"
+							       placeholder="Title"
+							       @bind="newListName"
+							       @bind:event="oninput"
+							       autofocus />
 
-						<div class="flex items-center justify-end gap-2 sm:shrink-0">
-							<button type="button"
-									class="flex h-14 w-14 items-center justify-center rounded-full border border-neutral-300 bg-white text-2xl font-light leading-none text-neutral-700 shadow-sm transition hover:bg-neutral-50 dark:border-white/15 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
-									aria-label="Cancel"
-									@onclick="CancelAddComposer">
-								×
-							</button>
-							<button type="button"
-									class="flex h-14 w-14 items-center justify-center rounded-full border border-emerald-500 bg-emerald-500 text-2xl font-semibold leading-none text-white shadow-sm transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:border-neutral-200 disabled:bg-neutral-200 disabled:text-neutral-400 dark:border-emerald-400 dark:bg-emerald-400 dark:text-neutral-950 dark:hover:bg-emerald-300 dark:disabled:border-neutral-700 dark:disabled:bg-neutral-700 dark:disabled:text-neutral-500"
-									aria-label="Create list"
-									disabled="@string.IsNullOrWhiteSpace(newListName)"
-									@onclick="CreateList">
-								✓
-							</button>
-						</div>
+							<div class="flex items-center justify-end gap-2 sm:shrink-0">
+								<button type="button"
+										class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rose-600 shadow-[0_12px_30px_rgba(244,63,94,0.14)] ring-1 ring-inset ring-neutral-200 transition hover:-translate-y-0.5 hover:bg-rose-50 hover:text-rose-500 hover:ring-rose-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 dark:bg-white/10 dark:text-rose-300 dark:ring-white/15 dark:hover:bg-rose-400/10 dark:hover:text-rose-200 dark:hover:ring-rose-300/50"
+										aria-label="Cancel"
+										@onclick="CancelAddComposer">
+									<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+										<path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-linecap="round" stroke-width="2.25" />
+									</svg>
+								</button>
+								<button type="submit"
+										class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-600 shadow-[0_12px_30px_rgba(16,185,129,0.18)] ring-1 ring-inset ring-neutral-200 transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:text-emerald-500 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-300 disabled:shadow-none disabled:ring-neutral-200 dark:bg-white/10 dark:text-emerald-300 dark:ring-white/15 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-200 dark:hover:ring-emerald-300/50 dark:disabled:bg-white/5 dark:disabled:text-neutral-600 dark:disabled:ring-white/10"
+										aria-label="Create list"
+										disabled="@string.IsNullOrWhiteSpace(newListName)">
+									<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+										<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" />
+									</svg>
+								</button>
+							</div>
+						</form>
 					</div>
 				}
 				else
 				{
-					<div class="flex justify-center py-2">
+					<div class="flex justify-center py-4">
 						<button type="button"
-								class="inline-flex items-center rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm transition hover:bg-neutral-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10"
+								class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-600 shadow-[0_12px_30px_rgba(16,185,129,0.18)] ring-1 ring-inset ring-neutral-200 transition duration-500 ease-in hover:-translate-y-0.5 hover:bg-emerald-50 hover:text-emerald-500 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:pointer-events-none dark:bg-white/10 dark:text-emerald-300 dark:ring-white/15 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-200 dark:hover:ring-emerald-300/50 @(_isAddButtonExiting ? "-translate-x-[110vw] opacity-0" : "translate-x-0 opacity-100")"
 								aria-label="Add new list"
+								disabled="@_isAddButtonExiting"
 								@onclick="BeginAddList">
-							<span class="mr-2 text-lg leading-none">+</span>
-							Add list
+							<svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+								<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-linecap="round" stroke-width="2.25" />
+							</svg>
 						</button>
 					</div>
 				}
-			</div>
-		</section>
+			</section>
+		}
 	</section>
 </div>
 
@@ -118,6 +129,8 @@
 	private string newListName = string.Empty;
 	private List<ShoppingList> shoppingLists = [];
 	private bool _isAddComposerOpen;
+	private bool _isAddComposerEntering;
+	private bool _isAddButtonExiting;
 
 	private List<ShoppingList> VisibleLists => shoppingLists
 		.Where(list => activeTab == ArchivedTab ? list.Archived : !list.Archived)
@@ -132,6 +145,11 @@
 	protected override void OnParametersSet()
 	{
 		activeTab = RequestedTab == ArchivedTab ? ArchivedTab : NewTab;
+
+		if (activeTab == ArchivedTab)
+		{
+			CancelAddComposer();
+		}
 	}
 
 	public void Dispose()
@@ -142,6 +160,11 @@
 	private void SelectTab(string tab)
 	{
 		activeTab = tab;
+
+		if (activeTab == ArchivedTab)
+		{
+			CancelAddComposer();
+		}
 	}
 
 	private void OpenList(int id)
@@ -149,14 +172,30 @@
 		Navigation.NavigateTo($"/lists/{id}");
 	}
 
-	private void BeginAddList()
+	private async Task BeginAddList()
 	{
+		if (_isAddComposerOpen || _isAddButtonExiting)
+		{
+			return;
+		}
+
+		_isAddButtonExiting = true;
+		await Task.Delay(450);
+
 		_isAddComposerOpen = true;
+		_isAddComposerEntering = true;
+		_isAddButtonExiting = false;
+		StateHasChanged();
+
+		await Task.Delay(20);
+		_isAddComposerEntering = false;
 	}
 
 	private void CancelAddComposer()
 	{
 		_isAddComposerOpen = false;
+		_isAddComposerEntering = false;
+		_isAddButtonExiting = false;
 		newListName = string.Empty;
 	}
 
@@ -170,6 +209,8 @@
 		var list = await ShoppingLists.CreateListAsync(newListName);
 		newListName = string.Empty;
 		_isAddComposerOpen = false;
+		_isAddComposerEntering = false;
+		_isAddButtonExiting = false;
 		Navigation.NavigateTo($"/lists/{list.Id}");
 	}
 

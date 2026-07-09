@@ -34,7 +34,7 @@ mcp_playwright_browser_snapshot
 
 Expected:
 - Heading "Pick a list and keep moving."
-- "New list" button
+- Icon-only "Add new list" button
 - Tab group "Shopping list status" with buttons: New, Archived
 - Visible list cards: Weekly groceries and Dinner party
 
