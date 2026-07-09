@@ -37,6 +37,7 @@ Dockerfile           Multi-stage container build
 - **Language**: write source code, identifiers, comments, documentation, tests, and default user-facing text in English. Treat `Boodschap` as the product name and do not localize it unless the user explicitly asks for another language.
 - **JavaScript** — none. Do not add JavaScript files unless strictly necessary for a browser API unavailable in Blazor.
 - **Tailwind**: write utility classes directly in markup. Run `npm run watch:css` during development to auto-rebuild `wwwroot/app.css`. Run `npm run build:css` for a minified production build.
+- **Circular icon buttons**: use Tailwind utility classes with `inline-flex`, fixed equal `h-*`/`w-*`, `rounded-full`, subtle `ring-*`/`shadow-*`, hover and `focus-visible` states, and a real inline SVG icon. Keep visible text out of icon-only buttons; use `aria-label` for the accessible name. Do not use raw text glyphs like `+`, `×`, or `✓` for polished action buttons.
 - **No magic strings for item state** — use the existing filter values `"All"`, `"Needed"`, `"Purchased"`.
 
 ## Running Locally
