@@ -1,9 +1,10 @@
 @page "/signed-out"
 @attribute [AllowAnonymous]
 @rendermode InteractiveServer
+@inject IStringLocalizer<AppStrings> Localizer
 
-<PageTitle>Signed out</PageTitle>
+<PageTitle>@Localizer["Account.SignedOutPageTitle"]</PageTitle>
 
-<SignInGate Title="You have signed out."
-			Description="Your local Boodschap session has ended. Sign in again with your username and password when you want to work with the shared lists."
+<SignInGate Title="@Localizer["Account.SignedOutTitle"]"
+			Description="@Localizer["Account.SignedOutDescription"]"
 			ReturnUrl="/" />

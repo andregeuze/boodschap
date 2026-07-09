@@ -29,10 +29,11 @@ public sealed class ShoppingListServiceTests
 
 		var service = new ShoppingListService(repository, notifier);
 
-		var result = await service.CreateListAsync("Weekend groceries");
+		var result = await service.CreateListAsync("Weekend groceries", "Snacks and breakfast for the weekend.");
 
 		Assert.Same(createdList, result);
 		Assert.Equal("Weekend groceries", repository.LastCreatedName);
+		Assert.Equal("Snacks and breakfast for the weekend.", repository.LastCreatedDescription);
 		Assert.Single(observedChanges);
 		Assert.Equal(42, observedChanges[0].ListId);
 	}
@@ -174,6 +175,7 @@ public sealed class ShoppingListServiceTests
 		public MutationResult<ShoppingList> RemoveArchivedListResult { get; set; }
 
 		public string? LastCreatedName { get; private set; }
+		public string? LastCreatedDescription { get; private set; }
 		public string? LastRenamedName { get; private set; }
 		public int? LastRenamedItemId { get; private set; }
 		public string? LastRenamedItemName { get; private set; }
@@ -188,9 +190,10 @@ public sealed class ShoppingListServiceTests
 			throw new NotSupportedException();
 		}
 
-		public Task<ShoppingList> CreateListAsync(string name, CancellationToken cancellationToken = default)
+		public Task<ShoppingList> CreateListAsync(string name, string description, CancellationToken cancellationToken = default)
 		{
 			LastCreatedName = name;
+			LastCreatedDescription = description;
 			return Task.FromResult(CreatedList);
 		}
 

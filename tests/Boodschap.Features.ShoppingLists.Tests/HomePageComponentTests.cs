@@ -1,3 +1,4 @@
+using System.Globalization;
 using AngleSharp.Dom;
 using Bunit;
 using Bunit.Rendering;
@@ -31,17 +32,17 @@ public sealed class HomePageComponentTests
 			Assert.Contains("Weekly groceries", cut.Markup);
 			Assert.Contains("Dinner party", cut.Markup);
 			Assert.DoesNotContain("Camping weekend", cut.Markup);
-			Assert.Single(cut.FindAll("button[aria-label='Add new list']"));
+			Assert.Single(cut.FindAll("button[aria-label='Nieuwe lijst toevoegen']"));
 		});
 
-		FindButton(cut, "Archived").Click();
+		FindButton(cut, "Archief").Click();
 
 		cut.WaitForAssertion(() =>
 		{
 			Assert.DoesNotContain("Weekly groceries", cut.Markup);
 			Assert.DoesNotContain("Dinner party", cut.Markup);
 			Assert.Contains("Camping weekend", cut.Markup);
-			Assert.Empty(cut.FindAll("button[aria-label='Add new list']"));
+			Assert.Empty(cut.FindAll("button[aria-label='Nieuwe lijst toevoegen']"));
 		});
 	}
 
@@ -54,15 +55,17 @@ public sealed class HomePageComponentTests
 		var navigation = context.Services.GetRequiredService<NavigationManager>();
 		var cut = context.Render<Home>();
 
-		FindButtonByLabel(cut, "Add new list").Click();
+		FindButtonByLabel(cut, "Nieuwe lijst toevoegen").Click();
 
 		cut.WaitForElement("#new-list-name");
 		cut.Find("#new-list-name").Input("Weekend groceries");
+		cut.Find("#new-list-description").Input("Snacks and breakfast for the weekend.");
 		cut.Find("form").Submit();
 
 		cut.WaitForAssertion(() =>
 		{
 			Assert.Equal("Weekend groceries", service.LastCreatedListName);
+			Assert.Equal("Snacks and breakfast for the weekend.", service.LastCreatedListDescription);
 			Assert.Equal("http://localhost/lists/1", navigation.Uri);
 		});
 	}
@@ -79,13 +82,13 @@ public sealed class HomePageComponentTests
 
 		cut.WaitForAssertion(() => Assert.Contains("Camping weekend", cut.Markup));
 
-		FindButton(cut, "Remove").Click();
+		FindButton(cut, "Verwijderen").Click();
 
 		cut.WaitForAssertion(() =>
 		{
 			Assert.Equal(7, service.LastRemovedArchivedListId);
 			Assert.DoesNotContain("Camping weekend", cut.Markup);
-			Assert.Contains("No lists in this view yet.", cut.Markup);
+			Assert.Contains("Nog geen lijsten in deze weergave.", cut.Markup);
 		});
 	}
 
@@ -111,7 +114,12 @@ public sealed class HomePageComponentTests
 
 	private static BunitContext CreateContext(IShoppingListService shoppingLists, StoreChangeNotifier notifier)
 	{
+		var culture = CultureInfo.GetCultureInfo("nl-NL");
+		CultureInfo.CurrentCulture = culture;
+		CultureInfo.CurrentUICulture = culture;
+
 		var context = new BunitContext();
+		context.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 		context.Services.AddSingleton<IShoppingListService>(shoppingLists);
 		context.Services.AddSingleton(notifier);
 		return context;

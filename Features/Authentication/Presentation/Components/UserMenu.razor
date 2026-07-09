@@ -1,5 +1,6 @@
 @using System.Security.Claims
 @using Boodschap.Features.Authentication.Infrastructure
+@inject IStringLocalizer<AppStrings> Localizer
 
 <AuthorizeView>
 	<Authorized Context="authenticationState">
@@ -8,7 +9,7 @@
 				<p class="text-sm font-medium text-neutral-900 dark:text-neutral-100">@ResolveDisplayName(authenticationState.User)</p>
 				@if (authenticationState.User.IsInRole(LocalAuthenticationDefaults.AdminRole))
 				{
-					<p class="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">Administrator</p>
+					<p class="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">@Localizer["Account.AdminRole"]</p>
 				}
 				@if (!string.IsNullOrWhiteSpace(ResolveEmail(authenticationState.User)))
 				{
@@ -17,24 +18,24 @@
 			</div>
 			<a class="rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition hover:bg-neutral-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
 			   href="/account">
-				Account
+				@Localizer["Account.AccountLink"]
 			</a>
 			<a class="rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition hover:bg-neutral-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
 			   data-enhance-nav="false"
 			   href="/account/logout?returnUrl=/signed-out">
-				Sign out
+				@Localizer["Account.SignOut"]
 			</a>
 		</div>
 	</Authorized>
 </AuthorizeView>
 
 @code {
-	private static string ResolveDisplayName(ClaimsPrincipal user)
+	private string ResolveDisplayName(ClaimsPrincipal user)
 	{
 		return user.Identity?.Name
 			?? user.FindFirst(ClaimTypes.GivenName)?.Value
 			?? user.FindFirst(ClaimTypes.Email)?.Value
-			?? "Signed in";
+			?? Localizer["Account.SignedIn"].Value;
 	}
 
 	private static string? ResolveEmail(ClaimsPrincipal user)

@@ -1,3 +1,4 @@
+using System.Globalization;
 using AngleSharp.Dom;
 using Bunit;
 using Bunit.Rendering;
@@ -23,24 +24,24 @@ public sealed class ShoppingListPageComponentTests
 
 		cut.WaitForAssertion(() =>
 		{
-			Assert.Contains("Use the edit icon to rename. Drag to reorder.", cut.Markup);
+			Assert.Contains("Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen.", cut.Markup);
 			Assert.Contains("Milk", cut.Markup);
 			Assert.Contains("Coffee", cut.Markup);
 			Assert.Contains("Eggs", cut.Markup);
 		});
 
-		FindButton(cut, "Needed").Click();
+		FindButton(cut, "Nodig").Click();
 
 		cut.WaitForAssertion(() =>
 		{
-			Assert.Contains("Use the edit icon to rename.", cut.Markup);
-			Assert.DoesNotContain("Drag to reorder.", cut.Markup);
+			Assert.Contains("Gebruik het bewerkicoon om te hernoemen.", cut.Markup);
+			Assert.DoesNotContain("Sleep om de volgorde te wijzigen.", cut.Markup);
 			Assert.Contains("Milk", cut.Markup);
 			Assert.Contains("Coffee", cut.Markup);
 			Assert.DoesNotContain("Eggs", cut.Markup);
 		});
 
-		FindButton(cut, "Purchased").Click();
+		FindButton(cut, "Gekocht").Click();
 
 		cut.WaitForAssertion(() =>
 		{
@@ -58,10 +59,10 @@ public sealed class ShoppingListPageComponentTests
 		using var context = CreateContext(service, new StoreChangeNotifier());
 		var cut = context.Render<ShoppingListPage>(parameters => parameters.Add(page => page.Id, 1));
 
-		FindButton(cut, "Purchased").Click();
-		FindButton(cut, "New item").Click();
-		cut.Find("input[placeholder='Add grocery item']").Input("Bananas");
-		FindButton(cut, "Add").Click();
+		FindButton(cut, "Gekocht").Click();
+		FindButton(cut, "Nieuwe boodschap").Click();
+		cut.Find("input[placeholder='Boodschap toevoegen']").Input("Bananas");
+		FindButton(cut, "Toevoegen").Click();
 
 		cut.WaitForAssertion(() =>
 		{
@@ -69,7 +70,7 @@ public sealed class ShoppingListPageComponentTests
 			Assert.Contains("Bananas", cut.Markup);
 			Assert.Contains("Milk", cut.Markup);
 			Assert.Contains("Eggs", cut.Markup);
-			Assert.Contains("Use the edit icon to rename. Drag to reorder.", cut.Markup);
+			Assert.Contains("Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen.", cut.Markup);
 		});
 	}
 
@@ -81,15 +82,15 @@ public sealed class ShoppingListPageComponentTests
 		using var context = CreateContext(service, new StoreChangeNotifier());
 		var cut = context.Render<ShoppingListPage>(parameters => parameters.Add(page => page.Id, 1));
 
-		cut.Find("button[aria-label='Edit Coffee']").Click();
-		cut.WaitForAssertion(() => Assert.Single(cut.FindAll("input[placeholder='Rename item']")));
+		cut.Find("button[aria-label='Coffee bewerken']").Click();
+		cut.WaitForAssertion(() => Assert.Single(cut.FindAll("input[placeholder='Boodschap hernoemen']")));
 
-		FindButton(cut, "Needed").Click();
+		FindButton(cut, "Nodig").Click();
 
 		cut.WaitForAssertion(() =>
 		{
-			Assert.Empty(cut.FindAll("input[placeholder='Rename item']"));
-			Assert.Single(cut.FindAll("button[aria-label='Edit Coffee']"));
+			Assert.Empty(cut.FindAll("input[placeholder='Boodschap hernoemen']"));
+			Assert.Single(cut.FindAll("button[aria-label='Coffee bewerken']"));
 		});
 	}
 
@@ -102,7 +103,7 @@ public sealed class ShoppingListPageComponentTests
 		var navigation = context.Services.GetRequiredService<NavigationManager>();
 		var cut = context.Render<ShoppingListPage>(parameters => parameters.Add(page => page.Id, 1));
 
-		FindButton(cut, "Archive").Click();
+		FindButton(cut, "Archiveren").Click();
 
 		cut.WaitForAssertion(() =>
 		{
@@ -120,14 +121,19 @@ public sealed class ShoppingListPageComponentTests
 		var navigation = context.Services.GetRequiredService<NavigationManager>();
 		var cut = context.Render<ShoppingListPage>(parameters => parameters.Add(page => page.Id, 1));
 
-		FindButton(cut, "Back").Click();
+		FindButton(cut, "Terug").Click();
 
 		cut.WaitForAssertion(() => Assert.Equal("http://localhost/?tab=Archived", navigation.Uri));
 	}
 
 	private static BunitContext CreateContext(IShoppingListService shoppingLists, StoreChangeNotifier notifier)
 	{
+		var culture = CultureInfo.GetCultureInfo("nl-NL");
+		CultureInfo.CurrentCulture = culture;
+		CultureInfo.CurrentUICulture = culture;
+
 		var context = new BunitContext();
+		context.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 		context.Services.AddSingleton<IShoppingListService>(shoppingLists);
 		context.Services.AddSingleton(notifier);
 		return context;

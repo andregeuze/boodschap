@@ -17,9 +17,9 @@ public sealed class ShoppingListService(
 		return shoppingListRepository.GetListAsync(id, cancellationToken);
 	}
 
-	public async Task<ShoppingList> CreateListAsync(string name, CancellationToken cancellationToken = default)
+	public async Task<ShoppingList> CreateListAsync(string name, string description, CancellationToken cancellationToken = default)
 	{
-		var shoppingList = await shoppingListRepository.CreateListAsync(name, cancellationToken);
+		var shoppingList = await shoppingListRepository.CreateListAsync(name, description, cancellationToken);
 		await storeChangeNotifier.NotifyChangedAsync(new StoreChange(shoppingList.Id));
 		return shoppingList;
 	}

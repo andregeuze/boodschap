@@ -33,154 +33,155 @@ mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- Heading "Pick a list and keep moving."
-- Icon-only "Add new list" button
-- Tab group "Shopping list status" with buttons: New, Archived
-- Visible list cards: Weekly groceries and Dinner party
+- Heading "Kies een lijst en ga door."
+- Icon-only "Nieuwe lijst toevoegen" button
+- Clicking "Nieuwe lijst toevoegen" opens inputs with placeholders "Titel" and "Beschrijving"
+- Tab group "Status van boodschappenlijst" with buttons: Nieuw, Archief
+- Visible list cards: Weekboodschappen and Etentje
 
 ## 3. Test archived tab
 
 ```
-mcp_playwright_browser_click → button "Archived"
+mcp_playwright_browser_click → button "Archief"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- "Archived" button is `[active]`
-- Archived list card "Camping weekend" is shown
+- "Archief" button is `[active]`
+- Archived list card "Kampeerweekend" is shown
 - New list cards are hidden
 
 ## 4. Open a shopping list
 
 ```
-mcp_playwright_browser_click → button "Weekly groceries"
+mcp_playwright_browser_click → button "Weekboodschappen"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
 - URL ends with `/lists/1`
-- "Back" button is visible
-- Heading "Weekly groceries"
-- "New item" button
-- Paragraph: "Use the edit icon to rename. Drag to reorder."
-- FilterBar group "Filter groceries" with buttons: All, Needed, Purchased
+- "Terug" button is visible
+- Heading "Weekboodschappen"
+- "Nieuwe boodschap" button
+- Paragraph: "Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen."
+- FilterBar group "Boodschappen filteren" with buttons: Alles, Nodig, Gekocht
 - Each item row shows the edit icon button before the remove icon button
-- 6 list items: Milk, Eggs, Bread, Tomatoes, Cheese, Coffee (all unchecked)
+- 6 list items: Melk, Eieren, Brood, Tomaten, Kaas, Koffie (all unchecked)
 
 ## 4a. Test inline item rename
 
 ```
-mcp_playwright_browser_click → button "Edit Bread"
+mcp_playwright_browser_click → button "Brood bewerken"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- Input with placeholder "Rename item" appears inline in the row
+- Input with placeholder "Boodschap hernoemen" appears inline in the row
 - Save and cancel icon buttons are visible on the same line as the input
 
 Rename and save:
 
 ```
-mcp_playwright_browser_fill_form → input "Rename item" with "Flatbread"
-mcp_playwright_browser_click → button "Save item name"
+mcp_playwright_browser_fill_form → input "Boodschap hernoemen" with "Flatbread"
+mcp_playwright_browser_click → button "Naam opslaan"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
 - The item row now shows "Flatbread"
-- Paragraph returns to "Use the edit icon to rename. Drag to reorder."
+- Paragraph returns to "Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen."
 
 ## 5. Test drag and drop reorder
 
-Drag `Coffee` onto `Flatbread`.
+Drag `Koffie` onto `Flatbread`.
 
 ```
 mcp_playwright_browser_snapshot
-mcp_playwright_browser_drag → drag "Coffee" onto "Bread"
+mcp_playwright_browser_drag → drag "Koffie" onto "Flatbread"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- Item order becomes: Milk, Eggs, Coffee, Flatbread, Tomatoes, Cheese
-- Paragraph remains "Use the edit icon to rename. Drag to reorder."
+- Item order becomes: Melk, Eieren, Koffie, Flatbread, Tomaten, Kaas
+- Paragraph remains "Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen."
 
 ## 6. Mark items as purchased
 
-Click the Milk row once, then the Eggs checkbox.
+Click the Melk row once, then the Eieren checkbox.
 
 ```
-mcp_playwright_browser_click → text "Milk"
-mcp_playwright_browser_click → checkbox "Eggs"
+mcp_playwright_browser_click → text "Melk"
+mcp_playwright_browser_click → checkbox "Eieren"
 ```
 
 Expected:
-- Milk and Eggs are both marked as purchased
+- Melk and Eieren are both marked as purchased
 - The row click toggles the same done state change as clicking the checkbox
 
 ## 7. Test "Needed" filter
 
 ```
-mcp_playwright_browser_click → button "Needed"
+mcp_playwright_browser_click → button "Nodig"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- "Needed" button is `[active]`
-- Only unchecked items shown: Coffee, Flatbread, Tomatoes, Cheese
-- Paragraph changes to "Use the edit icon to rename."
+- "Nodig" button is `[active]`
+- Only unchecked items shown: Koffie, Flatbread, Tomaten, Kaas
+- Paragraph changes to "Gebruik het bewerkicoon om te hernoemen."
 
 ## 8. Test "Purchased" filter
 
 ```
-mcp_playwright_browser_click → button "Purchased"
+mcp_playwright_browser_click → button "Gekocht"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- "Purchased" button is `[active]`
-- Only checked items shown: Milk `[checked]`, Eggs `[checked]`
-- Paragraph remains "Use the edit icon to rename."
+- "Gekocht" button is `[active]`
+- Only checked items shown: Melk `[checked]`, Eieren `[checked]`
+- Paragraph remains "Gebruik het bewerkicoon om te hernoemen."
 
 ## 9. Test "All" filter
 
 ```
-mcp_playwright_browser_click → button "All"
+mcp_playwright_browser_click → button "Alles"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- "All" button is `[active]`
+- "Alles" button is `[active]`
 - All 6 items shown
-- Paragraph returns to "Use the edit icon to rename. Drag to reorder."
+- Paragraph returns to "Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen."
 
 ## 10. Test "New item" quick-add
 
 ```
-mcp_playwright_browser_click → button "New item"
+mcp_playwright_browser_click → button "Nieuwe boodschap"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
-- Input with placeholder "Add grocery item" appears
-- "Add" submit button appears
+- Input with placeholder "Boodschap toevoegen" appears
+- "Toevoegen" submit button appears
 
 Type a new item and submit:
 
 ```
-mcp_playwright_browser_fill_form → input "Add grocery item" with "Bananas"
-mcp_playwright_browser_click → button "Add"
+mcp_playwright_browser_fill_form → input "Boodschap toevoegen" with "Bananas"
+mcp_playwright_browser_click → button "Toevoegen"
 mcp_playwright_browser_snapshot
 ```
 
 Expected:
 - "Bananas" appears in the list below the existing unchecked items and above the checked items
-- In the seeded smoke run after reordering Coffee before Bread and then checking off Milk and Eggs, "Bananas" should appear after Cheese and before Milk/Eggs
+- In the seeded smoke run after reordering Koffie before Flatbread and then checking off Melk and Eieren, "Bananas" should appear after Kaas and before Melk/Eieren
 - Input is cleared
 
 ## 11. Test remove
 
 ```
-mcp_playwright_browser_click → button "Remove" (next to "Bananas")
+mcp_playwright_browser_click → button "Bananas verwijderen"
 mcp_playwright_browser_snapshot
 ```
 
@@ -190,7 +191,7 @@ Expected:
 ## 12. Return to overview
 
 ```
-mcp_playwright_browser_click → button "Back"
+mcp_playwright_browser_click → button "Terug"
 mcp_playwright_browser_snapshot
 ```
 
@@ -213,9 +214,9 @@ Expected:
 On page A, add a new item:
 
 ```
-mcp_playwright_browser_click → button "New item" (page A)
-mcp_playwright_browser_fill_form → input "Add grocery item" with "Oranges" (page A)
-mcp_playwright_browser_click → button "Add" (page A)
+mcp_playwright_browser_click → button "Nieuwe boodschap" (page A)
+mcp_playwright_browser_fill_form → input "Boodschap toevoegen" with "Oranges" (page A)
+mcp_playwright_browser_click → button "Toevoegen" (page A)
 ```
 
 Expected:
@@ -226,7 +227,7 @@ Expected:
 On page A, remove the new item:
 
 ```
-mcp_playwright_browser_click → button "Remove" (next to "Oranges") (page A)
+mcp_playwright_browser_click → button "Oranges verwijderen" (page A)
 ```
 
 Expected:
@@ -235,7 +236,7 @@ Expected:
 On page A, reorder an item:
 
 ```
-mcp_playwright_browser_drag → drag "Coffee" onto "Bread" (page A)
+mcp_playwright_browser_drag → drag "Koffie" onto "Flatbread" (page A)
 ```
 
 Expected:

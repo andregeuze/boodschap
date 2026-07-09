@@ -1,9 +1,11 @@
-﻿<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+﻿@inject IStringLocalizer<AppStrings> Localizer
+
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
             <NotAuthorized>
-                <SignInGate Title="Sign in to access Boodschap."
-                            Description="Shared shopping lists are now available only to signed-in users." />
+                <SignInGate Title="@Localizer["Routes.NotAuthorizedTitle"]"
+                            Description="@Localizer["Routes.NotAuthorizedDescription"]" />
             </NotAuthorized>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />

@@ -10,6 +10,7 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 	private int nextItemId = (shoppingLists?.SelectMany(list => list.Items).Select(item => item.Id).DefaultIfEmpty(0).Max() ?? 0) + 1;
 
 	public string? LastCreatedListName { get; private set; }
+	public string? LastCreatedListDescription { get; private set; }
 	public int? LastArchivedListId { get; private set; }
 	public int? LastUnarchivedListId { get; private set; }
 	public int? LastRemovedArchivedListId { get; private set; }
@@ -38,16 +39,18 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 		return Task.FromResult(storedLists.SingleOrDefault(list => list.Id == id) is { } shoppingList ? CloneList(shoppingList) : null);
 	}
 
-	public Task<ShoppingList> CreateListAsync(string name, CancellationToken cancellationToken = default)
+	public Task<ShoppingList> CreateListAsync(string name, string description, CancellationToken cancellationToken = default)
 	{
 		var normalizedName = name.Trim();
+		var normalizedDescription = description.Trim();
 		LastCreatedListName = normalizedName;
+		LastCreatedListDescription = normalizedDescription;
 
 		var shoppingList = new ShoppingList
 		{
 			Id = nextListId++,
 			Name = normalizedName,
-			Description = "A fresh list ready for new items.",
+			Description = normalizedDescription,
 			Archived = false,
 			SortOrder = storedLists.Count == 0 ? 0 : storedLists.Min(list => list.SortOrder) - 1,
 			Items = []

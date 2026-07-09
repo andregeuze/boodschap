@@ -3,8 +3,9 @@
 @rendermode InteractiveServer
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigation
+@inject IStringLocalizer<AppStrings> Localizer
 
-<PageTitle>Sign in</PageTitle>
+<PageTitle>@Localizer["Account.SignInPageTitle"]</PageTitle>
 
 <SignInGate ReturnUrl="@ReturnUrl"
 			ErrorCode="@ErrorCode"

@@ -1,9 +1,11 @@
 @rendermode InteractiveServer
+@inject IStringLocalizer<AppStrings> Localizer
 
 <TabBar Tabs="Filters"
 		ActiveTab="@ActiveFilter"
 		OnTabChanged="OnFilterChanged"
-		AriaLabel="Filter groceries" />
+		AriaLabel="@Localizer["Shopping.FilterGroceries"]"
+		TabLabelSelector="GetFilterLabel" />
 
 @code {
 	private static readonly IReadOnlyList<string> Filters = ShoppingItemFilters.AllValues;
@@ -13,4 +15,15 @@
 
 	[Parameter, EditorRequired]
 	public EventCallback<string> OnFilterChanged { get; set; }
+
+	private string GetFilterLabel(string filter)
+	{
+		return filter switch
+		{
+			ShoppingItemFilters.All => Localizer["Shopping.FilterAll"].Value,
+			ShoppingItemFilters.Needed => Localizer["Shopping.FilterNeeded"].Value,
+			ShoppingItemFilters.Purchased => Localizer["Shopping.FilterPurchased"].Value,
+			_ => filter
+		};
+	}
 }

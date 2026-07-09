@@ -29,9 +29,10 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		return shoppingList is null ? null : MapList(shoppingList);
 	}
 
-	public async Task<ShoppingList> CreateListAsync(string name, CancellationToken cancellationToken = default)
+	public async Task<ShoppingList> CreateListAsync(string name, string description, CancellationToken cancellationToken = default)
 	{
 		var normalizedName = NormalizeRequiredName(name);
+		var normalizedDescription = description.Trim();
 
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var nextSortOrder = (await dbContext.ShoppingLists.MinAsync(list => (int?)list.SortOrder, cancellationToken) ?? 0) - 1;
@@ -39,7 +40,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		var shoppingList = new ShoppingList
 		{
 			Name = normalizedName,
-			Description = "A fresh list ready for new items.",
+			Description = normalizedDescription,
 			Archived = false,
 			SortOrder = nextSortOrder,
 			Items = []

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account.AccessEyebrow" xml:space="preserve"><value>Accounttoegang</value></data>
+  <data name="Account.AccountLink" xml:space="preserve"><value>Account</value></data>
+  <data name="Account.AdminRole" xml:space="preserve"><value>Beheerder</value></data>
+  <data name="Account.CreateAsAdmin" xml:space="preserve"><value>Aanmaken als beheerder</value></data>
+  <data name="Account.CreateFirstAccount" xml:space="preserve"><value>Maak het eerste account aan</value></data>
+  <data name="Account.CreateFirstAccountDescription" xml:space="preserve"><value>Het eerste account wordt beheerder en kan later extra gebruikers aanmaken.</value></data>
+  <data name="Account.CreateAccount" xml:space="preserve"><value>Account aanmaken</value></data>
+  <data name="Account.CreateUser" xml:space="preserve"><value>Gebruiker aanmaken</value></data>
+  <data name="Account.CreateUserDescription" xml:space="preserve"><value>Zelf registreren sluit na het eerste account, dus beheerders maken hier extra gebruikers aan.</value></data>
+  <data name="Account.CurrentPassword" xml:space="preserve"><value>Huidig wachtwoord</value></data>
+  <data name="Account.ConfirmPassword" xml:space="preserve"><value>Wachtwoord bevestigen</value></data>
+  <data name="Account.DefaultDescription" xml:space="preserve"><value>Boodschap vereist nu een lokaal account voordat de gedeelde boodschappenlijsten gebruikt kunnen worden.</value></data>
+  <data name="Account.DefaultTitle" xml:space="preserve"><value>Log in om verder te gaan.</value></data>
+  <data name="Account.Error.AdminRequired" xml:space="preserve"><value>Alleen een beheerder kan nieuwe accounts aanmaken.</value></data>
+  <data name="Account.Error.BootstrapRegistrationClosed" xml:space="preserve"><value>Zelf registreren is gesloten. Vraag een beheerder om een account voor je aan te maken.</value></data>
+  <data name="Account.Error.CurrentPasswordInvalid" xml:space="preserve"><value>Het huidige wachtwoord is onjuist.</value></data>
+  <data name="Account.Error.CurrentPasswordRequired" xml:space="preserve"><value>Voer je huidige wachtwoord in om het te wijzigen.</value></data>
+  <data name="Account.Error.InvalidCredentials" xml:space="preserve"><value>De gebruikersnaam of het wachtwoord is onjuist.</value></data>
+  <data name="Account.Error.PasswordMismatch" xml:space="preserve"><value>De wachtwoordbevestiging komt niet overeen.</value></data>
+  <data name="Account.Error.PasswordRequired" xml:space="preserve"><value>Een wachtwoord is verplicht.</value></data>
+  <data name="Account.Error.PasswordTooShort" xml:space="preserve"><value>Wachtwoorden moeten minimaal 8 tekens lang zijn.</value></data>
+  <data name="Account.Error.RequestFailed" xml:space="preserve"><value>Het verzoek kon niet worden voltooid.</value></data>
+  <data name="Account.Error.UsernameRequired" xml:space="preserve"><value>Een gebruikersnaam is verplicht.</value></data>
+  <data name="Account.Error.UsernameTaken" xml:space="preserve"><value>Die gebruikersnaam is al in gebruik.</value></data>
+  <data name="Account.Loading" xml:space="preserve"><value>Accountinstellingen laden...</value></data>
+  <data name="Account.ManageDescription" xml:space="preserve"><value>Beheer je wachtwoord en maak extra accounts aan als je beheerder bent.</value></data>
+  <data name="Account.NewPassword" xml:space="preserve"><value>Nieuw wachtwoord</value></data>
+  <data name="Account.PageTitle" xml:space="preserve"><value>Account</value></data>
+  <data name="Account.Password" xml:space="preserve"><value>Wachtwoord</value></data>
+  <data name="Account.PasswordHelp" xml:space="preserve"><value>Gebruik minimaal 8 tekens voor het wachtwoord.</value></data>
+  <data name="Account.PasswordUpdated" xml:space="preserve"><value>Wachtwoord bijgewerkt.</value></data>
+  <data name="Account.RegisterClosed" xml:space="preserve"><value>Zelf registreren is gesloten. Vraag een beheerder om een account voor je aan te maken.</value></data>
+  <data name="Account.SignIn" xml:space="preserve"><value>Inloggen</value></data>
+  <data name="Account.SignInDescription" xml:space="preserve"><value>Gebruik je Boodschap-gebruikersnaam en wachtwoord.</value></data>
+  <data name="Account.SignOut" xml:space="preserve"><value>Uitloggen</value></data>
+  <data name="Account.SignedIn" xml:space="preserve"><value>Ingelogd</value></data>
+  <data name="Account.SignedOutDescription" xml:space="preserve"><value>Je lokale Boodschap-sessie is beeindigd. Log opnieuw in met je gebruikersnaam en wachtwoord wanneer je met de gedeelde lijsten wilt werken.</value></data>
+  <data name="Account.SignedOutPageTitle" xml:space="preserve"><value>Uitgelogd</value></data>
+  <data name="Account.SignedOutTitle" xml:space="preserve"><value>Je bent uitgelogd.</value></data>
+  <data name="Account.SignInPageTitle" xml:space="preserve"><value>Inloggen</value></data>
+  <data name="Account.Title" xml:space="preserve"><value>Account</value></data>
+  <data name="Account.UpdatePassword" xml:space="preserve"><value>Wachtwoord bijwerken</value></data>
+  <data name="Account.UpdatePasswordDescription" xml:space="preserve"><value>Werk je wachtwoord bij zonder de rest van de gedeelde appstatus te raken.</value></data>
+  <data name="Account.UserAccountCreated" xml:space="preserve"><value>Gebruikersaccount aangemaakt.</value></data>
+  <data name="Account.AdminAccountCreated" xml:space="preserve"><value>Beheerdersaccount aangemaakt.</value></data>
+  <data name="Account.Username" xml:space="preserve"><value>Gebruikersnaam</value></data>
+  <data name="Common.Add" xml:space="preserve"><value>Toevoegen</value></data>
+  <data name="Common.Archive" xml:space="preserve"><value>Archiveren</value></data>
+  <data name="Common.Archived" xml:space="preserve"><value>Archief</value></data>
+  <data name="Common.Back" xml:space="preserve"><value>Terug</value></data>
+  <data name="Common.Cancel" xml:space="preserve"><value>Annuleren</value></data>
+  <data name="Common.Create" xml:space="preserve"><value>Aanmaken</value></data>
+  <data name="Common.New" xml:space="preserve"><value>Nieuw</value></data>
+  <data name="Common.Remove" xml:space="preserve"><value>Verwijderen</value></data>
+  <data name="Common.Rename" xml:space="preserve"><value>Hernoemen</value></data>
+  <data name="Common.Save" xml:space="preserve"><value>Opslaan</value></data>
+  <data name="Common.Unarchive" xml:space="preserve"><value>Uit archief halen</value></data>
+  <data name="Error.DevelopmentEnvironmentWarning" xml:space="preserve"><value>De Development-omgeving mag niet zijn ingeschakeld voor gedeployde apps.</value></data>
+  <data name="Error.DevelopmentMode" xml:space="preserve"><value>Ontwikkelmodus</value></data>
+  <data name="Error.DevelopmentModeDescription" xml:space="preserve"><value>Schakelen naar de Development-omgeving toont meer details over de fout die is opgetreden.</value></data>
+  <data name="Error.DevelopmentModeInstructions" xml:space="preserve"><value>Dit kan gevoelige informatie uit uitzonderingen aan eindgebruikers tonen. Zet voor lokaal debuggen de omgevingsvariabele ASPNETCORE_ENVIRONMENT op Development en herstart de app.</value></data>
+  <data name="Error.Message" xml:space="preserve"><value>Er is een fout opgetreden tijdens het verwerken van je verzoek.</value></data>
+  <data name="Error.PageTitle" xml:space="preserve"><value>Fout</value></data>
+  <data name="Error.RequestId" xml:space="preserve"><value>Request-ID:</value></data>
+  <data name="Error.Title" xml:space="preserve"><value>Fout.</value></data>
+  <data name="NotFound.Description" xml:space="preserve"><value>Sorry, de inhoud die je zoekt bestaat niet.</value></data>
+  <data name="NotFound.Title" xml:space="preserve"><value>Niet gevonden</value></data>
+  <data name="Reconnect.Failed" xml:space="preserve"><value>Opnieuw verbinden is mislukt.</value></data>
+  <data name="Reconnect.FailedHelp" xml:space="preserve"><value>Probeer opnieuw of herlaad de pagina.</value></data>
+  <data name="Reconnect.Rejoining" xml:space="preserve"><value>Opnieuw verbinden met de server...</value></data>
+  <data name="Reconnect.Repeated" xml:space="preserve"><value>Opnieuw verbinden mislukt... nieuwe poging over</value></data>
+  <data name="Reconnect.Retry" xml:space="preserve"><value>Opnieuw proberen</value></data>
+  <data name="Reconnect.Resume" xml:space="preserve"><value>Hervatten</value></data>
+  <data name="Reconnect.ResumeFailed" xml:space="preserve"><value>De sessie hervatten is mislukt.</value></data>
+  <data name="Reconnect.Seconds" xml:space="preserve"><value>seconden.</value></data>
+  <data name="Reconnect.SessionPaused" xml:space="preserve"><value>De sessie is gepauzeerd door de server.</value></data>
+  <data name="Routes.NotAuthorizedDescription" xml:space="preserve"><value>Gedeelde boodschappenlijsten zijn alleen beschikbaar voor ingelogde gebruikers.</value></data>
+  <data name="Routes.NotAuthorizedTitle" xml:space="preserve"><value>Log in om Boodschap te gebruiken.</value></data>
+  <data name="Shopping.AddNewList" xml:space="preserve"><value>Nieuwe lijst toevoegen</value></data>
+  <data name="Shopping.AddGroceryItemPlaceholder" xml:space="preserve"><value>Boodschap toevoegen</value></data>
+  <data name="Shopping.ArchiveList" xml:space="preserve"><value>Lijst archiveren</value></data>
+  <data name="Shopping.BackToOverview" xml:space="preserve"><value>Terug naar overzicht</value></data>
+  <data name="Shopping.CancelItemRename" xml:space="preserve"><value>Naam wijzigen annuleren</value></data>
+  <data name="Shopping.CreateList" xml:space="preserve"><value>Lijst aanmaken</value></data>
+  <data name="Shopping.DescriptionPlaceholder" xml:space="preserve"><value>Beschrijving</value></data>
+  <data name="Shopping.EmptyState" xml:space="preserve"><value>Nog geen lijsten in deze weergave.</value></data>
+  <data name="Shopping.FilterAll" xml:space="preserve"><value>Alles</value></data>
+  <data name="Shopping.FilterGroceries" xml:space="preserve"><value>Boodschappen filteren</value></data>
+  <data name="Shopping.FilterNeeded" xml:space="preserve"><value>Nodig</value></data>
+  <data name="Shopping.FilterPurchased" xml:space="preserve"><value>Gekocht</value></data>
+  <data name="Shopping.Groceries" xml:space="preserve"><value>Boodschappen</value></data>
+  <data name="Shopping.HomeDescription" xml:space="preserve"><value>Je actieve lijsten staan vooraan, terwijl gearchiveerde lijsten makkelijk terug te vinden blijven.</value></data>
+  <data name="Shopping.HomeEyebrow" xml:space="preserve"><value>Boodschappenlijsten</value></data>
+  <data name="Shopping.HomeHeading" xml:space="preserve"><value>Kies een lijst en ga door.</value></data>
+  <data name="Shopping.ItemInteractionHint" xml:space="preserve"><value>Gebruik het bewerkicoon om te hernoemen.</value></data>
+  <data name="Shopping.ItemInteractionHintWithReorder" xml:space="preserve"><value>Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen.</value></data>
+  <data name="Shopping.ListNamePlaceholder" xml:space="preserve"><value>Lijstnaam</value></data>
+  <data name="Shopping.ListNotFound" xml:space="preserve"><value>Lijst niet gevonden</value></data>
+  <data name="Shopping.ListNotFoundDescription" xml:space="preserve"><value>De geselecteerde lijst bestaat niet.</value></data>
+  <data name="Shopping.ListSummary" xml:space="preserve"><value>{0}/{1} gekocht</value></data>
+  <data name="Shopping.NewItem" xml:space="preserve"><value>Nieuwe boodschap</value></data>
+  <data name="Shopping.PageTitle" xml:space="preserve"><value>Boodschap</value></data>
+  <data name="Shopping.RemoveItem" xml:space="preserve"><value>{0} verwijderen</value></data>
+  <data name="Shopping.RenameItem" xml:space="preserve"><value>{0} bewerken</value></data>
+  <data name="Shopping.RenameItemPlaceholder" xml:space="preserve"><value>Boodschap hernoemen</value></data>
+  <data name="Shopping.SaveItemName" xml:space="preserve"><value>Naam opslaan</value></data>
+  <data name="Shopping.ShoppingList" xml:space="preserve"><value>Boodschappenlijst</value></data>
+  <data name="Shopping.ShoppingListStatus" xml:space="preserve"><value>Status van boodschappenlijst</value></data>
+  <data name="Shopping.TitlePlaceholder" xml:space="preserve"><value>Titel</value></data>
+</root>

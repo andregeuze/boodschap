@@ -3,13 +3,14 @@
 @rendermode InteractiveServer
 @inject ICurrentUserAccessor CurrentUserAccessor
 @inject ILocalAuthenticationService LocalAuthentication
+@inject IStringLocalizer<AppStrings> Localizer
 
-<PageTitle>Account</PageTitle>
+<PageTitle>@Localizer["Account.PageTitle"]</PageTitle>
 
 @if (currentUser is null)
 {
 	<div class="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4 text-sm text-slate-500">
-		Loading account settings...
+		@Localizer["Account.Loading"]
 	</div>
 }
 else
@@ -17,14 +18,14 @@ else
 	<div class="min-h-screen">
 		<section class="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 sm:px-6">
 			<div class="rounded-[2rem] border border-white/10 bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-800 p-6 shadow-2xl shadow-black/20 text-neutral-100">
-				<p class="text-sm font-medium uppercase tracking-[0.24em] text-emerald-400">Account</p>
+				<p class="text-sm font-medium uppercase tracking-[0.24em] text-emerald-400">@Localizer["Account.Title"]</p>
 				<h1 class="mt-2 text-3xl font-black tracking-tight text-white">@currentUser.DisplayName</h1>
-				<p class="mt-2 text-sm text-neutral-400">Manage your password and, if you are an administrator, create additional accounts.</p>
+				<p class="mt-2 text-sm text-neutral-400">@Localizer["Account.ManageDescription"]</p>
 			</div>
 
 			<form class="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/10" @onsubmit="ChangePassword">
-				<h2 class="text-xl font-semibold text-white">Change password</h2>
-				<p class="mt-1 text-sm text-neutral-400">Update your password without affecting the rest of the shared app state.</p>
+				<h2 class="text-xl font-semibold text-white">@Localizer["Account.UpdatePassword"]</h2>
+				<p class="mt-1 text-sm text-neutral-400">@Localizer["Account.UpdatePasswordDescription"]</p>
 
 				@if (!string.IsNullOrWhiteSpace(passwordStatusMessage))
 				{
@@ -35,7 +36,7 @@ else
 
 				<div class="mt-4 space-y-4">
 					<div class="space-y-1">
-						<label class="text-sm font-medium text-neutral-300" for="current-password">Current password</label>
+						<label class="text-sm font-medium text-neutral-300" for="current-password">@Localizer["Account.CurrentPassword"]</label>
 						<input id="current-password"
 							   class="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-500 focus:ring-2"
 							   type="password"
@@ -43,7 +44,7 @@ else
 							   @bind="currentPassword" />
 					</div>
 					<div class="space-y-1">
-						<label class="text-sm font-medium text-neutral-300" for="new-password">New password</label>
+						<label class="text-sm font-medium text-neutral-300" for="new-password">@Localizer["Account.NewPassword"]</label>
 						<input id="new-password"
 							   class="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-500 focus:ring-2"
 							   type="password"
@@ -51,7 +52,7 @@ else
 							   @bind="newPassword" />
 					</div>
 					<div class="space-y-1">
-						<label class="text-sm font-medium text-neutral-300" for="confirm-new-password">Confirm new password</label>
+						<label class="text-sm font-medium text-neutral-300" for="confirm-new-password">@Localizer["Account.ConfirmPassword"]</label>
 						<input id="confirm-new-password"
 							   class="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-500 focus:ring-2"
 							   type="password"
@@ -61,15 +62,15 @@ else
 				</div>
 
 				<button type="submit" class="mt-5 rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-300">
-					Update password
+					@Localizer["Account.UpdatePassword"]
 				</button>
 			</form>
 
 			@if (currentUser.IsAdmin)
 			{
 				<form class="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/10" @onsubmit="CreateUser">
-					<h2 class="text-xl font-semibold text-white">Create user</h2>
-					<p class="mt-1 text-sm text-neutral-400">Self-service registration is closed after the first account, so administrators create additional users here.</p>
+					<h2 class="text-xl font-semibold text-white">@Localizer["Account.CreateUser"]</h2>
+					<p class="mt-1 text-sm text-neutral-400">@Localizer["Account.CreateUserDescription"]</p>
 
 					@if (!string.IsNullOrWhiteSpace(createUserStatusMessage))
 					{
@@ -80,14 +81,14 @@ else
 
 					<div class="mt-4 space-y-4">
 						<div class="space-y-1">
-							<label class="text-sm font-medium text-neutral-300" for="new-user-username">Username</label>
+							<label class="text-sm font-medium text-neutral-300" for="new-user-username">@Localizer["Account.Username"]</label>
 							<input id="new-user-username"
 								   class="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-500 focus:ring-2"
 								   autocomplete="username"
 								   @bind="newUserUsername" />
 						</div>
 						<div class="space-y-1">
-							<label class="text-sm font-medium text-neutral-300" for="new-user-password">Password</label>
+							<label class="text-sm font-medium text-neutral-300" for="new-user-password">@Localizer["Account.Password"]</label>
 							<input id="new-user-password"
 								   class="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-500 focus:ring-2"
 								   type="password"
@@ -95,7 +96,7 @@ else
 								   @bind="newUserPassword" />
 						</div>
 						<div class="space-y-1">
-							<label class="text-sm font-medium text-neutral-300" for="new-user-confirm-password">Confirm password</label>
+							<label class="text-sm font-medium text-neutral-300" for="new-user-confirm-password">@Localizer["Account.ConfirmPassword"]</label>
 							<input id="new-user-confirm-password"
 								   class="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-500 focus:ring-2"
 								   type="password"
@@ -104,12 +105,12 @@ else
 						</div>
 						<label class="flex items-center gap-2 text-sm text-neutral-300">
 							<input type="checkbox" class="h-4 w-4 rounded border-white/20 accent-emerald-400" @bind="newUserIsAdmin" />
-							Create as administrator
+							@Localizer["Account.CreateAsAdmin"]
 						</label>
 					</div>
 
 					<button type="submit" class="mt-5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-neutral-100 transition hover:bg-white/10">
-						Create user
+						@Localizer["Account.CreateUser"]
 					</button>
 				</form>
 			}
@@ -146,7 +147,7 @@ else
 		var result = await LocalAuthentication.ChangePasswordAsync(currentUser.LocalUserId, currentPassword, newPassword, confirmNewPassword);
 		passwordStatusIsError = !result.Succeeded;
 		passwordStatusMessage = result.Succeeded
-			? "Password updated."
+			? Localizer["Account.PasswordUpdated"].Value
 			: DescribeError(result.ErrorCode);
 
 		if (!result.Succeeded)
@@ -169,7 +170,7 @@ else
 		var result = await LocalAuthentication.CreateUserAsync(currentUser.LocalUserId, newUserUsername, newUserPassword, newUserConfirmPassword, newUserIsAdmin);
 		createUserStatusIsError = !result.Succeeded;
 		createUserStatusMessage = result.Succeeded
-			? (newUserIsAdmin ? "Administrator account created." : "User account created.")
+			? (newUserIsAdmin ? Localizer["Account.AdminAccountCreated"].Value : Localizer["Account.UserAccountCreated"].Value)
 			: DescribeError(result.ErrorCode);
 
 		if (!result.Succeeded)
@@ -183,20 +184,20 @@ else
 		newUserIsAdmin = false;
 	}
 
-	private static string DescribeError(string? errorCode)
+	private string DescribeError(string? errorCode)
 	{
 		return errorCode switch
 		{
-			LocalAuthenticationErrorCodes.AdminRequired => "Only administrators can create additional users.",
-			LocalAuthenticationErrorCodes.BootstrapRegistrationClosed => "Self-service registration is closed. Ask an administrator to create an account for you.",
-			LocalAuthenticationErrorCodes.CurrentPasswordInvalid => "The current password is incorrect.",
-			LocalAuthenticationErrorCodes.CurrentPasswordRequired => "Enter your current password to change it.",
-			LocalAuthenticationErrorCodes.UsernameRequired => "A username is required.",
-			LocalAuthenticationErrorCodes.PasswordRequired => "A password is required.",
-			LocalAuthenticationErrorCodes.PasswordTooShort => "Passwords must be at least 8 characters long.",
-			LocalAuthenticationErrorCodes.PasswordMismatch => "The password confirmation does not match.",
-			LocalAuthenticationErrorCodes.UsernameTaken => "That username is already in use.",
-			_ => "The request could not be completed."
+			LocalAuthenticationErrorCodes.AdminRequired => Localizer["Account.Error.AdminRequired"].Value,
+			LocalAuthenticationErrorCodes.BootstrapRegistrationClosed => Localizer["Account.Error.BootstrapRegistrationClosed"].Value,
+			LocalAuthenticationErrorCodes.CurrentPasswordInvalid => Localizer["Account.Error.CurrentPasswordInvalid"].Value,
+			LocalAuthenticationErrorCodes.CurrentPasswordRequired => Localizer["Account.Error.CurrentPasswordRequired"].Value,
+			LocalAuthenticationErrorCodes.UsernameRequired => Localizer["Account.Error.UsernameRequired"].Value,
+			LocalAuthenticationErrorCodes.PasswordRequired => Localizer["Account.Error.PasswordRequired"].Value,
+			LocalAuthenticationErrorCodes.PasswordTooShort => Localizer["Account.Error.PasswordTooShort"].Value,
+			LocalAuthenticationErrorCodes.PasswordMismatch => Localizer["Account.Error.PasswordMismatch"].Value,
+			LocalAuthenticationErrorCodes.UsernameTaken => Localizer["Account.Error.UsernameTaken"].Value,
+			_ => Localizer["Account.Error.RequestFailed"].Value
 		};
 	}
 }

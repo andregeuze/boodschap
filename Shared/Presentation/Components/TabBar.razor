@@ -6,7 +6,7 @@
 		<button class="rounded-full border px-4 py-2 text-sm font-medium transition @(tab == ActiveTab ? "border-emerald-500 bg-emerald-500 text-neutral-950 shadow-lg shadow-emerald-500/20" : "border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10")"
 				@onclick="() => OnTabChanged.InvokeAsync(tab)"
 				aria-pressed="@(tab == ActiveTab)">
-			@tab
+			@GetTabLabel(tab)
 		</button>
 	}
 </div>
@@ -22,5 +22,13 @@
 	public EventCallback<string> OnTabChanged { get; set; }
 
 	[Parameter]
-	public string AriaLabel { get; set; } = "Tabs";
+	public string AriaLabel { get; set; } = string.Empty;
+
+	[Parameter]
+	public Func<string, string>? TabLabelSelector { get; set; }
+
+	private string GetTabLabel(string tab)
+	{
+		return TabLabelSelector?.Invoke(tab) ?? tab;
+	}
 }

@@ -5,17 +5,18 @@
 @inject NavigationManager Navigation
 @inject IShoppingListService ShoppingLists
 @inject StoreChangeNotifier StoreChangeNotifier
+@inject IStringLocalizer<AppStrings> Localizer
 
 <PageTitle>@PageTitleText</PageTitle>
 
 @if (shoppingList is null)
 {
 	<div class="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center gap-4 px-4 text-center">
-		<h1 class="text-2xl font-semibold text-neutral-100">Shopping list not found</h1>
-		<p class="text-sm text-neutral-400">The selected list does not exist.</p>
+		<h1 class="text-2xl font-semibold text-neutral-100">@Localizer["Shopping.ListNotFound"]</h1>
+		<p class="text-sm text-neutral-400">@Localizer["Shopping.ListNotFoundDescription"]</p>
 		<button class="rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-neutral-950 hover:bg-emerald-300"
 				@onclick="BackToOverview">
-			Back to overview
+			@Localizer["Shopping.BackToOverview"]
 		</button>
 	</div>
 }
@@ -27,28 +28,28 @@ else
 				<div class="flex items-center gap-3">
 					<button class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
 							@onclick="BackToOverview">
-						Back
+						@Localizer["Common.Back"]
 					</button>
 
 					<div>
-						<p class="text-xs uppercase tracking-[0.24em] text-emerald-400">Shopping list</p>
+						<p class="text-xs uppercase tracking-[0.24em] text-emerald-400">@Localizer["Shopping.ShoppingList"]</p>
 						@if (isRenaming)
 						{
 							<form class="mt-1 flex flex-wrap items-center gap-2" @onsubmit="RenameList">
 								<input class="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white outline-none ring-emerald-400/40 placeholder:text-neutral-400 focus:ring-2 sm:w-80"
-									   placeholder="List name"
+								       placeholder="@Localizer["Shopping.ListNamePlaceholder"]"
 									   @bind="editableListName"
 									   @bind:event="oninput"
 									   autofocus />
 								<button type="submit"
 										class="rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
 										disabled="@string.IsNullOrWhiteSpace(editableListName)">
-									Save
+									@Localizer["Common.Save"]
 								</button>
 								<button type="button"
 										class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
 										@onclick="CancelRename">
-									Cancel
+									@Localizer["Common.Cancel"]
 								</button>
 							</form>
 						}
@@ -64,33 +65,33 @@ else
 					{
 						<button class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
 								@onclick="BeginRename">
-							Rename
+							@Localizer["Common.Rename"]
 						</button>
 					}
 
 					@if (shoppingList.Archived)
 					{
-						<span class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium uppercase tracking-[0.2em] text-neutral-300">Archived</span>
+						<span class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium uppercase tracking-[0.2em] text-neutral-300">@Localizer["Common.Archived"]</span>
 						<button class="rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-sm font-medium text-rose-300 transition hover:bg-rose-500/15"
 								@onclick="RemoveArchivedList">
-							Remove
+							@Localizer["Common.Remove"]
 						</button>
 						<button class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
 								@onclick="UnarchiveList">
-							Unarchive
+							@Localizer["Common.Unarchive"]
 						</button>
 					}
 					else
 					{
 						<button class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
 								@onclick="ArchiveList">
-							Archive
+							@Localizer["Common.Archive"]
 						</button>
 					}
 
 					<button class="rounded-full bg-emerald-400 px-3 py-2 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-300"
 							@onclick="ToggleQuickAdd">
-						New item
+						@Localizer["Shopping.NewItem"]
 					</button>
 				</div>
 			</div>
@@ -100,11 +101,11 @@ else
 				<div class="mx-auto w-full max-w-3xl px-4 pb-3">
 					<form class="flex gap-2" @onsubmit="AddItem">
 						<input class="w-full rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-400 focus:ring-2"
-							   placeholder="Add grocery item"
+						       placeholder="@Localizer["Shopping.AddGroceryItemPlaceholder"]"
 							   @bind="newItemName"
 							   @bind:event="oninput"
 							   autofocus />
-						<button type="submit" class="rounded-full bg-emerald-400 px-4 py-3 text-sm font-semibold text-neutral-950 hover:bg-emerald-300">Add</button>
+						<button type="submit" class="rounded-full bg-emerald-400 px-4 py-3 text-sm font-semibold text-neutral-950 hover:bg-emerald-300">@Localizer["Common.Add"]</button>
 					</form>
 				</div>
 			}
@@ -113,7 +114,7 @@ else
 		<section class="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
 			<div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 				<div>
-					<h2 class="text-2xl font-bold tracking-tight text-white">Groceries</h2>
+					<h2 class="text-2xl font-bold tracking-tight text-white">@Localizer["Shopping.Groceries"]</h2>
 					@if (!string.IsNullOrWhiteSpace(shoppingList.Description))
 					{
 						<p class="text-sm text-neutral-400">@shoppingList.Description</p>
@@ -143,15 +144,15 @@ else
 							<form class="flex w-full min-w-0 items-center gap-2" @onsubmit="() => RenameItem(item.Id)">
 								<input type="checkbox" checked="@item.IsDone" disabled class="h-4 w-4 shrink-0 accent-emerald-400" />
 								<input class="min-w-0 flex-1 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-400 focus:ring-2"
-									   placeholder="Rename item"
+								       placeholder="@Localizer["Shopping.RenameItemPlaceholder"]"
 									   @bind="editableItemName"
 									   @bind:event="oninput"
 									   autofocus />
 								<div class="flex shrink-0 items-center gap-2">
 									<button type="submit"
 											class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-400 text-neutral-950 transition hover:bg-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-500"
-											aria-label="Save item name"
-											title="Save"
+											aria-label="@Localizer["Shopping.SaveItemName"]"
+											title="@Localizer["Common.Save"]"
 											disabled="@string.IsNullOrWhiteSpace(editableItemName)">
 										<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
 											<path stroke-linecap="round" stroke-linejoin="round" d="M5 12.75 10 17l9-10" />
@@ -159,8 +160,8 @@ else
 									</button>
 									<button type="button"
 											class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-neutral-300 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
-											aria-label="Cancel item rename"
-											title="Cancel"
+											aria-label="@Localizer["Shopping.CancelItemRename"]"
+											title="@Localizer["Common.Cancel"]"
 											@onclick="CancelItemRename">
 										<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
 											<path stroke-linecap="round" stroke-linejoin="round" d="m6.75 6.75 10.5 10.5m0-10.5-10.5 10.5" />
@@ -184,8 +185,8 @@ else
 								<div class="flex shrink-0 items-center gap-2">
 									<button type="button"
 											class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-neutral-300 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
-											aria-label="@($"Edit {item.Name}")"
-											title="Edit"
+											aria-label="@FormatText("Shopping.RenameItem", item.Name)"
+											title="@Localizer["Common.Rename"]"
 											@onclick:stopPropagation
 											@onclick="() => BeginItemRename(item)">
 										<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -194,8 +195,8 @@ else
 									</button>
 									<button type="button"
 											class="inline-flex h-10 w-10 items-center justify-center rounded-full text-rose-300 transition hover:bg-rose-500/10 hover:text-rose-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/20"
-											aria-label="@($"Remove {item.Name}")"
-											title="Remove"
+											aria-label="@FormatText("Shopping.RemoveItem", item.Name)"
+											title="@Localizer["Common.Remove"]"
 											@onclick:stopPropagation
 											@onclick="() => RemoveItem(item.Id)">
 										<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -228,9 +229,9 @@ else
 	private string newItemName = string.Empty;
 	private bool CanReorderItems => selectedFilter == ShoppingItemFilters.All && editingItemId is null;
 	private string ItemInteractionHint => CanReorderItems
-		? "Use the edit icon to rename. Drag to reorder."
-		: "Use the edit icon to rename.";
-	private string PageTitleText => shoppingList?.Name ?? "List not found";
+		? Localizer["Shopping.ItemInteractionHintWithReorder"].Value
+		: Localizer["Shopping.ItemInteractionHint"].Value;
+	private string PageTitleText => shoppingList?.Name ?? Localizer["Shopping.ListNotFound"].Value;
 
 	private List<ShoppingListItem> VisibleItems => selectedFilter switch
 	{
@@ -238,6 +239,11 @@ else
 		ShoppingItemFilters.Purchased => shoppingList?.Items.Where(item => item.IsDone).ToList() ?? [],
 		_ => shoppingList?.Items ?? []
 	};
+
+	private string FormatText(string key, params object[] arguments)
+	{
+		return string.Format(Localizer[key].Value, arguments);
+	}
 
 	protected override void OnInitialized()
 	{
