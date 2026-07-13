@@ -98,10 +98,6 @@
   <data name="Shopping.CreateList" xml:space="preserve"><value>Lijst aanmaken</value></data>
   <data name="Shopping.DescriptionPlaceholder" xml:space="preserve"><value>Beschrijving</value></data>
   <data name="Shopping.EmptyState" xml:space="preserve"><value>Nog geen lijsten in deze weergave.</value></data>
-  <data name="Shopping.FilterAll" xml:space="preserve"><value>Alles</value></data>
-  <data name="Shopping.FilterGroceries" xml:space="preserve"><value>Boodschappen filteren</value></data>
-  <data name="Shopping.FilterNeeded" xml:space="preserve"><value>Nodig</value></data>
-  <data name="Shopping.FilterPurchased" xml:space="preserve"><value>Gekocht</value></data>
   <data name="Shopping.Groceries" xml:space="preserve"><value>Boodschappen</value></data>
   <data name="Shopping.HomeDescription" xml:space="preserve"><value>Je actieve lijsten staan vooraan, terwijl gearchiveerde lijsten makkelijk terug te vinden blijven.</value></data>
   <data name="Shopping.HomeEyebrow" xml:space="preserve"><value>Boodschappenlijsten</value></data>

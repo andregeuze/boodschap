@@ -15,7 +15,7 @@ namespace Boodschap.Features.ShoppingLists.Tests;
 public sealed class ShoppingListPageComponentTests
 {
 	[Fact]
-	public void SwitchingFilters_UpdatesVisibleItemsAndInteractionHint()
+	public void Render_ShowsAllItemsAndNoItemFilters()
 	{
 		var service = new FakeShoppingListService([CreateActiveList()]);
 
@@ -28,39 +28,22 @@ public sealed class ShoppingListPageComponentTests
 			Assert.Contains("Milk", cut.Markup);
 			Assert.Contains("Coffee", cut.Markup);
 			Assert.Contains("Eggs", cut.Markup);
+			Assert.DoesNotContain("Boodschappen filteren", cut.Markup);
 		});
 
-		FindButton(cut, "Nodig").Click();
-
-		cut.WaitForAssertion(() =>
-		{
-			Assert.Contains("Gebruik het bewerkicoon om te hernoemen.", cut.Markup);
-			Assert.DoesNotContain("Sleep om de volgorde te wijzigen.", cut.Markup);
-			Assert.Contains("Milk", cut.Markup);
-			Assert.Contains("Coffee", cut.Markup);
-			Assert.DoesNotContain("Eggs", cut.Markup);
-		});
-
-		FindButton(cut, "Gekocht").Click();
-
-		cut.WaitForAssertion(() =>
-		{
-			Assert.Contains("Eggs", cut.Markup);
-			Assert.DoesNotContain("Milk", cut.Markup);
-			Assert.DoesNotContain("Coffee", cut.Markup);
-		});
+		Assert.DoesNotContain(cut.FindAll("button"), button =>
+			button.TextContent.Trim() is "Alles" or "Nodig" or "Gekocht");
 	}
 
 	[Fact]
-	public void AddItem_ResetsFilterToAllAndShowsNewItem()
+	public void AddItem_ShowsNewItem()
 	{
 		var service = new FakeShoppingListService([CreateActiveList()]);
 
 		using var context = CreateContext(service, new StoreChangeNotifier());
 		var cut = context.Render<ShoppingListPage>(parameters => parameters.Add(page => page.Id, 1));
 
-		FindButton(cut, "Gekocht").Click();
-		FindButton(cut, "Nieuwe boodschap").Click();
+		cut.Find("button[aria-label='Nieuwe boodschap']").Click();
 		cut.Find("input[placeholder='Boodschap toevoegen']").Input("Bananas");
 		FindButton(cut, "Toevoegen").Click();
 
@@ -71,26 +54,6 @@ public sealed class ShoppingListPageComponentTests
 			Assert.Contains("Milk", cut.Markup);
 			Assert.Contains("Eggs", cut.Markup);
 			Assert.Contains("Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen.", cut.Markup);
-		});
-	}
-
-	[Fact]
-	public void ChangingFilters_CancelsInlineRename()
-	{
-		var service = new FakeShoppingListService([CreateActiveList()]);
-
-		using var context = CreateContext(service, new StoreChangeNotifier());
-		var cut = context.Render<ShoppingListPage>(parameters => parameters.Add(page => page.Id, 1));
-
-		cut.Find("button[aria-label='Coffee bewerken']").Click();
-		cut.WaitForAssertion(() => Assert.Single(cut.FindAll("input[placeholder='Boodschap hernoemen']")));
-
-		FindButton(cut, "Nodig").Click();
-
-		cut.WaitForAssertion(() =>
-		{
-			Assert.Empty(cut.FindAll("input[placeholder='Boodschap hernoemen']"));
-			Assert.Single(cut.FindAll("button[aria-label='Coffee bewerken']"));
 		});
 	}
 

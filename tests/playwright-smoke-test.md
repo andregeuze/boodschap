@@ -64,7 +64,7 @@ Expected:
 - Heading "Weekboodschappen"
 - "Nieuwe boodschap" button
 - Paragraph: "Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen."
-- FilterBar group "Boodschappen filteren" with buttons: Alles, Nodig, Gekocht
+- No item filter buttons are shown
 - Each item row shows the edit icon button before the remove icon button
 - 6 list items: Melk, Eieren, Brood, Tomaten, Kaas, Koffie (all unchecked)
 
@@ -118,43 +118,7 @@ Expected:
 - Melk and Eieren are both marked as purchased
 - The row click toggles the same done state change as clicking the checkbox
 
-## 7. Test "Needed" filter
-
-```
-mcp_playwright_browser_click → button "Nodig"
-mcp_playwright_browser_snapshot
-```
-
-Expected:
-- "Nodig" button is `[active]`
-- Only unchecked items shown: Koffie, Flatbread, Tomaten, Kaas
-- Paragraph changes to "Gebruik het bewerkicoon om te hernoemen."
-
-## 8. Test "Purchased" filter
-
-```
-mcp_playwright_browser_click → button "Gekocht"
-mcp_playwright_browser_snapshot
-```
-
-Expected:
-- "Gekocht" button is `[active]`
-- Only checked items shown: Melk `[checked]`, Eieren `[checked]`
-- Paragraph remains "Gebruik het bewerkicoon om te hernoemen."
-
-## 9. Test "All" filter
-
-```
-mcp_playwright_browser_click → button "Alles"
-mcp_playwright_browser_snapshot
-```
-
-Expected:
-- "Alles" button is `[active]`
-- All 6 items shown
-- Paragraph returns to "Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen."
-
-## 10. Test "New item" quick-add
+## 7. Test "New item" quick-add
 
 ```
 mcp_playwright_browser_click → button "Nieuwe boodschap"
@@ -178,7 +142,7 @@ Expected:
 - In the seeded smoke run after reordering Koffie before Flatbread and then checking off Melk and Eieren, "Bananas" should appear after Kaas and before Melk/Eieren
 - Input is cleared
 
-## 11. Test remove
+## 8. Test remove
 
 ```
 mcp_playwright_browser_click → button "Bananas verwijderen"
@@ -188,7 +152,7 @@ mcp_playwright_browser_snapshot
 Expected:
 - "Bananas" is no longer in the list
 
-## 12. Return to overview
+## 9. Return to overview
 
 ```
 mcp_playwright_browser_click → button "Terug"
@@ -199,7 +163,7 @@ Expected:
 - URL returns to `/`
 - Overview cards are visible again
 
-## 13. Verify cross-session synchronization
+## 10. Verify cross-session synchronization
 
 Open a second browser page to the same list while the first page remains open.
 
@@ -242,13 +206,13 @@ mcp_playwright_browser_drag → drag "Koffie" onto "Flatbread" (page A)
 Expected:
 - The reordered item position updates on both pages without manual refresh
 
-## 14. Close browser
+## 11. Close browser
 
 ```
 mcp_playwright_browser_close
 ```
 
-## 15. Kill the host process
+## 12. Kill the host process
 
 Stop the `dotnet run` process that was started at the beginning.
 
