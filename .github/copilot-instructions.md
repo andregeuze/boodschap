@@ -50,6 +50,17 @@ npm run watch:css
 dotnet run
 ```
 
+## Running Tests
+
+When running `dotnet test`, always redirect test build output away from the app's normal `bin/` folder so `dotnet watch` or `dotnet run` can keep serving the app without file-lock conflicts:
+
+```powershell
+$out = Join-Path $env:TEMP 'boodschap-test-bin'
+dotnet test tests/Boodschap.Features.ShoppingLists.Tests/Boodschap.Features.ShoppingLists.Tests.csproj /p:OutputPath="$out\"
+```
+
+Use the same `/p:OutputPath="$out\"` pattern for focused test runs and future feature work. Do not stop `dotnet watch` or `dotnet run` just to run tests unless a task explicitly requires validating the normal publish/build output.
+
 ## Building the Docker Image
 
 ```bash

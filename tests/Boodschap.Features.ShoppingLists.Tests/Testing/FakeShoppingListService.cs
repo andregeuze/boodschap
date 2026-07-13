@@ -11,6 +11,7 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 
 	public string? LastCreatedListName { get; private set; }
 	public string? LastCreatedListDescription { get; private set; }
+	public (int ListId, string Name)? LastRenamedList { get; private set; }
 	public int? LastArchivedListId { get; private set; }
 	public int? LastUnarchivedListId { get; private set; }
 	public int? LastRemovedArchivedListId { get; private set; }
@@ -69,6 +70,7 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 		}
 
 		var normalizedName = name.Trim();
+		LastRenamedList = (listId, normalizedName);
 		if (!string.IsNullOrWhiteSpace(normalizedName))
 		{
 			shoppingList.Name = normalizedName;

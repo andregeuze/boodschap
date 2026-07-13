@@ -38,6 +38,7 @@ Expected:
 - Clicking "Nieuwe lijst toevoegen" opens inputs with placeholders "Titel" and "Beschrijving"
 - Tab group "Status van boodschappenlijst" with buttons: Nieuw, Archief
 - Visible list cards: Weekboodschappen and Etentje
+- Active list cards show list-management buttons: Hernoemen and Archiveren
 
 ## 3. Test archived tab
 
@@ -50,6 +51,7 @@ Expected:
 - "Archief" button is `[active]`
 - Archived list card "Kampeerweekend" is shown
 - New list cards are hidden
+- Archived list cards show list-management buttons: Hernoemen, Uit archief halen, and Verwijderen
 
 ## 4. Open a shopping list
 
@@ -62,7 +64,8 @@ Expected:
 - URL ends with `/lists/1`
 - "Terug" button is visible
 - Heading "Weekboodschappen"
-- "Nieuwe boodschap" button
+- No list-management buttons are shown in the list view
+- The icon-only "Nieuwe boodschap" button appears under the "Boodschappen" heading
 - Paragraph: "Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen."
 - No item filter buttons are shown
 - Each item row shows the edit icon button before the remove icon button

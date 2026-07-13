@@ -54,7 +54,7 @@ The app shell should only compose this feature through `Program.cs` and `Shoppin
 - Shopping list routes require an authenticated user.
 - Lists may only be permanently removed after they are archived.
 - New items are inserted before the first purchased item when a list contains both needed and purchased items.
-- List names are user-provided at creation time and can be renamed later without leaving the list page.
+- List names are user-provided at creation time and can be renamed later from the overview page.
 - Item names are user-provided and can be renamed inline from the list page without leaving the current list.
 - Marking an item as purchased moves it to the end of the list.
 - Drag-and-drop reordering is available when no item is being renamed inline.

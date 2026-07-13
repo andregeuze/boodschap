@@ -16,14 +16,25 @@
 					<p class="text-xs text-neutral-500 dark:text-neutral-400">@ResolveEmail(authenticationState.User)</p>
 				}
 			</div>
-			<a class="rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition hover:bg-neutral-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
-			   href="/account">
-				@Localizer["Account.AccountLink"]
+			<a class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
+			   href="/account"
+			   aria-label="@Localizer["Account.AccountLink"]"
+			   title="@Localizer["Account.AccountLink"]">
+				<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+					<path d="M20 21a8 8 0 0 0-16 0" />
+					<circle cx="12" cy="8" r="4" />
+				</svg>
 			</a>
-			<a class="rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition hover:bg-neutral-50 dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10"
+			<a class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
 			   data-enhance-nav="false"
-			   href="/account/logout?returnUrl=/signed-out">
-				@Localizer["Account.SignOut"]
+			   href="/account/logout?returnUrl=/signed-out"
+			   aria-label="@Localizer["Account.SignOut"]"
+			   title="@Localizer["Account.SignOut"]">
+				<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+					<path d="M14 3h5v18h-5" />
+					<path d="M10 17l5-5-5-5" />
+					<path d="M15 12H3" />
+				</svg>
 			</a>
 		</div>
 	</Authorized>

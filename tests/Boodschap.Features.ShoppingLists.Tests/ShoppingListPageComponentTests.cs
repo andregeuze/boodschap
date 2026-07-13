@@ -28,6 +28,8 @@ public sealed class ShoppingListPageComponentTests
 			Assert.Contains("Milk", cut.Markup);
 			Assert.Contains("Coffee", cut.Markup);
 			Assert.Contains("Eggs", cut.Markup);
+			Assert.DoesNotContain(">Archiveren</button>", cut.Markup);
+			Assert.DoesNotContain(">Hernoemen</button>", cut.Markup);
 			Assert.DoesNotContain("Boodschappen filteren", cut.Markup);
 		});
 
@@ -54,24 +56,6 @@ public sealed class ShoppingListPageComponentTests
 			Assert.Contains("Milk", cut.Markup);
 			Assert.Contains("Eggs", cut.Markup);
 			Assert.Contains("Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen.", cut.Markup);
-		});
-	}
-
-	[Fact]
-	public void ArchiveList_NavigatesToArchivedOverview()
-	{
-		var service = new FakeShoppingListService([CreateActiveList()]);
-
-		using var context = CreateContext(service, new StoreChangeNotifier());
-		var navigation = context.Services.GetRequiredService<NavigationManager>();
-		var cut = context.Render<ShoppingListPage>(parameters => parameters.Add(page => page.Id, 1));
-
-		FindButton(cut, "Archiveren").Click();
-
-		cut.WaitForAssertion(() =>
-		{
-			Assert.Equal(1, service.LastArchivedListId);
-			Assert.Equal("http://localhost/?tab=Archived", navigation.Uri);
 		});
 	}
 

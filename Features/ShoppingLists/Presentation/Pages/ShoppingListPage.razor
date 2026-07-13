@@ -24,7 +24,7 @@ else
 {
 	<div class="min-h-screen">
 		<header class="sticky top-0 z-20 border-b border-white/10 bg-neutral-950/80 backdrop-blur">
-			<div class="mx-auto flex w-full max-w-5xl flex-col items-stretch gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+			<div class="mx-auto flex w-full max-w-5xl items-center gap-3 px-4 py-3 sm:px-6">
 				<div class="flex min-w-0 items-center gap-3">
 					<button class="shrink-0 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
 							@onclick="BackToOverview">
@@ -33,64 +33,23 @@ else
 
 					<div class="min-w-0">
 						<p class="text-xs uppercase tracking-[0.24em] text-emerald-400">@Localizer["Shopping.ShoppingList"]</p>
-						@if (isRenaming)
-						{
-							<form class="mt-1 flex flex-wrap items-center gap-2" @onsubmit="RenameList">
-								<input class="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white outline-none ring-emerald-400/40 placeholder:text-neutral-400 focus:ring-2 sm:w-80"
-								       placeholder="@Localizer["Shopping.ListNamePlaceholder"]"
-									   @bind="editableListName"
-									   @bind:event="oninput"
-									   autofocus />
-								<button type="submit"
-										class="rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-400"
-										disabled="@string.IsNullOrWhiteSpace(editableListName)">
-									@Localizer["Common.Save"]
-								</button>
-								<button type="button"
-										class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
-										@onclick="CancelRename">
-									@Localizer["Common.Cancel"]
-								</button>
-							</form>
-						}
-						else
-						{
-							<h1 class="truncate text-lg font-semibold tracking-tight text-white">@shoppingList.Name</h1>
-						}
+						<h1 class="truncate text-lg font-semibold tracking-tight text-white">@shoppingList.Name</h1>
 					</div>
 				</div>
+			</div>
+		</header>
 
-				<div class="flex flex-wrap items-center gap-2 sm:justify-end">
-					@if (!isRenaming)
+		<section class="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
+			<div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+				<div class="min-w-0">
+					<h2 class="text-2xl font-bold tracking-tight text-white">@Localizer["Shopping.Groceries"]</h2>
+					@if (!string.IsNullOrWhiteSpace(shoppingList.Description))
 					{
-						<button class="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
-								@onclick="BeginRename">
-							@Localizer["Common.Rename"]
-						</button>
-					}
-
-					@if (shoppingList.Archived)
-					{
-						<span class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium uppercase tracking-[0.2em] text-neutral-300">@Localizer["Common.Archived"]</span>
-						<button class="rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-sm font-medium text-rose-300 transition hover:bg-rose-500/15"
-								@onclick="RemoveArchivedList">
-							@Localizer["Common.Remove"]
-						</button>
-						<button class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
-								@onclick="UnarchiveList">
-							@Localizer["Common.Unarchive"]
-						</button>
-					}
-					else
-					{
-						<button class="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-neutral-200 transition hover:bg-white/10"
-								@onclick="ArchiveList">
-							@Localizer["Common.Archive"]
-						</button>
+						<p class="text-sm text-neutral-400">@shoppingList.Description</p>
 					}
 
 					<button type="button"
-							class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-600 shadow-[0_12px_30px_rgba(16,185,129,0.18)] ring-1 ring-inset ring-neutral-200 transition duration-500 ease-in hover:-translate-y-0.5 hover:bg-emerald-50 hover:text-emerald-500 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:pointer-events-none dark:bg-white/10 dark:text-emerald-300 dark:ring-white/15 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-200 dark:hover:ring-emerald-300/50"
+							class="mt-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-600 shadow-[0_12px_30px_rgba(16,185,129,0.18)] ring-1 ring-inset ring-neutral-200 transition duration-500 ease-in hover:-translate-y-0.5 hover:bg-emerald-50 hover:text-emerald-500 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:pointer-events-none dark:bg-white/10 dark:text-emerald-300 dark:ring-white/15 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-200 dark:hover:ring-emerald-300/50"
 							aria-label="@Localizer["Shopping.NewItem"]"
 							title="@Localizer["Shopping.NewItem"]"
 							@onclick="ToggleQuickAdd">
@@ -99,11 +58,13 @@ else
 						</svg>
 					</button>
 				</div>
+
+				<p class="text-sm text-neutral-400 sm:max-w-xs sm:text-right">@ItemInteractionHint</p>
 			</div>
 
 			@if (isQuickAddOpen)
 			{
-				<div class="mx-auto w-full max-w-3xl px-4 pb-3">
+				<div class="mb-5 w-full max-w-3xl">
 					<form class="flex min-w-0 gap-2" @onsubmit="AddItem">
 						<input class="min-w-0 flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none ring-emerald-400/40 placeholder:text-neutral-400 focus:ring-2"
 						       placeholder="@Localizer["Shopping.AddGroceryItemPlaceholder"]"
@@ -114,20 +75,6 @@ else
 					</form>
 				</div>
 			}
-		</header>
-
-		<section class="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
-			<div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-				<div>
-					<h2 class="text-2xl font-bold tracking-tight text-white">@Localizer["Shopping.Groceries"]</h2>
-					@if (!string.IsNullOrWhiteSpace(shoppingList.Description))
-					{
-						<p class="text-sm text-neutral-400">@shoppingList.Description</p>
-					}
-				</div>
-
-				<p class="text-sm text-neutral-400">@ItemInteractionHint</p>
-			</div>
 
 			<ul class="space-y-2">
 				@foreach (var item in VisibleItems)
@@ -223,9 +170,7 @@ else
 	private ShoppingListItem? dragOverItem;
 	private int? editingItemId;
 	private bool isQuickAddOpen;
-	private bool isRenaming;
 	private string editableItemName = string.Empty;
-	private string editableListName = string.Empty;
 	private string newItemName = string.Empty;
 	private bool CanReorderItems => editingItemId is null;
 	private string ItemInteractionHint => CanReorderItems
@@ -247,9 +192,7 @@ else
 	protected override async Task OnParametersSetAsync()
 	{
 		shoppingList = await ShoppingLists.GetListAsync(Id);
-		editableListName = shoppingList?.Name ?? string.Empty;
 		CancelItemRename();
-		isRenaming = false;
 	}
 
 	public void Dispose()
@@ -262,78 +205,6 @@ else
 		Navigation.NavigateTo(shoppingList?.Archived is true ? "/?tab=Archived" : "/");
 	}
 
-	private void BeginRename()
-	{
-		if (shoppingList is null)
-		{
-			return;
-		}
-
-		CancelItemRename();
-		editableListName = shoppingList.Name;
-		isRenaming = true;
-	}
-
-	private void CancelRename()
-	{
-		editableListName = shoppingList?.Name ?? string.Empty;
-		isRenaming = false;
-	}
-
-	private async Task RenameList()
-	{
-		if (shoppingList is null || string.IsNullOrWhiteSpace(editableListName))
-		{
-			return;
-		}
-
-		var previousName = shoppingList.Name;
-		shoppingList = await ShoppingLists.RenameListAsync(Id, editableListName) ?? shoppingList;
-		editableListName = shoppingList.Name;
-		isRenaming = false;
-
-		if (!string.Equals(previousName, shoppingList.Name, StringComparison.Ordinal))
-		{
-			Navigation.NavigateTo($"/lists/{Id}", forceLoad: true, replace: true);
-		}
-	}
-
-	private async Task ArchiveList()
-	{
-		if (shoppingList is null || shoppingList.Archived)
-		{
-			return;
-		}
-
-		shoppingList = await ShoppingLists.ArchiveListAsync(Id) ?? shoppingList;
-		Navigation.NavigateTo("/?tab=Archived");
-	}
-
-	private async Task UnarchiveList()
-	{
-		if (shoppingList is null || !shoppingList.Archived)
-		{
-			return;
-		}
-
-		shoppingList = await ShoppingLists.UnarchiveListAsync(Id) ?? shoppingList;
-	}
-
-	private async Task RemoveArchivedList()
-	{
-		if (shoppingList is null || !shoppingList.Archived)
-		{
-			return;
-		}
-
-		if (!await ShoppingLists.RemoveArchivedListAsync(Id))
-		{
-			return;
-		}
-
-		Navigation.NavigateTo("/?tab=Archived");
-	}
-
 	private void ToggleQuickAdd()
 	{
 		isQuickAddOpen = !isQuickAddOpen;
@@ -344,11 +215,6 @@ else
 		if (shoppingList is null)
 		{
 			return;
-		}
-
-		if (isRenaming)
-		{
-			CancelRename();
 		}
 
 		HandleDragEnd();
@@ -456,10 +322,8 @@ else
 		return InvokeAsync(async () =>
 		{
 			shoppingList = await ShoppingLists.GetListAsync(Id);
-			editableListName = shoppingList?.Name ?? string.Empty;
 			if (shoppingList is null)
 			{
-				isRenaming = false;
 				CancelItemRename();
 			}
 			else if (editingItemId is int itemId && !shoppingList.Items.Any(item => item.Id == itemId))
