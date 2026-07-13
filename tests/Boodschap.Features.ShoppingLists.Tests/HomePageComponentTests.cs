@@ -33,7 +33,8 @@ public sealed class HomePageComponentTests
 			Assert.Contains("Dinner party", cut.Markup);
 			Assert.DoesNotContain("Camping weekend", cut.Markup);
 			Assert.Single(cut.FindAll("button[aria-label='Nieuwe lijst toevoegen']"));
-			Assert.Equal(2, cut.FindAll("button").Count(button => button.TextContent.Trim() == "Hernoemen"));
+			Assert.Single(cut.FindAll("button[aria-label='Weekly groceries bewerken'][title='Hernoemen']"));
+			Assert.Single(cut.FindAll("button[aria-label='Dinner party bewerken'][title='Hernoemen']"));
 			Assert.Equal(2, cut.FindAll("button").Count(button => button.TextContent.Trim() == "Archiveren"));
 		});
 
@@ -45,7 +46,7 @@ public sealed class HomePageComponentTests
 			Assert.DoesNotContain("Dinner party", cut.Markup);
 			Assert.Contains("Camping weekend", cut.Markup);
 			Assert.Empty(cut.FindAll("button[aria-label='Nieuwe lijst toevoegen']"));
-			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Hernoemen");
+			Assert.Single(cut.FindAll("button[aria-label='Camping weekend bewerken'][title='Hernoemen']"));
 			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Uit archief halen");
 			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Verwijderen");
 		});
@@ -59,7 +60,7 @@ public sealed class HomePageComponentTests
 		using var context = CreateContext(service, new StoreChangeNotifier());
 		var cut = context.Render<Home>();
 
-		FindButton(cut, "Hernoemen").Click();
+		FindButtonByLabel(cut, "Weekly groceries bewerken").Click();
 		cut.Find("input[placeholder='Lijstnaam']").Input("Weekly staples");
 		cut.Find("form").Submit();
 

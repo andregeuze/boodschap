@@ -112,6 +112,7 @@
   <data name="Shopping.PageTitle" xml:space="preserve"><value>Boodschap</value></data>
   <data name="Shopping.RemoveItem" xml:space="preserve"><value>{0} verwijderen</value></data>
   <data name="Shopping.RenameItem" xml:space="preserve"><value>{0} bewerken</value></data>
+  <data name="Shopping.RenameList" xml:space="preserve"><value>{0} bewerken</value></data>
   <data name="Shopping.RenameItemPlaceholder" xml:space="preserve"><value>Boodschap hernoemen</value></data>
   <data name="Shopping.SaveItemName" xml:space="preserve"><value>Naam opslaan</value></data>
   <data name="Shopping.ShoppingList" xml:space="preserve"><value>Boodschappenlijst</value></data>
