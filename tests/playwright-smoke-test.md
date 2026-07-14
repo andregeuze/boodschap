@@ -33,6 +33,7 @@ mcp_playwright_browser_snapshot
 ```
 
 Expected:
+- Header feature navigation shows icon-only links for "Boodschappenlijsten" and "Voeding"
 - Heading "Kies een lijst en ga door."
 - Icon-only "Nieuwe lijst toevoegen" button
 - Clicking "Nieuwe lijst toevoegen" opens inputs with placeholders "Titel" and "Beschrijving"

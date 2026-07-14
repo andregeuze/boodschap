@@ -79,6 +79,20 @@
   <data name="Error.Title" xml:space="preserve"><value>Fout.</value></data>
   <data name="NotFound.Description" xml:space="preserve"><value>Sorry, de inhoud die je zoekt bestaat niet.</value></data>
   <data name="NotFound.Title" xml:space="preserve"><value>Niet gevonden</value></data>
+  <data name="Nutrition.Carbohydrates" xml:space="preserve"><value>Koolhydraten</value></data>
+  <data name="Nutrition.Description" xml:space="preserve"><value>NEVO-voedingswaarden worden lokaal in SQLite opgeslagen en per 100 gram getoond.</value></data>
+  <data name="Nutrition.EmptyState" xml:space="preserve"><value>De lokale NEVO-database bevat nog geen voedingsartikelen.</value></data>
+  <data name="Nutrition.EnergyKcal" xml:space="preserve"><value>kcal</value></data>
+  <data name="Nutrition.Eyebrow" xml:space="preserve"><value>Voeding</value></data>
+  <data name="Nutrition.Fat" xml:space="preserve"><value>Vet</value></data>
+  <data name="Nutrition.FeatureName" xml:space="preserve"><value>Voeding</value></data>
+  <data name="Nutrition.Fiber" xml:space="preserve"><value>Vezels</value></data>
+  <data name="Nutrition.Food" xml:space="preserve"><value>Voedingsartikel</value></data>
+  <data name="Nutrition.Heading" xml:space="preserve"><value>Voedingswaarden</value></data>
+  <data name="Nutrition.Loading" xml:space="preserve"><value>Voedingsartikelen laden...</value></data>
+  <data name="Nutrition.NevoCode" xml:space="preserve"><value>NEVO-code</value></data>
+  <data name="Nutrition.PageTitle" xml:space="preserve"><value>Voeding</value></data>
+  <data name="Nutrition.Protein" xml:space="preserve"><value>Eiwit</value></data>
   <data name="Reconnect.Failed" xml:space="preserve"><value>Opnieuw verbinden is mislukt.</value></data>
   <data name="Reconnect.FailedHelp" xml:space="preserve"><value>Probeer opnieuw of herlaad de pagina.</value></data>
   <data name="Reconnect.Rejoining" xml:space="preserve"><value>Opnieuw verbinden met de server...</value></data>

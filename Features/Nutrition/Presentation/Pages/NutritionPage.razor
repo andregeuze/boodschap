@@ -1,0 +1,69 @@
+@page "/nutrition"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IFoodService Foods
+@inject IStringLocalizer<AppStrings> Localizer
+
+<PageTitle>@Localizer["Nutrition.PageTitle"]</PageTitle>
+
+<section class="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-6 sm:px-6 sm:py-8">
+	<div class="space-y-3">
+		<p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-600 dark:text-emerald-400">@Localizer["Nutrition.Eyebrow"]</p>
+		<div class="space-y-2">
+			<h1 class="text-3xl font-black tracking-tight text-neutral-950 dark:text-white sm:text-4xl">@Localizer["Nutrition.Heading"]</h1>
+			<p class="max-w-2xl text-sm leading-6 text-neutral-600 dark:text-neutral-300">@Localizer["Nutrition.Description"]</p>
+		</div>
+	</div>
+
+	<div class="rounded-[1.5rem] border border-neutral-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-neutral-900/90">
+		@if (foods is null)
+		{
+			<p class="text-sm text-neutral-600 dark:text-neutral-300">@Localizer["Nutrition.Loading"]</p>
+		}
+		else if (foods.Count == 0)
+		{
+			<p class="text-sm text-neutral-600 dark:text-neutral-300">@Localizer["Nutrition.EmptyState"]</p>
+		}
+		else
+		{
+			<div class="overflow-x-auto">
+				<table class="min-w-full text-left text-sm">
+					<thead class="text-xs uppercase tracking-[0.16em] text-neutral-500 dark:text-neutral-400">
+						<tr>
+							<th class="px-3 py-2 font-semibold">@Localizer["Nutrition.NevoCode"]</th>
+							<th class="px-3 py-2 font-semibold">@Localizer["Nutrition.Food"]</th>
+							<th class="px-3 py-2 font-semibold">@Localizer["Nutrition.EnergyKcal"]</th>
+							<th class="px-3 py-2 font-semibold">@Localizer["Nutrition.Protein"]</th>
+							<th class="px-3 py-2 font-semibold">@Localizer["Nutrition.Carbohydrates"]</th>
+							<th class="px-3 py-2 font-semibold">@Localizer["Nutrition.Fat"]</th>
+							<th class="px-3 py-2 font-semibold">@Localizer["Nutrition.Fiber"]</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-neutral-100 dark:divide-white/10">
+						@foreach (var food in foods)
+						{
+							<tr>
+								<td class="px-3 py-3 text-neutral-600 dark:text-neutral-300">@food.NevoCode</td>
+								<td class="px-3 py-3 font-medium text-neutral-950 dark:text-white">@food.Name</td>
+								<td class="px-3 py-3 text-neutral-600 dark:text-neutral-300">@food.EnergyKcal</td>
+								<td class="px-3 py-3 text-neutral-600 dark:text-neutral-300">@food.Protein</td>
+								<td class="px-3 py-3 text-neutral-600 dark:text-neutral-300">@food.Carbohydrates</td>
+								<td class="px-3 py-3 text-neutral-600 dark:text-neutral-300">@food.Fat</td>
+								<td class="px-3 py-3 text-neutral-600 dark:text-neutral-300">@food.Fiber</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</div>
+</section>
+
+@code {
+	private IReadOnlyList<Food>? foods;
+
+	protected override async Task OnInitializedAsync()
+	{
+		foods = await Foods.GetFoodsAsync();
+	}
+}

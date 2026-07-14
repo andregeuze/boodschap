@@ -1,6 +1,8 @@
 using Boodschap.Components;
 using Boodschap.Features.Authentication;
 using Boodschap.Features.Authentication.Infrastructure.Persistence;
+using Boodschap.Features.Nutrition;
+using Boodschap.Features.Nutrition.Infrastructure.Persistence;
 using Boodschap.Features.ShoppingLists;
 using Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 using Boodschap.Shared.Infrastructure.Persistence;
@@ -32,6 +34,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 builder.Services.AddAuthenticationFeature(sqliteConnectionString);
 builder.Services.AddShoppingListsFeature(sqliteConnectionString);
+builder.Services.AddNutritionFeature(sqliteConnectionString);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -46,11 +49,13 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var app = builder.Build();
 
 await AuthenticationStoreInitializer.InitializeAsync(app.Services);
+await ShoppingListsInitializer.InitializeAsync(app.Services);
+await NutritionInitializer.InitializeAsync(app.Services);
 if (app.Environment.IsDevelopment())
 {
     await AuthenticationDevelopmentSeeder.SeedAsync(app.Services);
+    await NutritionDevelopmentSeeder.SeedAsync(app.Services);
 }
-await ShoppingListsInitializer.InitializeAsync(app.Services);
 
 app.UseForwardedHeaders();
 app.UseRequestLocalization();
