@@ -24,6 +24,7 @@ Nutrition owns locally stored NEVO food data and per-portion nutrition calculati
 
 - `NutritionDbContext`
 - `FoodRepository`
+- `NevoDetailsCsvImporter`
 - `NutritionInitializer`
 - `NutritionDevelopmentSeeder`
 - `Infrastructure/Persistence/Migrations/`
@@ -41,10 +42,11 @@ NEVO records are matched by `Food.NevoCode`; the app-owned `Food.Id` remains an 
 Import NEVO as a local file, not as a runtime API dependency:
 
 1. Download or export the NEVO dataset to a local CSV/XLSX file.
-2. Parse only the columns this feature owns: Nevocode, voedingsmiddelnaam, kcal, eiwit, koolhydraten, vet, and vezel.
-3. Normalize Dutch decimal values before writing decimals to SQLite.
-4. Upsert rows by Nevocode so the same export can be imported repeatedly without duplicates.
-5. Keep the raw source file outside the web root; do not fetch NEVO online during normal app usage.
+2. Parse the NEVO details CSV rows into `Food` identity fields and `FoodNutrientDetail` rows.
+3. Derive kcal, protein, carbohydrates, fat, and fiber from their matching nutrient detail rows.
+4. Normalize Dutch decimal values before writing decimals to SQLite.
+5. Upsert foods by Nevocode so the same export can be imported repeatedly without duplicate foods.
+6. Keep the raw source file outside the web root; do not fetch NEVO online during normal app usage.
 
 The detailed NEVO 2025 v9.0 CSV is checked in as a Nutrition test fixture at `tests/Boodschap.Features.Nutrition.Tests/Fixtures/NEVO2025_v9.0_Details.csv` and is parsed by `NevoDetailsCsvImporter`.
 
@@ -66,10 +68,12 @@ The app shell composes this feature through `Program.cs` and `NutritionModule`.
 - Nutrition routes require an authenticated user.
 - Food nutrient values are stored per 100 grams.
 - `Food.NevoCode` is the stable external key for NEVO imports.
+- `FoodNutrientDetail.NutrientCode` is not unique per food; the NEVO details export can repeat a code in different nutrient groups, and those rows must be preserved.
 - Portion calculations use `per100g / 100m * grams`.
 - SQLite persistence stays behind feature-level contracts.
-- NEVO data should be imported into the local database rather than fetched from a live API at runtime.
+- NEVO data should be imported into the local database by an admin rather than fetched from a live API at runtime.
 - Development startup seeds five basic food articles when the nutrition database is empty.
+- The `/nutrition` page exposes the NEVO details CSV upload only to admin users.
 
 ## Test Strategy
 

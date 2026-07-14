@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
+const long maxNevoImportFileSize = 150 * 1024 * 1024;
 var supportedCultures = new[] { new CultureInfo("nl-NL") };
 
 CultureInfo.DefaultThreadCurrentCulture = supportedCultures[0];
@@ -22,7 +23,8 @@ var sqliteConnectionString = SqliteConnectionStringResolver.Normalize(
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddHubOptions(options => options.MaximumReceiveMessageSize = maxNevoImportFileSize);
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.Configure<RequestLocalizationOptions>(options =>

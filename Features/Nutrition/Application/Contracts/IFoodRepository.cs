@@ -6,4 +6,5 @@ public interface IFoodRepository
 {
 	Task<IReadOnlyList<Food>> GetFoodsAsync(CancellationToken cancellationToken = default);
 	Task<IReadOnlyList<Food>> SearchFoodsAsync(string query, CancellationToken cancellationToken = default);
+	Task UpsertFoodsAsync(IReadOnlyCollection<Food> foods, CancellationToken cancellationToken = default);
 }

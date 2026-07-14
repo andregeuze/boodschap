@@ -49,7 +49,7 @@ public sealed class NutritionDbContext(DbContextOptions<NutritionDbContext> opti
 			entity.Property(detail => detail.TraceFortified).HasMaxLength(100);
 			entity.Property(detail => detail.SourceCode).HasMaxLength(100);
 			entity.Property(detail => detail.Reference).HasMaxLength(2000);
-			entity.HasIndex(detail => new { detail.FoodId, detail.NutrientCode }).IsUnique();
+			entity.HasIndex(detail => new { detail.FoodId, detail.NutrientCode });
 		});
 	}
 }

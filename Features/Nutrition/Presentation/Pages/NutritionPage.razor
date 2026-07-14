@@ -1,18 +1,37 @@
 @page "/nutrition"
 @attribute [Authorize]
 @rendermode InteractiveServer
+@inject ICurrentUserAccessor CurrentUserAccessor
 @inject IFoodService Foods
 @inject IStringLocalizer<AppStrings> Localizer
+@inject ILogger<NutritionPage> Logger
 
 <PageTitle>@Localizer["Nutrition.PageTitle"]</PageTitle>
 
 <section class="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-6 sm:px-6 sm:py-8">
-	<div class="space-y-3">
-		<p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-600 dark:text-emerald-400">@Localizer["Nutrition.Eyebrow"]</p>
-		<div class="space-y-2">
-			<h1 class="text-3xl font-black tracking-tight text-neutral-950 dark:text-white sm:text-4xl">@Localizer["Nutrition.Heading"]</h1>
-			<p class="max-w-2xl text-sm leading-6 text-neutral-600 dark:text-neutral-300">@Localizer["Nutrition.Description"]</p>
+	<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+		<div class="space-y-3">
+			<p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-600 dark:text-emerald-400">@Localizer["Nutrition.Eyebrow"]</p>
+			<div class="space-y-2">
+				<h1 class="text-3xl font-black tracking-tight text-neutral-950 dark:text-white sm:text-4xl">@Localizer["Nutrition.Heading"]</h1>
+				<p class="max-w-2xl text-sm leading-6 text-neutral-600 dark:text-neutral-300">@Localizer["Nutrition.Description"]</p>
+			</div>
 		</div>
+
+		@if (currentUser?.IsAdmin == true)
+		{
+			<div class="flex flex-col items-start gap-2 sm:items-end">
+				<InputFile OnChange="ImportNevoData"
+				           accept=".csv,text/csv"
+				           disabled="@isImporting"
+				           aria-label="@Localizer["Nutrition.ImportNevoData"]"
+				           class="block max-w-full text-sm text-neutral-600 file:mr-3 file:rounded-full file:border-0 file:bg-emerald-400 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-neutral-950 file:transition hover:file:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60 dark:text-neutral-300" />
+				@if (!string.IsNullOrWhiteSpace(importStatusMessage))
+				{
+					<p class="max-w-xs text-sm @(importStatusIsError ? "text-rose-600 dark:text-rose-300" : "text-emerald-700 dark:text-emerald-300")">@importStatusMessage</p>
+				}
+		</div>
+		}
 	</div>
 
 	<div class="rounded-[1.5rem] border border-neutral-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-neutral-900/90">
@@ -60,10 +79,47 @@
 </section>
 
 @code {
+	private const long MaxImportFileSize = 150 * 1024 * 1024;
+
+	private CurrentUser? currentUser;
 	private IReadOnlyList<Food>? foods;
+	private string importStatusMessage = string.Empty;
+	private bool importStatusIsError;
+	private bool isImporting;
 
 	protected override async Task OnInitializedAsync()
 	{
+		currentUser = await CurrentUserAccessor.GetRequiredCurrentUserAsync();
 		foods = await Foods.GetFoodsAsync();
+	}
+
+	private async Task ImportNevoData(InputFileChangeEventArgs args)
+	{
+		if (currentUser?.IsAdmin != true)
+		{
+			return;
+		}
+
+		isImporting = true;
+		importStatusMessage = Localizer["Nutrition.Importing"].Value;
+		importStatusIsError = false;
+
+		try
+		{
+			await using var stream = args.File.OpenReadStream(MaxImportFileSize);
+			var result = await Foods.ImportNevoDetailsAsync(stream);
+			foods = await Foods.GetFoodsAsync();
+			importStatusMessage = Localizer["Nutrition.ImportSucceeded", result.ImportedFoods].Value;
+		}
+		catch (Exception exception)
+		{
+			Logger.LogError(exception, "NEVO details CSV import failed.");
+			importStatusIsError = true;
+			importStatusMessage = Localizer["Nutrition.ImportFailed"].Value;
+		}
+		finally
+		{
+			isImporting = false;
+		}
 	}
 }

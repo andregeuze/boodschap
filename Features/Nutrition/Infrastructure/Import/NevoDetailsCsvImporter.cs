@@ -1,17 +1,25 @@
 using Boodschap.Features.Nutrition.Domain;
+using Boodschap.Features.Nutrition.Application;
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
+using System.Text;
 
 namespace Boodschap.Features.Nutrition.Infrastructure.Import;
 
-public sealed class NevoDetailsCsvImporter
+public sealed class NevoDetailsCsvImporter : INevoFoodImporter
 {
 	private static readonly CultureInfo DutchCulture = CultureInfo.GetCultureInfo("nl-NL");
 
 	public IReadOnlyList<Food> ReadFoods(string path)
 	{
-		using var reader = new StreamReader(path);
+		using var stream = File.OpenRead(path);
+		return ReadFoods(stream);
+	}
+
+	public IReadOnlyList<Food> ReadFoods(Stream source)
+	{
+		using var reader = new StreamReader(source, Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024, leaveOpen: true);
 		using var csv = new CsvReader(reader, new CsvConfiguration(DutchCulture)
 		{
 			Delimiter = "|",

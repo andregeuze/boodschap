@@ -1,4 +1,5 @@
 using Boodschap.Features.Nutrition.Application;
+using Boodschap.Features.Nutrition.Infrastructure.Import;
 using Boodschap.Features.Nutrition.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ public static class NutritionModule
 		services.AddDbContextFactory<NutritionDbContext>(options => options.UseSqlite(
 			sqliteConnectionString,
 			sqlite => sqlite.MigrationsHistoryTable(NutritionDbContext.MigrationsHistoryTableName)));
+		services.AddSingleton<INevoFoodImporter, NevoDetailsCsvImporter>();
 		services.AddScoped<IFoodRepository, FoodRepository>();
 		services.AddScoped<IFoodService, FoodService>();
 
