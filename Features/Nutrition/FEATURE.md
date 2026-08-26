@@ -4,6 +4,8 @@
 
 Nutrition owns locally stored NEVO food data and per-portion nutrition calculations. NEVO data is kept in SQLite rather than queried through an external API, so lookups stay fast, cheap, and available without an external service dependency.
 
+The feature is controlled by `Features:Nutrition:Enabled` and is enabled in the default configuration.
+
 ## Owned Surface
 
 ### Routes

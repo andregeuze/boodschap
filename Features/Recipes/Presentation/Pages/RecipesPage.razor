@@ -1,0 +1,463 @@
+@page "/recipes"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@using System.Net.Http
+@using Boodschap.Features.Nutrition.Application
+@using Boodschap.Features.Nutrition.Domain
+@using Boodschap.Features.Recipes.Application
+@inject IFoodService FoodCatalog
+@inject IRecipeSearchService RecipeSearchService
+@inject ILogger<RecipesPage> Logger
+@inject IStringLocalizer<AppStrings> Localizer
+
+<PageTitle>@Text("Recipes.PageTitle")</PageTitle>
+
+<section class="mx-auto w-full max-w-xl px-4 py-6 sm:px-6 sm:py-8">
+	<h1 class="sr-only">@Text("Recipes.PageTitle")</h1>
+
+	<div class="overflow-hidden rounded-[2.25rem] border border-neutral-200 bg-[#fbf7ef] shadow-[0_24px_80px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-neutral-900/85 dark:shadow-black/20">
+		<div class="border-b border-black/10 bg-white/80 p-3 backdrop-blur dark:border-white/10 dark:bg-white/5">
+			<div class="grid grid-cols-[auto_1fr_1fr_1fr] overflow-hidden rounded-[1.35rem] border border-neutral-200 bg-[#f4efe6] dark:border-white/10 dark:bg-neutral-950/70">
+				<button type="button"
+						class="inline-flex h-12 w-12 items-center justify-center border-r border-neutral-200 text-emerald-600 transition hover:bg-white/70 hover:text-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-emerald-400 dark:border-white/10 dark:text-emerald-300 dark:hover:bg-white/10"
+						aria-label="@Text("Recipes.CreateRecipe")"
+						title="@Text("Recipes.CreateRecipe")"
+						@onclick="StartFreshDraft">
+					<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+						<path d="M12 5v14M5 12h14" stroke-linecap="round" />
+					</svg>
+				</button>
+
+				@foreach (var category in CategoryOptions)
+				{
+					var isSelected = selectedCategory == category.Value && !isCreatingRecipe;
+					<button type="button"
+							class="border-l border-neutral-200 px-3 py-3 text-sm font-semibold transition @(isSelected ? "bg-neutral-950 text-white dark:bg-emerald-400 dark:text-neutral-950" : "text-neutral-700 hover:bg-white/70 dark:border-white/10 dark:text-neutral-200 dark:hover:bg-white/10")"
+							@onclick="() => SelectCategory(category.Value)">
+						@Text(category.TabLabelKey)
+					</button>
+				}
+			</div>
+		</div>
+
+		<div class="px-5 py-6 sm:px-6 sm:py-7">
+			<div class="flex items-start justify-between gap-4">
+				<div class="min-w-0">
+					<p class="text-xs font-semibold uppercase tracking-[0.26em] text-neutral-500 dark:text-neutral-400">@Text(CurrentTabLabelKey)</p>
+					<h2 class="mt-3 text-3xl font-black tracking-tight text-neutral-950 dark:text-white">@CurrentTitle</h2>
+				</div>
+
+				@if (isCreatingRecipe)
+				{
+					<span class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-200">@Text("Recipes.CreateRecipe")</span>
+				}
+			</div>
+
+			<div class="mt-6 rounded-[1.6rem] border border-neutral-200/80 bg-white/70 p-3 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+				<div class="flex flex-col gap-3 sm:flex-row">
+					<div class="min-w-0 flex-1">
+						<label class="sr-only" for="recipe-ingredient-input">@Text("Recipes.IngredientInputLabel")</label>
+						<input id="recipe-ingredient-input"
+							   class="h-11 w-full rounded-2xl border border-neutral-200 bg-[#fcfaf5] px-4 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200 dark:border-white/10 dark:bg-neutral-950/70 dark:text-white dark:placeholder:text-neutral-500 dark:focus:ring-emerald-400/20"
+							   type="text"
+							   list="recipe-ingredient-suggestions"
+							   placeholder="@Text("Recipes.IngredientInputPlaceholder")"
+							   @bind="ingredientInput"
+							   @bind:event="oninput"
+							   @onkeydown="HandleIngredientInputKeyDown" />
+
+						<datalist id="recipe-ingredient-suggestions">
+							@foreach (var suggestion in VisibleFoodSuggestions)
+							{
+								<option value="@suggestion"></option>
+							}
+						</datalist>
+					</div>
+
+					<button type="button"
+							class="inline-flex h-11 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-950 px-4 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+							@onclick="AddIngredient"
+							disabled="@isSearching">
+						@Text("Common.Add")
+					</button>
+				</div>
+
+				<div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+					<p class="text-xs font-medium text-neutral-500 dark:text-neutral-400">@Text("Recipes.SearchHint")</p>
+
+					<button type="button"
+							class="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-100 dark:hover:bg-emerald-400/20"
+							@onclick="SearchWithAiAsync"
+							disabled="@(isSearching || draftIngredients.Count == 0)">
+						@if (isSearching)
+						{
+							<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+								<path d="M12 3a9 9 0 1 0 9 9" stroke-linecap="round" stroke-linejoin="round" />
+							</svg>
+						}
+
+						<span>@(isSearching ? Text("Recipes.SearchWithAiLoading") : Text("Recipes.SearchWithAi"))</span>
+					</button>
+				</div>
+
+				@if (!string.IsNullOrWhiteSpace(searchErrorMessage))
+				{
+					<p class="mt-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-400/10 dark:text-rose-200" role="alert">@searchErrorMessage</p>
+				}
+			</div>
+
+			<div class="mt-6">
+				@if (draftIngredients.Count == 0)
+				{
+					<div class="space-y-4">
+						@for (var index = 0; index < 3; index++)
+						{
+							<div class="flex items-center gap-3">
+								<span class="inline-flex h-5 w-5 shrink-0 rounded-sm border border-neutral-300 dark:border-white/20"></span>
+								<span class="h-px flex-1 bg-neutral-300/80 dark:bg-white/15"></span>
+							</div>
+						}
+
+						<p class="pl-8 text-sm text-neutral-500 dark:text-neutral-400">@Text("Recipes.EmptyDraft")</p>
+					</div>
+				}
+				else
+				{
+					<div class="space-y-4">
+						@foreach (var ingredient in draftIngredients)
+						{
+							<button type="button"
+									class="flex w-full items-center gap-3 rounded-xl px-1 py-1 text-left transition hover:bg-white/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:hover:bg-white/5"
+									@onclick="() => ToggleIngredient(ingredient.Id)">
+								<span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border text-[10px] font-bold @(ingredient.IsChecked ? "border-emerald-500 bg-emerald-500 text-white" : "border-neutral-300 text-transparent dark:border-white/20")">✓</span>
+								<span class="min-w-0 truncate text-lg font-medium tracking-tight @(ingredient.IsChecked ? "text-neutral-400 line-through dark:text-neutral-500" : "text-neutral-950 dark:text-white")">@ingredient.Name</span>
+							</button>
+						}
+
+						<div class="ml-8 h-px w-24 bg-neutral-300/80 dark:bg-white/20"></div>
+					</div>
+				}
+			</div>
+
+			@if (recipeSuggestion is not null)
+			{
+				<div class="mt-6 rounded-[1.8rem] border border-neutral-200 bg-white/80 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
+					<div class="flex flex-wrap items-start justify-between gap-3">
+						<div class="min-w-0">
+							<p class="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-200">@Text("Recipes.AiSuggestion")</p>
+							<h3 class="mt-2 text-2xl font-black tracking-tight text-neutral-950 dark:text-white">@recipeSuggestion.Title</h3>
+
+							@if (!string.IsNullOrWhiteSpace(recipeSuggestion.Why))
+							{
+								<p class="mt-3 max-w-xl text-sm leading-6 text-neutral-600 dark:text-neutral-300">@recipeSuggestion.Why</p>
+							}
+						</div>
+
+						<span class="rounded-full border border-neutral-200 bg-[#f5efe2] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-neutral-600 dark:border-white/10 dark:bg-neutral-950/70 dark:text-neutral-300">@Text("Recipes.IngredientsCount", recipeSuggestion.Ingredients.Count)</span>
+					</div>
+
+					<div class="mt-5 grid gap-5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+						<div>
+							<p class="text-xs font-semibold uppercase tracking-[0.22em] text-neutral-500 dark:text-neutral-400">@Text("Recipes.IngredientsTitle")</p>
+							<ul class="mt-3 space-y-2">
+								@foreach (var ingredient in recipeSuggestion.Ingredients)
+								{
+									<li class="text-sm font-medium text-neutral-800 dark:text-neutral-100">@ingredient</li>
+								}
+							</ul>
+						</div>
+
+						@if (recipeSuggestion.Steps.Count > 0)
+						{
+							<div>
+								<p class="text-xs font-semibold uppercase tracking-[0.22em] text-neutral-500 dark:text-neutral-400">@Text("Recipes.MethodTitle")</p>
+								<ol class="mt-3 space-y-3">
+									@for (var index = 0; index < recipeSuggestion.Steps.Count; index++)
+									{
+										<li class="flex items-start gap-3">
+											<span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-xs font-bold text-white dark:bg-emerald-400 dark:text-neutral-950">@(index + 1)</span>
+											<span class="text-sm leading-6 text-neutral-700 dark:text-neutral-200">@recipeSuggestion.Steps[index]</span>
+										</li>
+									}
+								</ol>
+							</div>
+						}
+					</div>
+				</div>
+			}
+			else if (hasSearched && string.IsNullOrWhiteSpace(searchErrorMessage))
+			{
+				<div class="mt-6 rounded-[1.6rem] border border-dashed border-neutral-300 bg-white/40 px-4 py-5 text-sm text-neutral-600 dark:border-white/15 dark:bg-white/5 dark:text-neutral-300">
+					@Text("Recipes.AiNoSuggestion")
+				</div>
+			}
+		</div>
+	</div>
+</section>
+
+@code {
+	private static readonly IReadOnlyList<RecipeCategoryOption> CategoryOptions =
+	[
+		new(RecipeCategory.Favorites, "Recipes.Tab.Favorites"),
+		new(RecipeCategory.Dinner, "Recipes.Tab.Dinner"),
+		new(RecipeCategory.Lunch, "Recipes.Tab.Lunch")
+	];
+
+	private static readonly IReadOnlyList<RecipeTemplate> RecipeTemplates =
+	[
+		new(
+			RecipeCategory.Favorites,
+			"Recipes.Sample.TrayBake.Title",
+			[
+				new RecipeIngredientSeed("Recipes.Ingredient.Zalm"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Aardappels"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Broccoli"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Citroen"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Dille")
+			]),
+		new(
+			RecipeCategory.Dinner,
+			"Recipes.Sample.CreamyCoconutChicken.Title",
+			[
+				new RecipeIngredientSeed("Recipes.Ingredient.Mozzarella"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Kokosroom"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Penne"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Kipfilet"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Courgette")
+			]),
+		new(
+			RecipeCategory.Lunch,
+			"Recipes.Sample.QuickNoodleBowl.Title",
+			[
+				new RecipeIngredientSeed("Recipes.Ingredient.Noedels"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Paksoi"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Ei"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Bosui"),
+				new RecipeIngredientSeed("Recipes.Ingredient.Chiliolie")
+			])
+	];
+
+	private IReadOnlyList<Food> knownFoods = [];
+	private List<RecipeIngredientDraft> draftIngredients = [];
+	private string ingredientInput = string.Empty;
+	private bool hasSearched;
+	private bool isCreatingRecipe;
+	private bool isSearching;
+	private RecipeSuggestion? recipeSuggestion;
+	private string? searchErrorMessage;
+	private RecipeCategory selectedCategory = RecipeCategory.Dinner;
+
+	private RecipeTemplate CurrentRecipe => RecipeTemplates.First(recipe => recipe.Category == selectedCategory);
+	private string CurrentTabLabelKey => CategoryOptions.First(option => option.Value == selectedCategory).TabLabelKey;
+	private string CurrentTitle => isCreatingRecipe ? Text("Recipes.CreateRecipe") : Text(CurrentRecipe.TitleKey);
+	private IEnumerable<string> VisibleFoodSuggestions => knownFoods
+		.Select(food => food.Name)
+		.Where(name => name is { Length: > 0 }
+			&& (string.IsNullOrWhiteSpace(ingredientInput)
+				|| name.Contains(ingredientInput, StringComparison.CurrentCultureIgnoreCase)))
+		.Cast<string>()
+		.Distinct(StringComparer.CurrentCultureIgnoreCase)
+		.Take(8);
+
+	protected override async Task OnInitializedAsync()
+	{
+		knownFoods = await FoodCatalog.GetFoodsAsync();
+		LoadDraftFromCategory(selectedCategory);
+	}
+
+	private string Text(string key)
+	{
+		return Localizer[key].Value;
+	}
+
+	private string Text(string key, params object[] arguments)
+	{
+		return Localizer[key, arguments].Value;
+	}
+
+	private void SelectCategory(RecipeCategory category)
+	{
+		selectedCategory = category;
+		isCreatingRecipe = false;
+		ingredientInput = string.Empty;
+		ClearSearchState();
+		LoadDraftFromCategory(category);
+	}
+
+	private void StartFreshDraft()
+	{
+		isCreatingRecipe = true;
+		ingredientInput = string.Empty;
+		ClearSearchState();
+		draftIngredients = [];
+	}
+
+	private void HandleIngredientInputKeyDown(KeyboardEventArgs args)
+	{
+		if (args.Key == "Enter")
+		{
+			AddIngredient();
+		}
+	}
+
+	private void AddIngredient()
+	{
+		var label = ResolveKnownFoodLabel(ingredientInput);
+		if (string.IsNullOrWhiteSpace(label)
+			|| draftIngredients.Any(item => string.Equals(item.Name, label, StringComparison.CurrentCultureIgnoreCase)))
+		{
+			ingredientInput = string.Empty;
+			return;
+		}
+
+		isCreatingRecipe = true;
+		ClearSearchState();
+		draftIngredients.Add(new RecipeIngredientDraft
+		{
+			Id = draftIngredients.Count == 0 ? 1 : draftIngredients.Max(item => item.Id) + 1,
+			Name = label
+		});
+		ingredientInput = string.Empty;
+	}
+
+	private void ToggleIngredient(int ingredientId)
+	{
+		var ingredient = draftIngredients.FirstOrDefault(item => item.Id == ingredientId);
+		if (ingredient is null)
+		{
+			return;
+		}
+
+		ingredient.IsChecked = !ingredient.IsChecked;
+	}
+
+	private void LoadDraftFromCategory(RecipeCategory category)
+	{
+		var template = RecipeTemplates.First(recipe => recipe.Category == category);
+		draftIngredients = template.Ingredients
+			.Select((ingredient, index) => new RecipeIngredientDraft
+			{
+				Id = index + 1,
+				Name = ResolveRecipeIngredientLabel(ingredient.NameKey),
+			})
+			.ToList();
+	}
+
+	private async Task SearchWithAiAsync()
+	{
+		if (draftIngredients.Count == 0)
+		{
+			searchErrorMessage = Text("Recipes.SearchNeedsIngredients");
+			return;
+		}
+
+		isSearching = true;
+		searchErrorMessage = null;
+		recipeSuggestion = null;
+		hasSearched = false;
+
+		try
+		{
+			var suggestions = await RecipeSearchService.SearchAsync(new RecipeSearchRequest(
+				draftIngredients.Select(item => item.Name).ToArray(),
+				GetMealType(),
+				1));
+
+			recipeSuggestion = suggestions.FirstOrDefault();
+			hasSearched = true;
+		}
+		catch (TaskCanceledException exception)
+		{
+			Logger.LogWarning(exception, "Recipe AI search timed out for category {Category}.", selectedCategory);
+			searchErrorMessage = Text("Recipes.SearchTimedOut");
+		}
+		catch (InvalidOperationException exception)
+		{
+			Logger.LogWarning(exception, "Recipe AI search is unavailable because the webhook is not configured.");
+			searchErrorMessage = Text("Recipes.SearchUnavailable");
+		}
+		catch (HttpRequestException exception)
+		{
+			Logger.LogWarning(exception, "Recipe AI search request failed for category {Category}.", selectedCategory);
+			searchErrorMessage = Text("Recipes.SearchFailed");
+		}
+		catch (Exception exception)
+		{
+			Logger.LogWarning(exception, "Recipe AI search failed unexpectedly.");
+			searchErrorMessage = Text("Recipes.SearchFailed");
+		}
+		finally
+		{
+			isSearching = false;
+		}
+	}
+
+	private string ResolveRecipeIngredientLabel(string ingredientKey)
+	{
+		var preferredLabel = Text(ingredientKey);
+		var match = knownFoods.FirstOrDefault(food =>
+			!string.IsNullOrWhiteSpace(food.Name)
+			&& (string.Equals(food.Name, preferredLabel, StringComparison.CurrentCultureIgnoreCase)
+				|| food.Name.Contains(preferredLabel, StringComparison.CurrentCultureIgnoreCase)
+				|| preferredLabel.Contains(food.Name, StringComparison.CurrentCultureIgnoreCase)));
+
+		return match?.Name ?? preferredLabel;
+	}
+
+	private string ResolveKnownFoodLabel(string value)
+	{
+		var normalizedValue = value.Trim();
+		if (string.IsNullOrWhiteSpace(normalizedValue))
+		{
+			return string.Empty;
+		}
+
+		var match = knownFoods.FirstOrDefault(food =>
+			!string.IsNullOrWhiteSpace(food.Name)
+			&& (string.Equals(food.Name, normalizedValue, StringComparison.CurrentCultureIgnoreCase)
+				|| food.Name.Contains(normalizedValue, StringComparison.CurrentCultureIgnoreCase)
+				|| normalizedValue.Contains(food.Name, StringComparison.CurrentCultureIgnoreCase)));
+
+		return match?.Name ?? normalizedValue;
+	}
+
+	private string? GetMealType()
+	{
+		return selectedCategory switch
+		{
+			RecipeCategory.Dinner => "dinner",
+			RecipeCategory.Lunch => "lunch",
+			_ => null
+		};
+	}
+
+	private void ClearSearchState()
+	{
+		hasSearched = false;
+		recipeSuggestion = null;
+		searchErrorMessage = null;
+	}
+
+	private sealed record RecipeCategoryOption(RecipeCategory Value, string TabLabelKey);
+
+	private sealed record RecipeTemplate(
+		RecipeCategory Category,
+		string TitleKey,
+		IReadOnlyList<RecipeIngredientSeed> Ingredients);
+
+	private sealed record RecipeIngredientSeed(string NameKey);
+
+	private sealed class RecipeIngredientDraft
+	{
+		public int Id { get; init; }
+		public string Name { get; init; } = string.Empty;
+		public bool IsChecked { get; set; }
+	}
+
+	private enum RecipeCategory
+	{
+		Favorites,
+		Dinner,
+		Lunch
+	}
+}

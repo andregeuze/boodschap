@@ -32,7 +32,10 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 
 	public Task<IReadOnlyList<ShoppingList>> GetListsAsync(CancellationToken cancellationToken = default)
 	{
-		return Task.FromResult<IReadOnlyList<ShoppingList>>([.. storedLists.OrderBy(list => list.SortOrder).Select(CloneList)]);
+		return Task.FromResult<IReadOnlyList<ShoppingList>>([.. storedLists
+			.OrderByDescending(list => list.UpdatedAt)
+			.ThenBy(list => list.SortOrder)
+			.Select(CloneList)]);
 	}
 
 	public Task<ShoppingList?> GetListAsync(int id, CancellationToken cancellationToken = default)
@@ -244,6 +247,7 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 			Description = shoppingList.Description,
 			Archived = shoppingList.Archived,
 			SortOrder = shoppingList.SortOrder,
+			UpdatedAt = shoppingList.UpdatedAt,
 			Items = shoppingList.Items
 				.OrderBy(item => item.SortOrder)
 				.Select(item => new ShoppingListItem

@@ -27,9 +27,4 @@
     <ProjectReference Include="..\..\Boodschap.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Fixtures\NEVO2025_v9.0_Details.csv" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="Fixtures\NEVO2025_v9.0_Details_SMALL.csv" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>

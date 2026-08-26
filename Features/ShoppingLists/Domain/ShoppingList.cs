@@ -7,5 +7,6 @@ public sealed class ShoppingList
 	public string Description { get; set; } = string.Empty;
 	public bool Archived { get; set; }
 	public int SortOrder { get; set; }
+	public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 	public List<ShoppingListItem> Items { get; set; } = [];
 }

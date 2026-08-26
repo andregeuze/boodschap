@@ -7,6 +7,31 @@ namespace Boodschap.Features.ShoppingLists.Tests;
 public sealed class ShoppingListRepositoryTests
 {
 	[Fact]
+	public async Task GetListsAsync_ReturnsMostRecentlyUpdatedListFirst()
+	{
+		await using var harness = await ShoppingListsSqliteTestHarness.CreateAsync();
+		await harness.SeedAsync(
+			new ShoppingList
+			{
+				Name = "Older groceries",
+				SortOrder = 0,
+				UpdatedAt = new DateTime(2026, 8, 20, 8, 0, 0, DateTimeKind.Utc)
+			},
+			new ShoppingList
+			{
+				Name = "Recent groceries",
+				SortOrder = 1,
+				UpdatedAt = new DateTime(2026, 8, 25, 8, 0, 0, DateTimeKind.Utc)
+			});
+
+		var repository = new ShoppingListRepository(harness.DbContextFactory);
+
+		var lists = await repository.GetListsAsync();
+
+		Assert.Equal(["Recent groceries", "Older groceries"], lists.Select(list => list.Name).ToArray());
+	}
+
+	[Fact]
 	public async Task AddItemAsync_InsertsBeforePurchasedItems()
 	{
 		await using var harness = await ShoppingListsSqliteTestHarness.CreateAsync();
@@ -15,6 +40,7 @@ public sealed class ShoppingListRepositoryTests
 			{
 				Name = "Weekly groceries",
 				SortOrder = 0,
+				UpdatedAt = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc),
 				Items =
 				[
 					new() { Name = "Milk", SortOrder = 0 },
@@ -30,6 +56,7 @@ public sealed class ShoppingListRepositoryTests
 		Assert.True(result.Changed);
 		Assert.NotNull(result.Value);
 		Assert.Equal(["Milk", "Bread", "Eggs"], result.Value.Items.Select(item => item.Name).ToArray());
+		Assert.True(result.Value.UpdatedAt > new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 	}
 
 	[Fact]

@@ -3,6 +3,7 @@ using Boodschap.Features.Authentication;
 using Boodschap.Features.Authentication.Infrastructure.Persistence;
 using Boodschap.Features.Nutrition;
 using Boodschap.Features.Nutrition.Infrastructure.Persistence;
+using Boodschap.Features.Recipes;
 using Boodschap.Features.ShoppingLists;
 using Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
 using Boodschap.Shared.Infrastructure.Persistence;
@@ -20,6 +21,7 @@ CultureInfo.DefaultThreadCurrentUICulture = supportedCultures[0];
 var sqliteConnectionString = SqliteConnectionStringResolver.Normalize(
     builder.Configuration.GetConnectionString("Boodschap"),
     builder.Environment.ContentRootPath);
+var nutritionFeatureEnabled = builder.Configuration.IsNutritionFeatureEnabled();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -36,7 +38,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 builder.Services.AddAuthenticationFeature(sqliteConnectionString);
 builder.Services.AddShoppingListsFeature(sqliteConnectionString);
-builder.Services.AddNutritionFeature(sqliteConnectionString);
+builder.Services.AddNutritionFeature(builder.Configuration, sqliteConnectionString);
+builder.Services.AddRecipesFeature(builder.Configuration);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -52,11 +55,20 @@ var app = builder.Build();
 
 await AuthenticationStoreInitializer.InitializeAsync(app.Services);
 await ShoppingListsInitializer.InitializeAsync(app.Services);
-await NutritionInitializer.InitializeAsync(app.Services);
+
+if (nutritionFeatureEnabled)
+{
+    await NutritionInitializer.InitializeAsync(app.Services);
+}
+
 if (app.Environment.IsDevelopment())
 {
     await AuthenticationDevelopmentSeeder.SeedAsync(app.Services);
-    await NutritionDevelopmentSeeder.SeedAsync(app.Services);
+
+    if (nutritionFeatureEnabled)
+    {
+        await NutritionDevelopmentSeeder.SeedAsync(app.Services);
+    }
 }
 
 app.UseForwardedHeaders();
@@ -71,9 +83,11 @@ app.MapStaticAssets();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseWebSockets();
 app.UseAntiforgery();
 app.MapAuthenticationFeature();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

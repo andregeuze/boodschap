@@ -35,23 +35,18 @@ mcp_playwright_browser_snapshot
 Expected:
 - Header feature navigation shows icon-only links for "Boodschappenlijsten" and "Voeding"
 - Heading "Kies een lijst en ga door."
-- Icon-only "Nieuwe lijst toevoegen" button
+- Icon-only "Nieuwe lijst toevoegen" button appears directly below the page introduction
 - Clicking "Nieuwe lijst toevoegen" opens inputs with placeholders "Titel" and "Beschrijving"
-- Tab group "Status van boodschappenlijst" with buttons: Nieuw, Archief
-- Visible list cards: Weekboodschappen and Etentje
+- No Nieuw or Archief status tabs are shown
+- Active list cards Etentje and Weekboodschappen are shown first, with the most recently updated list first
 - Active list cards show an edit icon button with tooltip "Hernoemen" and an Archiveren button
+- The "Archief" heading and archived list card Kampeerweekend are shown below the active cards
+- Archived list cards show an edit icon button with tooltip "Hernoemen", plus Uit archief halen and Verwijderen buttons
 
-## 3. Test archived tab
-
-```
-mcp_playwright_browser_click → button "Archief"
-mcp_playwright_browser_snapshot
-```
+## 3. Test archived section
 
 Expected:
-- "Archief" button is `[active]`
-- Archived list card "Kampeerweekend" is shown
-- New list cards are hidden
+- Archived list card "Kampeerweekend" remains visible below all active cards
 - Archived list cards show an edit icon button with tooltip "Hernoemen", plus Uit archief halen and Verwijderen buttons
 
 ## 4. Open a shopping list

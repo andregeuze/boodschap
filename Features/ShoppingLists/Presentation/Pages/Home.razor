@@ -20,23 +20,85 @@
 		</div>
 
 		<div class="space-y-4">
-			<TabBar Tabs="Tabs"
-					ActiveTab="@activeTab"
-					OnTabChanged="SelectTab"
-					AriaLabel="@Localizer["Shopping.ShoppingListStatus"]"
-					TabLabelSelector="GetTabLabel" />
+			<section class="overflow-hidden">
+				@if (_isAddComposerOpen)
+				{
+					<div class="w-full rounded-[2rem] border border-neutral-200 bg-white p-4 shadow-[0_18px_50px_rgba(0,0,0,0.10)] transition duration-500 ease-out dark:border-white/10 dark:bg-neutral-900 sm:p-5 @(_isAddComposerEntering ? "translate-x-[110vw] opacity-0" : "translate-x-0 opacity-100")">
+						<form class="flex flex-col gap-4 sm:min-h-24 sm:flex-row sm:items-center sm:justify-between"
+						      @onsubmit="CreateList"
+						      @onsubmit:preventDefault>
+							<div class="flex min-w-0 flex-1 flex-col gap-3">
+								<input id="new-list-name"
+								       class="w-full border-0 border-b border-neutral-300 bg-transparent px-1 py-3 text-2xl font-light tracking-tight text-neutral-950 outline-none placeholder:text-neutral-300 focus:border-emerald-500 focus:ring-0 dark:border-white/15 dark:text-white dark:placeholder:text-neutral-600 dark:focus:border-emerald-400"
+								       placeholder="@Localizer["Shopping.TitlePlaceholder"]"
+								       @bind="newListName"
+								       @bind:event="oninput"
+								       autofocus />
+								<input id="new-list-description"
+								       class="w-full border-0 border-b border-neutral-200 bg-transparent px-1 py-2 text-sm text-neutral-700 outline-none placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-0 dark:border-white/10 dark:text-neutral-300 dark:placeholder:text-neutral-600 dark:focus:border-emerald-400"
+								       placeholder="@Localizer["Shopping.DescriptionPlaceholder"]"
+								       @bind="newListDescription"
+								       @bind:event="oninput" />
+							</div>
 
-			@if (VisibleLists.Count == 0)
+							<div class="flex items-center justify-end gap-2 sm:shrink-0">
+								<button type="button"
+										class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rose-600 shadow-[0_12px_30px_rgba(244,63,94,0.14)] ring-1 ring-inset ring-neutral-200 transition hover:-translate-y-0.5 hover:bg-rose-50 hover:text-rose-500 hover:ring-rose-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 dark:bg-white/10 dark:text-rose-300 dark:ring-white/15 dark:hover:bg-rose-400/10 dark:hover:text-rose-200 dark:hover:ring-rose-300/50"
+										aria-label="@Localizer["Common.Cancel"]"
+										@onclick="CancelAddComposer">
+									<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+										<path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-linecap="round" stroke-width="2.25" />
+									</svg>
+								</button>
+								<button type="submit"
+										class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-600 shadow-[0_12px_30px_rgba(16,185,129,0.18)] ring-1 ring-inset ring-neutral-200 transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:text-emerald-500 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-300 disabled:shadow-none disabled:ring-neutral-200 dark:bg-white/10 dark:text-emerald-300 dark:ring-white/15 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-200 dark:hover:ring-emerald-300/50 dark:disabled:bg-white/5 dark:disabled:text-neutral-600 dark:disabled:ring-white/10"
+										aria-label="@Localizer["Shopping.CreateList"]"
+										disabled="@string.IsNullOrWhiteSpace(newListName)">
+									<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+										<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" />
+									</svg>
+								</button>
+							</div>
+						</form>
+					</div>
+				}
+				else
+				{
+					<div class="flex justify-start py-1">
+						<button type="button"
+								class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-600 shadow-[0_12px_30px_rgba(16,185,129,0.18)] ring-1 ring-inset ring-neutral-200 transition duration-500 ease-in hover:-translate-y-0.5 hover:bg-emerald-50 hover:text-emerald-500 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:pointer-events-none dark:bg-white/10 dark:text-emerald-300 dark:ring-white/15 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-200 dark:hover:ring-emerald-300/50 @(_isAddButtonExiting ? "-translate-x-[110vw] opacity-0" : "translate-x-0 opacity-100")"
+								aria-label="@Localizer["Shopping.AddNewList"]"
+								disabled="@_isAddButtonExiting"
+								@onclick="BeginAddList">
+							<svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+								<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-linecap="round" stroke-width="2.25" />
+							</svg>
+						</button>
+					</div>
+				}
+			</section>
+
+			@if (ActiveLists.Count == 0)
 			{
 				<div class="rounded-[1.5rem] border border-dashed border-neutral-300 bg-white px-6 py-10 text-center text-sm text-neutral-500 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-neutral-400">
 					@Localizer["Shopping.EmptyState"]
 				</div>
 			}
-			else
+
+			@if (VisibleLists.Count > 0)
 			{
 				<div class="grid gap-3">
+					@{ var archivedHeadingRendered = false; }
 					@foreach (var list in VisibleLists)
 					{
+						@if (list.Archived && !archivedHeadingRendered)
+						{
+							archivedHeadingRendered = true;
+							<div class="border-t border-neutral-200 pt-6 dark:border-white/10">
+								<h2 class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">@Localizer["Common.Archived"]</h2>
+							</div>
+						}
+
 						<article class="rounded-[1.5rem] border border-neutral-200 bg-white p-3 shadow-sm transition hover:border-neutral-300 hover:shadow-md dark:border-white/10 dark:bg-neutral-900/90 dark:text-neutral-100 dark:hover:bg-neutral-900">
 							<button class="group w-full rounded-[1.25rem] p-2 text-left transition hover:bg-neutral-50 dark:hover:bg-white/5"
 									@onclick="() => OpenList(list.Id)">
@@ -109,80 +171,10 @@
 				</div>
 			}
 		</div>
-
-		@if (activeTab == NewTab)
-		{
-			<section class="overflow-hidden pt-2">
-				@if (_isAddComposerOpen)
-				{
-					<div class="mx-auto w-full max-w-5xl rounded-[2rem] border border-neutral-200 bg-white p-4 shadow-[0_18px_50px_rgba(0,0,0,0.10)] transition duration-500 ease-out dark:border-white/10 dark:bg-neutral-900 sm:p-5 @(_isAddComposerEntering ? "translate-x-[110vw] opacity-0" : "translate-x-0 opacity-100")">
-						<form class="flex flex-col gap-4 sm:min-h-24 sm:flex-row sm:items-center sm:justify-between"
-						      @onsubmit="CreateList"
-						      @onsubmit:preventDefault>
-							<div class="flex min-w-0 flex-1 flex-col gap-3">
-								<input id="new-list-name"
-								       class="w-full border-0 border-b border-neutral-300 bg-transparent px-1 py-3 text-2xl font-light tracking-tight text-neutral-950 outline-none placeholder:text-neutral-300 focus:border-emerald-500 focus:ring-0 dark:border-white/15 dark:text-white dark:placeholder:text-neutral-600 dark:focus:border-emerald-400"
-								       placeholder="@Localizer["Shopping.TitlePlaceholder"]"
-								       @bind="newListName"
-								       @bind:event="oninput"
-								       autofocus />
-								<input id="new-list-description"
-								       class="w-full border-0 border-b border-neutral-200 bg-transparent px-1 py-2 text-sm text-neutral-700 outline-none placeholder:text-neutral-400 focus:border-emerald-500 focus:ring-0 dark:border-white/10 dark:text-neutral-300 dark:placeholder:text-neutral-600 dark:focus:border-emerald-400"
-								       placeholder="@Localizer["Shopping.DescriptionPlaceholder"]"
-								       @bind="newListDescription"
-								       @bind:event="oninput" />
-							</div>
-
-							<div class="flex items-center justify-end gap-2 sm:shrink-0">
-								<button type="button"
-										class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-rose-600 shadow-[0_12px_30px_rgba(244,63,94,0.14)] ring-1 ring-inset ring-neutral-200 transition hover:-translate-y-0.5 hover:bg-rose-50 hover:text-rose-500 hover:ring-rose-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 dark:bg-white/10 dark:text-rose-300 dark:ring-white/15 dark:hover:bg-rose-400/10 dark:hover:text-rose-200 dark:hover:ring-rose-300/50"
-										aria-label="@Localizer["Common.Cancel"]"
-										@onclick="CancelAddComposer">
-									<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-										<path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-linecap="round" stroke-width="2.25" />
-									</svg>
-								</button>
-								<button type="submit"
-										class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-600 shadow-[0_12px_30px_rgba(16,185,129,0.18)] ring-1 ring-inset ring-neutral-200 transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:text-emerald-500 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-300 disabled:shadow-none disabled:ring-neutral-200 dark:bg-white/10 dark:text-emerald-300 dark:ring-white/15 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-200 dark:hover:ring-emerald-300/50 dark:disabled:bg-white/5 dark:disabled:text-neutral-600 dark:disabled:ring-white/10"
-										aria-label="@Localizer["Shopping.CreateList"]"
-										disabled="@string.IsNullOrWhiteSpace(newListName)">
-									<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-										<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" />
-									</svg>
-								</button>
-							</div>
-						</form>
-					</div>
-				}
-				else
-				{
-					<div class="flex justify-center py-4">
-						<button type="button"
-								class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-emerald-600 shadow-[0_12px_30px_rgba(16,185,129,0.18)] ring-1 ring-inset ring-neutral-200 transition duration-500 ease-in hover:-translate-y-0.5 hover:bg-emerald-50 hover:text-emerald-500 hover:ring-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:pointer-events-none dark:bg-white/10 dark:text-emerald-300 dark:ring-white/15 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-200 dark:hover:ring-emerald-300/50 @(_isAddButtonExiting ? "-translate-x-[110vw] opacity-0" : "translate-x-0 opacity-100")"
-								aria-label="@Localizer["Shopping.AddNewList"]"
-								disabled="@_isAddButtonExiting"
-								@onclick="BeginAddList">
-							<svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-linecap="round" stroke-width="2.25" />
-							</svg>
-						</button>
-					</div>
-				}
-			</section>
-		}
 	</section>
 </div>
 
 @code {
-	private const string NewTab = "New";
-	private const string ArchivedTab = "Archived";
-
-	private static readonly string[] Tabs = [NewTab, ArchivedTab];
-
-	[SupplyParameterFromQuery(Name = "tab")]
-	public string? RequestedTab { get; set; }
-
-	private string activeTab = NewTab;
 	private int? renamingListId;
 	private string editableListName = string.Empty;
 	private string newListName = string.Empty;
@@ -192,9 +184,9 @@
 	private bool _isAddComposerEntering;
 	private bool _isAddButtonExiting;
 
-	private List<ShoppingList> VisibleLists => shoppingLists
-		.Where(list => activeTab == ArchivedTab ? list.Archived : !list.Archived)
-		.ToList();
+	private List<ShoppingList> ActiveLists => shoppingLists.Where(list => !list.Archived).ToList();
+	private List<ShoppingList> ArchivedLists => shoppingLists.Where(list => list.Archived).ToList();
+	private List<ShoppingList> VisibleLists => [.. ActiveLists, .. ArchivedLists];
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -202,30 +194,9 @@
 		shoppingLists = [.. await ShoppingLists.GetListsAsync()];
 	}
 
-	protected override void OnParametersSet()
-	{
-		activeTab = RequestedTab == ArchivedTab ? ArchivedTab : NewTab;
-
-		if (activeTab == ArchivedTab)
-		{
-			CancelAddComposer();
-		}
-	}
-
 	public void Dispose()
 	{
 		StoreChangeNotifier.Changed -= HandleStoreChangedAsync;
-	}
-
-	private void SelectTab(string tab)
-	{
-		activeTab = tab;
-		CancelListRename();
-
-		if (activeTab == ArchivedTab)
-		{
-			CancelAddComposer();
-		}
 	}
 
 	private void OpenList(int id)
@@ -339,16 +310,6 @@
 	{
 		var purchasedCount = list.Items.Count(item => item.IsDone);
 		return string.Format(Localizer["Shopping.ListSummary"].Value, purchasedCount, list.Items.Count);
-	}
-
-	private string GetTabLabel(string tab)
-	{
-		return tab switch
-		{
-			NewTab => Localizer["Common.New"].Value,
-			ArchivedTab => Localizer["Common.Archived"].Value,
-			_ => tab
-		};
 	}
 
 	private string FormatText(string key, params object[] arguments)

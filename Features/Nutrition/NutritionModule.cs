@@ -7,8 +7,15 @@ namespace Boodschap.Features.Nutrition;
 
 public static class NutritionModule
 {
-	public static IServiceCollection AddNutritionFeature(this IServiceCollection services, string sqliteConnectionString)
+	public static IServiceCollection AddNutritionFeature(this IServiceCollection services, IConfiguration configuration, string sqliteConnectionString)
 	{
+		services.Configure<NutritionFeatureOptions>(configuration.GetSection(NutritionFeatureOptions.SectionName));
+
+		if (!configuration.IsNutritionFeatureEnabled())
+		{
+			return services;
+		}
+
 		services.AddDbContextFactory<NutritionDbContext>(options => options.UseSqlite(
 			sqliteConnectionString,
 			sqlite => sqlite.MigrationsHistoryTable(NutritionDbContext.MigrationsHistoryTableName)));
@@ -17,5 +24,10 @@ public static class NutritionModule
 		services.AddScoped<IFoodService, FoodService>();
 
 		return services;
+	}
+
+	public static bool IsNutritionFeatureEnabled(this IConfiguration configuration)
+	{
+		return configuration.GetValue($"{NutritionFeatureOptions.SectionName}:Enabled", true);
 	}
 }

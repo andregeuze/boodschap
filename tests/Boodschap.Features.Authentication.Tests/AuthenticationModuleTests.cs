@@ -1,3 +1,4 @@
+using Boodschap.Features.Authentication.Application;
 using Boodschap.Features.Authentication.Infrastructure;
 using Boodschap.Features.Authentication.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.Cookies;

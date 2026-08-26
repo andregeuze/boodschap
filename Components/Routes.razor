@@ -1,13 +1,40 @@
-﻿@inject IStringLocalizer<AppStrings> Localizer
+﻿@using Boodschap.Features.Nutrition
+@using Boodschap.Features.Nutrition.Presentation.Pages
+@using Boodschap.Features.Recipes
+@using Boodschap.Features.Recipes.Presentation.Pages
+@using Microsoft.Extensions.Options
+@inject IStringLocalizer<AppStrings> Localizer
+@inject IOptions<NutritionFeatureOptions> NutritionFeatureOptions
+@inject IOptions<RecipeFeatureOptions> RecipeFeatureOptions
 
 <Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
-            <NotAuthorized>
-                <SignInGate Title="@Localizer["Routes.NotAuthorizedTitle"]"
-                            Description="@Localizer["Routes.NotAuthorizedDescription"]" />
-            </NotAuthorized>
-        </AuthorizeRouteView>
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        @if (IsDisabledFeatureRoute(routeData))
+        {
+            <LayoutView Layout="typeof(Layout.MainLayout)">
+                <h3>@Localizer["NotFound.Title"]</h3>
+                <p>@Localizer["NotFound.Description"]</p>
+            </LayoutView>
+        }
+        else
+        {
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    <SignInGate Title="@Localizer["Routes.NotAuthorizedTitle"]"
+                                Description="@Localizer["Routes.NotAuthorizedDescription"]" />
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        }
     </Found>
 </Router>
+
+@code {
+    private bool IsDisabledFeatureRoute(RouteData routeData)
+    {
+        var pageType = routeData.PageType;
+
+        return (!NutritionFeatureOptions.Value.Enabled && pageType == typeof(NutritionPage))
+            || (!RecipeFeatureOptions.Value.Enabled && pageType == typeof(RecipesPage));
+    }
+}

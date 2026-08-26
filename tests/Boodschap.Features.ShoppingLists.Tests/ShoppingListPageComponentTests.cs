@@ -60,7 +60,7 @@ public sealed class ShoppingListPageComponentTests
 	}
 
 	[Fact]
-	public void BackButton_UsesArchivedOverviewForArchivedLists()
+	public void BackButton_UsesUnifiedOverviewForArchivedLists()
 	{
 		var service = new FakeShoppingListService([CreateArchivedList()]);
 
@@ -70,7 +70,7 @@ public sealed class ShoppingListPageComponentTests
 
 		FindButton(cut, "Terug").Click();
 
-		cut.WaitForAssertion(() => Assert.Equal("http://localhost/?tab=Archived", navigation.Uri));
+		cut.WaitForAssertion(() => Assert.Equal("http://localhost/", navigation.Uri));
 	}
 
 	private static BunitContext CreateContext(IShoppingListService shoppingLists, StoreChangeNotifier notifier)

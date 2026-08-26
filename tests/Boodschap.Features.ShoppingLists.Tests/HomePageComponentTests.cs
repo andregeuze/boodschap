@@ -15,7 +15,7 @@ namespace Boodschap.Features.ShoppingLists.Tests;
 public sealed class HomePageComponentTests
 {
 	[Fact]
-	public void Render_ShowsActiveListsByDefaultAndArchivedAfterTabChange()
+	public void Render_ShowsCreateButtonThenActiveListsAndArchivedLists()
 	{
 		var service = new FakeShoppingListService(
 		[
@@ -31,24 +31,24 @@ public sealed class HomePageComponentTests
 		{
 			Assert.Contains("Weekly groceries", cut.Markup);
 			Assert.Contains("Dinner party", cut.Markup);
-			Assert.DoesNotContain("Camping weekend", cut.Markup);
+			Assert.Contains("Camping weekend", cut.Markup);
 			Assert.Single(cut.FindAll("button[aria-label='Nieuwe lijst toevoegen']"));
 			Assert.Single(cut.FindAll("button[aria-label='Weekly groceries bewerken'][title='Hernoemen']"));
 			Assert.Single(cut.FindAll("button[aria-label='Dinner party bewerken'][title='Hernoemen']"));
-			Assert.Equal(2, cut.FindAll("button").Count(button => button.TextContent.Trim() == "Archiveren"));
-		});
-
-		FindButton(cut, "Archief").Click();
-
-		cut.WaitForAssertion(() =>
-		{
-			Assert.DoesNotContain("Weekly groceries", cut.Markup);
-			Assert.DoesNotContain("Dinner party", cut.Markup);
-			Assert.Contains("Camping weekend", cut.Markup);
-			Assert.Empty(cut.FindAll("button[aria-label='Nieuwe lijst toevoegen']"));
 			Assert.Single(cut.FindAll("button[aria-label='Camping weekend bewerken'][title='Hernoemen']"));
+			Assert.Equal(2, cut.FindAll("button").Count(button => button.TextContent.Trim() == "Archiveren"));
 			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Uit archief halen");
 			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Verwijderen");
+			Assert.DoesNotContain(cut.FindAll("button"), button => button.TextContent.Trim() is "Nieuw" or "Archief");
+
+			var cards = cut.FindAll("article");
+			Assert.Equal(3, cards.Count);
+			Assert.Contains("Dinner party", cards[0].TextContent);
+			Assert.Contains("Weekly groceries", cards[1].TextContent);
+			Assert.Contains("Camping weekend", cards[2].TextContent);
+			Assert.True(
+				cut.Markup.IndexOf("Nieuwe lijst toevoegen", StringComparison.Ordinal) <
+				cut.Markup.IndexOf("Weekly groceries", StringComparison.Ordinal));
 		});
 	}
 
@@ -72,7 +72,7 @@ public sealed class HomePageComponentTests
 	}
 
 	[Fact]
-	public void ArchiveList_MovesCardToArchivedTab()
+	public void ArchiveList_MovesCardToArchivedSection()
 	{
 		var service = new FakeShoppingListService([CreateList(1, "Weekly groceries", archived: false)]);
 
@@ -84,23 +84,18 @@ public sealed class HomePageComponentTests
 		cut.WaitForAssertion(() =>
 		{
 			Assert.Equal(1, service.LastArchivedListId);
-			Assert.DoesNotContain("Weekly groceries", cut.Markup);
+			Assert.Contains("Weekly groceries", cut.Markup);
 			Assert.Contains("Nog geen lijsten in deze weergave.", cut.Markup);
+			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Uit archief halen");
 		});
-
-		FindButton(cut, "Archief").Click();
-
-		cut.WaitForAssertion(() => Assert.Contains("Weekly groceries", cut.Markup));
 	}
 
 	[Fact]
-	public void UnarchiveList_MovesCardToNewTab()
+	public void UnarchiveList_MovesCardToActiveSection()
 	{
 		var service = new FakeShoppingListService([CreateList(1, "Camping weekend", archived: true)]);
 
 		using var context = CreateContext(service, new StoreChangeNotifier());
-		var navigation = context.Services.GetRequiredService<NavigationManager>();
-		navigation.NavigateTo(navigation.GetUriWithQueryParameter("tab", "Archived"));
 		var cut = context.Render<Home>();
 
 		FindButton(cut, "Uit archief halen").Click();
@@ -108,13 +103,10 @@ public sealed class HomePageComponentTests
 		cut.WaitForAssertion(() =>
 		{
 			Assert.Equal(1, service.LastUnarchivedListId);
-			Assert.DoesNotContain("Camping weekend", cut.Markup);
-			Assert.Contains("Nog geen lijsten in deze weergave.", cut.Markup);
+			Assert.Contains("Camping weekend", cut.Markup);
+			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Archiveren");
+			Assert.DoesNotContain(cut.FindAll("button"), button => button.TextContent.Trim() == "Uit archief halen");
 		});
-
-		FindButton(cut, "Nieuw").Click();
-
-		cut.WaitForAssertion(() => Assert.Contains("Camping weekend", cut.Markup));
 	}
 
 	[Fact]
@@ -147,8 +139,6 @@ public sealed class HomePageComponentTests
 		var service = new FakeShoppingListService([CreateList(7, "Camping weekend", archived: true)]);
 
 		using var context = CreateContext(service, new StoreChangeNotifier());
-		var navigation = context.Services.GetRequiredService<NavigationManager>();
-		navigation.NavigateTo(navigation.GetUriWithQueryParameter("tab", "Archived"));
 		var cut = context.Render<Home>();
 
 		cut.WaitForAssertion(() => Assert.Contains("Camping weekend", cut.Markup));

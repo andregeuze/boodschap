@@ -1,5 +1,14 @@
-﻿@inherits LayoutComponentBase
+﻿@using Boodschap.Features.Authentication
+@using Boodschap.Features.Authentication.Presentation.Components
+@using Boodschap.Features.Nutrition
+@using Boodschap.Features.Recipes
+@using Boodschap.Features.ShoppingLists
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.Extensions.Options
+@inherits LayoutComponentBase
 @inject IStringLocalizer<AppStrings> Localizer
+@inject IOptions<NutritionFeatureOptions> NutritionFeatureOptions
+@inject IOptions<RecipeFeatureOptions> RecipeFeatureOptions
 
 <div class="min-h-screen bg-[#f4efe6] text-neutral-900 transition-colors duration-300 dark:bg-[#070708] dark:text-neutral-100">
     <header class="sticky top-0 z-30 border-b border-black/10 bg-[#f8f3ea]/90 backdrop-blur dark:border-white/10 dark:bg-neutral-950/85">
@@ -25,21 +34,40 @@
                             <path d="M4 18h10" />
                         </svg>
                     </NavLink>
-                    <NavLink class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
-                             href="/nutrition"
-                             ActiveClass="!border-emerald-400 !bg-emerald-400 !text-neutral-950 dark:!border-emerald-400 dark:!bg-emerald-400 dark:!text-neutral-950"
-                             aria-label="@Localizer["Nutrition.FeatureName"]"
-                             title="@Localizer["Nutrition.FeatureName"]">
-                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                            <path d="M8 3v8" />
-                            <path d="M5 3v8" />
-                            <path d="M11 3v8" />
-                            <path d="M5 11h6" />
-                            <path d="M8 11v10" />
-                            <path d="M18 3v18" />
-                            <path d="M15 3c0 4 1 6 3 8" />
-                        </svg>
-                    </NavLink>
+                    @if (RecipeFeatureOptions.Value.Enabled)
+                    {
+                        <NavLink class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
+                                 href="/recipes"
+                                 ActiveClass="!border-emerald-400 !bg-emerald-400 !text-neutral-950 dark:!border-emerald-400 dark:!bg-emerald-400 dark:!text-neutral-950"
+                                 aria-label="@Localizer["Recipes.FeatureName"]"
+                                 title="@Localizer["Recipes.FeatureName"]">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M5.5 4.75A2.75 2.75 0 0 1 8.25 2h9.25A1.5 1.5 0 0 1 19 3.5v17A1.5 1.5 0 0 1 17.5 22H8.25A2.75 2.75 0 0 0 5.5 19.25V4.75Z" />
+                                <path d="M8 6.5h7" />
+                                <path d="M8 10h7" />
+                                <path d="M8 13.5h4.5" />
+                                <path d="M5.5 19.25A2.75 2.75 0 0 1 8.25 16.5H19" />
+                            </svg>
+                        </NavLink>
+                    }
+                    @if (NutritionFeatureOptions.Value.Enabled)
+                    {
+                        <NavLink class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
+                                 href="/nutrition"
+                                 ActiveClass="!border-emerald-400 !bg-emerald-400 !text-neutral-950 dark:!border-emerald-400 dark:!bg-emerald-400 dark:!text-neutral-950"
+                                 aria-label="@Localizer["Nutrition.FeatureName"]"
+                                 title="@Localizer["Nutrition.FeatureName"]">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M8 3v8" />
+                                <path d="M5 3v8" />
+                                <path d="M11 3v8" />
+                                <path d="M5 11h6" />
+                                <path d="M8 11v10" />
+                                <path d="M18 3v18" />
+                                <path d="M15 3c0 4 1 6 3 8" />
+                            </svg>
+                        </NavLink>
+                    }
                 </nav>
             </div>
 

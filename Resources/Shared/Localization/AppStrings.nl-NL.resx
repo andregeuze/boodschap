@@ -97,6 +97,101 @@
   <data name="Nutrition.NevoCode" xml:space="preserve"><value>NEVO-code</value></data>
   <data name="Nutrition.PageTitle" xml:space="preserve"><value>Voeding</value></data>
   <data name="Nutrition.Protein" xml:space="preserve"><value>Eiwit</value></data>
+  <data name="Recipes.AddIngredientDescription" xml:space="preserve"><value>Voeg losse ingredienten toe alsof je een kaartje op de snijplank legt. De echte opslag en suggestielogica kan later volgen.</value></data>
+  <data name="Recipes.AddIngredientTitle" xml:space="preserve"><value>Snelle toevoeging</value></data>
+  <data name="Recipes.AddToRecipe" xml:space="preserve"><value>Aan recept toevoegen</value></data>
+  <data name="Recipes.AiNoSuggestion" xml:space="preserve"><value>Er kwam nog geen bruikbare suggestie terug. Probeer een paar andere ingredienten.</value></data>
+  <data name="Recipes.AiSuggestion" xml:space="preserve"><value>AI-suggestie</value></data>
+  <data name="Recipes.BoardDescription" xml:space="preserve"><value>Begin met een simpele opzet: kies een richting, klik ingredienten af en voeg rechts nieuwe bouwstenen toe.</value></data>
+  <data name="Recipes.BoardTitle" xml:space="preserve"><value>Receptschets</value></data>
+  <data name="Recipes.BuilderReady" xml:space="preserve"><value>{0} staat klaar voor {1} x {2}.</value></data>
+  <data name="Recipes.Category.Dinner" xml:space="preserve"><value>Diner</value></data>
+  <data name="Recipes.Category.Favorites" xml:space="preserve"><value>Favorieten</value></data>
+  <data name="Recipes.Category.Lunch" xml:space="preserve"><value>Lunch</value></data>
+  <data name="Recipes.Conflict.NoCheese" xml:space="preserve"><value>Botst met geen-kaas voorkeur</value></data>
+  <data name="Recipes.Description" xml:space="preserve"><value>Maak eerst het gevoel van recepten bouwen goed: losse ideeen, profielvoorkeuren en ingredienten die je direct in een gerecht kunt trekken.</value></data>
+  <data name="Recipes.DraftReset" xml:space="preserve"><value>Leeg concept gestart. Voeg rechts nieuwe ingredienten toe.</value></data>
+  <data name="Recipes.EmptyDraft" xml:space="preserve"><value>Nog geen ingredienten.</value></data>
+  <data name="Recipes.Eyebrow" xml:space="preserve"><value>Recepten</value></data>
+  <data name="Recipes.FeatureName" xml:space="preserve"><value>Recepten</value></data>
+  <data name="Recipes.Heading" xml:space="preserve"><value>Bouw je volgende gerecht</value></data>
+  <data name="Recipes.IdeasCount" xml:space="preserve"><value>{0} ideeen</value></data>
+  <data name="Recipes.IdeasTitle" xml:space="preserve"><value>Ideeen</value></data>
+  <data name="Recipes.Ingredient.Bosui" xml:space="preserve"><value>Bosui</value></data>
+  <data name="Recipes.Ingredient.Broccoli" xml:space="preserve"><value>Broccoli</value></data>
+  <data name="Recipes.Ingredient.Chiliolie" xml:space="preserve"><value>Chiliolie</value></data>
+  <data name="Recipes.Ingredient.Citroen" xml:space="preserve"><value>Citroen</value></data>
+  <data name="Recipes.Ingredient.Courgette" xml:space="preserve"><value>Courgette</value></data>
+  <data name="Recipes.Ingredient.Dille" xml:space="preserve"><value>Dille</value></data>
+  <data name="Recipes.Ingredient.Ei" xml:space="preserve"><value>Ei</value></data>
+  <data name="Recipes.IngredientInputLabel" xml:space="preserve"><value>Ingredient invoeren</value></data>
+  <data name="Recipes.IngredientInputPlaceholder" xml:space="preserve"><value>Typ een ingredient uit je voedingsdatabase</value></data>
+  <data name="Recipes.Ingredient.Kipfilet" xml:space="preserve"><value>Kipfilet</value></data>
+  <data name="Recipes.Ingredient.Kokosroom" xml:space="preserve"><value>Kokosroom</value></data>
+  <data name="Recipes.Ingredient.Mozzarella" xml:space="preserve"><value>Mozzarella</value></data>
+  <data name="Recipes.Ingredient.Noedels" xml:space="preserve"><value>Noedels</value></data>
+  <data name="Recipes.Ingredient.Paksoi" xml:space="preserve"><value>Paksoi</value></data>
+  <data name="Recipes.Ingredient.Penne" xml:space="preserve"><value>Penne</value></data>
+  <data name="Recipes.Ingredient.Zalm" xml:space="preserve"><value>Zalm</value></data>
+  <data name="Recipes.Ingredient.Aardappels" xml:space="preserve"><value>Aardappels</value></data>
+  <data name="Recipes.IngredientsCount" xml:space="preserve"><value>{0} ingredienten</value></data>
+  <data name="Recipes.IngredientsTitle" xml:space="preserve"><value>Ingredienten</value></data>
+  <data name="Recipes.CreateRecipe" xml:space="preserve"><value>Nieuw recept</value></data>
+  <data name="Recipes.MethodTitle" xml:space="preserve"><value>Bereiding</value></data>
+  <data name="Recipes.NewDraft" xml:space="preserve"><value>Nieuw concept</value></data>
+  <data name="Recipes.PageTitle" xml:space="preserve"><value>Recepten</value></data>
+  <data name="Recipes.Portion" xml:space="preserve"><value>Portie</value></data>
+  <data name="Recipes.Portion.100g" xml:space="preserve"><value>100 g</value></data>
+  <data name="Recipes.Portion.150g" xml:space="preserve"><value>150 g</value></data>
+  <data name="Recipes.Portion.1Ball" xml:space="preserve"><value>1 bol</value></data>
+  <data name="Recipes.Portion.1Bundle" xml:space="preserve"><value>1 bosje</value></data>
+  <data name="Recipes.Portion.1Cup" xml:space="preserve"><value>1 kop</value></data>
+  <data name="Recipes.Portion.1Handful" xml:space="preserve"><value>1 hand</value></data>
+  <data name="Recipes.Portion.1Piece" xml:space="preserve"><value>1 stuk</value></data>
+  <data name="Recipes.Portion.200g" xml:space="preserve"><value>200 g</value></data>
+  <data name="Recipes.Portion.250g" xml:space="preserve"><value>250 g</value></data>
+  <data name="Recipes.Portion.250ml" xml:space="preserve"><value>250 ml</value></data>
+  <data name="Recipes.Portion.300g" xml:space="preserve"><value>300 g</value></data>
+  <data name="Recipes.Preference.Allergy.Label" xml:space="preserve"><value>Allergie</value></data>
+  <data name="Recipes.Preference.Comfort.Note" xml:space="preserve"><value>Romig, hartig en simpel wint bijna altijd.</value></data>
+  <data name="Recipes.Preference.Comfort.Value" xml:space="preserve"><value>Dit vind ik echt lekker</value></data>
+  <data name="Recipes.Preference.Description" xml:space="preserve"><value>Deze kaartjes maken alvast zichtbaar hoe smaak, allergie en kookstijl straks mee kunnen sturen.</value></data>
+  <data name="Recipes.Preference.Dislike.Label" xml:space="preserve"><value>Lust niet</value></data>
+  <data name="Recipes.Preference.Favorite.Label" xml:space="preserve"><value>Favoriet</value></data>
+  <data name="Recipes.Preference.NoCheese.Note" xml:space="preserve"><value>Laat romige recepten liever zonder kaas landen.</value></data>
+  <data name="Recipes.Preference.NoCheese.Value" xml:space="preserve"><value>Ik lust geen kaas</value></data>
+  <data name="Recipes.Preference.Shellfish.Note" xml:space="preserve"><value>Hou suggesties veilig voor een allergische eter.</value></data>
+  <data name="Recipes.Preference.Shellfish.Value" xml:space="preserve"><value>Hiervoor allergisch</value></data>
+  <data name="Recipes.Preference.SlowCook.Note" xml:space="preserve"><value>Mag rustig garen zolang het weinig handwerk vraagt.</value></data>
+  <data name="Recipes.Preference.SlowCook.Value" xml:space="preserve"><value>Houdt van slow cooken</value></data>
+  <data name="Recipes.Preference.Style.Label" xml:space="preserve"><value>Kookstijl</value></data>
+  <data name="Recipes.Preference.Title" xml:space="preserve"><value>Profielvoorkeuren</value></data>
+  <data name="Recipes.QuantitySummary" xml:space="preserve"><value>{0} x {1}</value></data>
+  <data name="Recipes.Sample.CreamyCoconutChicken.Description" xml:space="preserve"><value>Zacht, romig en gemaakt om zonder veel nadenken op tafel te komen.</value></data>
+  <data name="Recipes.Sample.CreamyCoconutChicken.Title" xml:space="preserve"><value>Romige kokoskip</value></data>
+  <data name="Recipes.Sample.QuickNoodleBowl.Description" xml:space="preserve"><value>Snelle lunch met warmte, groen en net genoeg pit.</value></data>
+  <data name="Recipes.Sample.QuickNoodleBowl.Title" xml:space="preserve"><value>Snelle noedelkom</value></data>
+  <data name="Recipes.Sample.TrayBake.Description" xml:space="preserve"><value>Een makkelijke ovenschaal die voelt als comfort zonder zwaar te worden.</value></data>
+  <data name="Recipes.Sample.TrayBake.Title" xml:space="preserve"><value>Favoriete traybake</value></data>
+  <data name="Recipes.SearchFailed" xml:space="preserve"><value>Het zoeken naar een recept is mislukt. Controleer of je lokale AI-webhook bereikbaar is.</value></data>
+  <data name="Recipes.SearchHint" xml:space="preserve"><value>Voeg een paar bekende ingredienten toe en laat AI er een recept van maken.</value></data>
+  <data name="Recipes.SearchNeedsIngredients" xml:space="preserve"><value>Voeg eerst ingredienten toe voordat je AI laat zoeken.</value></data>
+  <data name="Recipes.SearchTimedOut" xml:space="preserve"><value>De lokale AI deed er te lang over. Probeer het opnieuw of gebruik minder ingredienten.</value></data>
+  <data name="Recipes.SearchUnavailable" xml:space="preserve"><value>De AI-zoekfunctie is nog niet geconfigureerd voor deze omgeving.</value></data>
+  <data name="Recipes.SearchWithAi" xml:space="preserve"><value>Zoek met AI</value></data>
+  <data name="Recipes.SearchWithAiLoading" xml:space="preserve"><value>AI zoekt...</value></data>
+  <data name="Recipes.SaveDraft" xml:space="preserve"><value>Concept opslaan</value></data>
+  <data name="Recipes.StatusIngredientAdded" xml:space="preserve"><value>{0} toegevoegd aan {1}.</value></data>
+  <data name="Recipes.Tag.Comfort" xml:space="preserve"><value>Comfort</value></data>
+  <data name="Recipes.Tag.Easy" xml:space="preserve"><value>Eenvoudig</value></data>
+  <data name="Recipes.Tag.Fast" xml:space="preserve"><value>Snel</value></data>
+  <data name="Recipes.Tag.Favorite" xml:space="preserve"><value>Bewaren</value></data>
+  <data name="Recipes.Tag.Fresh" xml:space="preserve"><value>Fris</value></data>
+  <data name="Recipes.Tag.Oven" xml:space="preserve"><value>Oven</value></data>
+  <data name="Recipes.Tag.SlowCook" xml:space="preserve"><value>Slowcooker</value></data>
+  <data name="Recipes.Tab.Dinner" xml:space="preserve"><value>diner</value></data>
+  <data name="Recipes.Tab.Favorites" xml:space="preserve"><value>fav</value></data>
+  <data name="Recipes.Tab.Lunch" xml:space="preserve"><value>lunch</value></data>
   <data name="Reconnect.Failed" xml:space="preserve"><value>Opnieuw verbinden is mislukt.</value></data>
   <data name="Reconnect.FailedHelp" xml:space="preserve"><value>Probeer opnieuw of herlaad de pagina.</value></data>
   <data name="Reconnect.Rejoining" xml:space="preserve"><value>Opnieuw verbinden met de server...</value></data>

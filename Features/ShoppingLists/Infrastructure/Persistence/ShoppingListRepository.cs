@@ -12,7 +12,8 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		var shoppingLists = await dbContext.ShoppingLists
 			.AsNoTracking()
 			.Include(list => list.Items)
-			.OrderBy(list => list.SortOrder)
+			.OrderByDescending(list => list.UpdatedAt)
+			.ThenBy(list => list.SortOrder)
 			.ToListAsync(cancellationToken);
 
 		return [.. shoppingLists.Select(MapList)];
@@ -74,6 +75,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		}
 
 		shoppingList.Name = normalizedName;
+		MarkUpdated(shoppingList);
 		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return new(await GetListAsync(listId, cancellationToken), true);
@@ -95,6 +97,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		}
 
 		shoppingList.Archived = archived;
+		MarkUpdated(shoppingList);
 		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return new(await GetListAsync(listId, cancellationToken), true);
@@ -129,17 +132,17 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		}
 
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+		var shoppingList = await dbContext.ShoppingLists
+			.SingleOrDefaultAsync(list => list.Id == listId, cancellationToken);
+		if (shoppingList is null)
+		{
+			return new(null, false);
+		}
+
 		var items = await dbContext.ShoppingListItems
 			.Where(item => item.ShoppingListId == listId)
 			.OrderBy(item => item.SortOrder)
 			.ToListAsync(cancellationToken);
-
-		var shoppingListExists = items.Count != 0
-			|| await dbContext.ShoppingLists.AnyAsync(list => list.Id == listId, cancellationToken);
-		if (!shoppingListExists)
-		{
-			return new(null, false);
-		}
 
 		var insertIndex = items.FindIndex(item => item.IsDone);
 		if (insertIndex < 0)
@@ -162,6 +165,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		}
 
 		dbContext.ShoppingListItems.Add(newItem);
+		MarkUpdated(shoppingList);
 		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return new(await GetListAsync(listId, cancellationToken), true);
@@ -177,6 +181,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var item = await dbContext.ShoppingListItems
+			.Include(entry => entry.ShoppingList)
 			.SingleOrDefaultAsync(entry => entry.ShoppingListId == listId && entry.Id == itemId, cancellationToken);
 		if (item is null)
 		{
@@ -189,6 +194,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		}
 
 		item.Name = normalizedName;
+		MarkUpdated(item.ShoppingList!);
 		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return new(await GetListAsync(listId, cancellationToken), true);
@@ -198,6 +204,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 	{
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var item = await dbContext.ShoppingListItems
+			.Include(entry => entry.ShoppingList)
 			.SingleOrDefaultAsync(entry => entry.ShoppingListId == listId && entry.Id == itemId, cancellationToken);
 		if (item is null)
 		{
@@ -218,6 +225,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 				.MaxAsync(entry => (int?)entry.SortOrder, cancellationToken) ?? -1) + 1;
 		}
 
+		MarkUpdated(item.ShoppingList!);
 		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return new(await GetListAsync(listId, cancellationToken), true);
@@ -227,6 +235,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 	{
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var item = await dbContext.ShoppingListItems
+			.Include(entry => entry.ShoppingList)
 			.SingleOrDefaultAsync(entry => entry.ShoppingListId == listId && entry.Id == itemId, cancellationToken);
 		if (item is null)
 		{
@@ -234,6 +243,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		}
 
 		dbContext.ShoppingListItems.Remove(item);
+		MarkUpdated(item.ShoppingList!);
 		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return new(await GetListAsync(listId, cancellationToken), true);
@@ -243,6 +253,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 	{
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var items = await dbContext.ShoppingListItems
+			.Include(item => item.ShoppingList)
 			.Where(item => item.ShoppingListId == listId)
 			.OrderBy(item => item.SortOrder)
 			.ToListAsync(cancellationToken);
@@ -264,6 +275,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 			items[index].SortOrder = index;
 		}
 
+		MarkUpdated(draggedItem.ShoppingList!);
 		await dbContext.SaveChangesAsync(cancellationToken);
 
 		return new(await GetListAsync(listId, cancellationToken), true);
@@ -295,6 +307,7 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 			Description = shoppingList.Description,
 			Archived = shoppingList.Archived,
 			SortOrder = shoppingList.SortOrder,
+			UpdatedAt = shoppingList.UpdatedAt,
 			Items = shoppingList.Items
 				.OrderBy(item => item.SortOrder)
 				.Select(item => new ShoppingListItem
@@ -307,5 +320,10 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 				})
 				.ToList()
 		};
+	}
+
+	private static void MarkUpdated(ShoppingList shoppingList)
+	{
+		shoppingList.UpdatedAt = DateTime.UtcNow;
 	}
 }

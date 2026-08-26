@@ -1,5 +1,6 @@
 using Boodschap.Features.Nutrition.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Boodschap.Features.Nutrition.Tests;
@@ -42,7 +43,7 @@ public sealed class NutritionDevelopmentSeederTests
 	{
 		var services = new ServiceCollection();
 		services.AddLogging();
-		services.AddNutritionFeature($"Data Source={sqlitePath}");
+		services.AddNutritionFeature(new ConfigurationBuilder().Build(), $"Data Source={sqlitePath}");
 
 		return services.BuildServiceProvider();
 	}

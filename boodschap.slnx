@@ -6,6 +6,7 @@
   </Configurations>
   <Folder Name="/tests/">
     <Project Path="tests/Boodschap.Features.Nutrition.Tests/Boodschap.Features.Nutrition.Tests.csproj" />
+    <Project Path="tests/Boodschap.Features.Recipes.Tests/Boodschap.Features.Recipes.Tests.csproj" />
   </Folder>
   <Project Path="Boodschap.csproj" />
   <Project Path="tests/Boodschap.Features.Authentication.Tests/Boodschap.Features.Authentication.Tests.csproj" />

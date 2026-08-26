@@ -55,6 +55,8 @@ The app shell should only compose this feature through `Program.cs` and `Shoppin
 - Lists may only be permanently removed after they are archived.
 - New items are inserted before the first purchased item when a list contains both needed and purchased items.
 - List names are user-provided at creation time and can be renamed later from the overview page.
+- The overview shows active lists first and archived lists in a section below them, without separate status tabs.
+- Lists within each overview section are ordered by their most recent successful list or item update.
 - Item names are user-provided and can be renamed inline from the list page without leaving the current list.
 - Marking an item as purchased moves it to the end of the list.
 - Drag-and-drop reordering is available when no item is being renamed inline.
@@ -65,7 +67,6 @@ The app shell should only compose this feature through `Program.cs` and `Shoppin
 ## Integration Points
 
 - Authentication gate and current user context: `Features/Authentication/`
-- Shared UI: `Shared/Presentation/Components/TabBar.razor`
 - Shared realtime notifications: `Shared/Realtime/StoreChangeNotifier.cs`
 - Host composition: `Program.cs`
 
