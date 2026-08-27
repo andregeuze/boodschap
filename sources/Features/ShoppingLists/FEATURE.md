@@ -47,7 +47,7 @@ This feature follows Onion/Clean Architecture:
 - `Infrastructure` depends on `Application` and `Domain`
 - `Domain` stays free of Blazor, EF Core, and transport concerns
 
-The app shell should only compose this feature through `sources/Program.cs` and `ShoppingListsModule`.
+The app shell should only compose this feature through `sources/Boodschap/Program.cs` and `ShoppingListsModule`.
 
 ## Invariants
 
@@ -68,7 +68,7 @@ The app shell should only compose this feature through `sources/Program.cs` and 
 
 - Authentication gate and current user context: `sources/Features/Authentication/`
 - Shared realtime notifications: `sources/Shared/Realtime/StoreChangeNotifier.cs`
-- Host composition: `sources/Program.cs`
+- Host composition: `sources/Boodschap/Program.cs`
 
 ## Test Strategy
 

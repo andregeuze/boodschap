@@ -5,8 +5,9 @@ applyTo: "sources/Features/**,tests/**"
 ---
 # Feature Development Guidelines
 
-- Build features under `sources/Features/<FeatureName>/` with `Domain`, `Application`, `Infrastructure`, and `Presentation` folders.
-- Keep the app shell thin: `sources/Components/` is for composition only.
+- Build each feature as one Razor project under `sources/Features/<FeatureName>/`, with `Domain`, `Application`, `Infrastructure`, and `Presentation` folders inside it. Do not create projects per layer.
+- Keep the app shell thin: `sources/Boodschap/Components/` is for composition only.
+- Features must not reference another feature's `Infrastructure` or `Presentation` namespaces. Keep cross-feature references explicit, acyclic, and limited to application/domain contracts.
 - Keep `Domain` free from Blazor, EF Core, and infrastructure details.
 - Put orchestration and use-case behavior behind `Application` contracts.
 - Put EF Core, SQLite, migrations, and external integration details in `Infrastructure`.

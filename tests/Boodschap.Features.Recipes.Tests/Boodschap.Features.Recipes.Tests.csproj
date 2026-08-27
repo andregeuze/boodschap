@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\sources\Boodschap.csproj" />
+    <ProjectReference Include="..\..\sources\Features\Recipes\Boodschap.Features.Recipes.csproj" />
   </ItemGroup>
 
 </Project>

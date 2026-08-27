@@ -5,11 +5,20 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/tests/">
+    <Project Path="tests/Boodschap.Tests/Boodschap.Tests.csproj" />
+    <Project Path="tests/Boodschap.Features.Authentication.Tests/Boodschap.Features.Authentication.Tests.csproj" />
     <Project Path="tests/Boodschap.Features.Nutrition.Tests/Boodschap.Features.Nutrition.Tests.csproj" />
     <Project Path="tests/Boodschap.Features.Recipes.Tests/Boodschap.Features.Recipes.Tests.csproj" />
+    <Project Path="tests/Boodschap.Features.ShoppingLists.Tests/Boodschap.Features.ShoppingLists.Tests.csproj" />
     <Project Path="tests/Boodschap.Features.Updates.Tests/Boodschap.Features.Updates.Tests.csproj" />
   </Folder>
-  <Project Path="sources/Boodschap.csproj" />
-  <Project Path="tests/Boodschap.Features.Authentication.Tests/Boodschap.Features.Authentication.Tests.csproj" />
-  <Project Path="tests/Boodschap.Features.ShoppingLists.Tests/Boodschap.Features.ShoppingLists.Tests.csproj" />
+  <Folder Name="/sources/">
+    <Project Path="sources/Boodschap/Boodschap.csproj" />
+    <Project Path="sources/Features/Authentication/Boodschap.Features.Authentication.csproj" />
+    <Project Path="sources/Features/Nutrition/Boodschap.Features.Nutrition.csproj" />
+    <Project Path="sources/Features/Recipes/Boodschap.Features.Recipes.csproj" />
+    <Project Path="sources/Features/ShoppingLists/Boodschap.Features.ShoppingLists.csproj" />
+    <Project Path="sources/Features/Updates/Boodschap.Features.Updates.csproj" />
+    <Project Path="sources/Shared/Boodschap.Shared.csproj" />
+  </Folder>
 </Solution>

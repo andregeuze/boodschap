@@ -1,15 +1,6 @@
-@page "/account"
-@using Boodschap.Features.Updates
-@using Boodschap.Features.Updates.Presentation.Components
-@using Microsoft.Extensions.Options
-@attribute [Authorize]
-@rendermode InteractiveServer
 @inject ICurrentUserAccessor CurrentUserAccessor
 @inject ILocalAuthenticationService LocalAuthentication
 @inject IStringLocalizer<AppStrings> Localizer
-@inject IOptions<UpdateFeatureOptions> UpdateFeatureOptions
-
-<PageTitle>@Localizer["Account.PageTitle"]</PageTitle>
 
 @if (currentUser is null)
 {
@@ -119,15 +110,15 @@ else
 				</form>
 			}
 
-			@if (UpdateFeatureOptions.Value.Enabled)
-			{
-				<UpdateStatus />
-			}
+			@ChildContent
 		</section>
 	</div>
 }
 
 @code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
 	private CurrentUser? currentUser;
 	private string currentPassword = string.Empty;
 	private string newPassword = string.Empty;

@@ -1,13 +1,18 @@
-﻿@using Boodschap.Features.Nutrition
+﻿@using Boodschap.Features.Authentication
+@using Boodschap.Features.Nutrition
 @using Boodschap.Features.Nutrition.Presentation.Pages
 @using Boodschap.Features.Recipes
 @using Boodschap.Features.Recipes.Presentation.Pages
+@using Boodschap.Features.ShoppingLists
+@using Boodschap.Features.Updates
 @using Microsoft.Extensions.Options
 @inject IStringLocalizer<AppStrings> Localizer
 @inject IOptions<NutritionFeatureOptions> NutritionFeatureOptions
 @inject IOptions<RecipeFeatureOptions> RecipeFeatureOptions
 
-<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+<Router AppAssembly="typeof(Program).Assembly"
+    AdditionalAssemblies="FeatureAssemblies"
+    NotFoundPage="typeof(Pages.NotFound)">
     <Found Context="routeData">
         @if (IsDisabledFeatureRoute(routeData))
         {
@@ -30,6 +35,15 @@
 </Router>
 
 @code {
+    private static readonly IReadOnlyList<System.Reflection.Assembly> FeatureAssemblies =
+    [
+        typeof(AuthenticationModule).Assembly,
+        typeof(ShoppingListsModule).Assembly,
+        typeof(NutritionModule).Assembly,
+        typeof(RecipesModule).Assembly,
+        typeof(UpdatesModule).Assembly
+    ];
+
     private bool IsDisabledFeatureRoute(RouteData routeData)
     {
         var pageType = routeData.PageType;

@@ -19,7 +19,7 @@ Authentication owns sign-in, sign-out, first-user bootstrap registration, local 
 
 - `Presentation/Pages/SignIn.razor`
 - `Presentation/Pages/SignedOut.razor`
-- `Presentation/Pages/Account.razor`
+- `Presentation/Components/AccountSettings.razor`
 - `Presentation/Components/SignInGate.razor`
 - `Presentation/Components/UserMenu.razor`
 - `Presentation/AuthenticationEndpoints.cs`
@@ -63,7 +63,8 @@ This feature follows the same feature-first boundary as the rest of the app:
 
 - `Presentation` depends on `Application`
 - `Infrastructure` depends on `Application`
-- `sources/Program.cs` composes the feature through `AuthenticationModule`
+- `sources/Boodschap/Program.cs` composes the feature through `AuthenticationModule`
+- the host-owned `/account` page composes `AccountSettings` with optional cross-feature content
 
 ## Invariants
 
@@ -80,8 +81,9 @@ This feature follows the same feature-first boundary as the rest of the app:
 
 ## Integration Points
 
-- Host composition: `sources/Program.cs`
-- App shell: `sources/Components/App.razor`, `sources/Components/Routes.razor`, `sources/Components/Layout/MainLayout.razor`
+- Host composition: `sources/Boodschap/Program.cs`
+- App shell: `sources/Boodschap/Components/App.razor`, `sources/Boodschap/Components/Routes.razor`, `sources/Boodschap/Components/Layout/MainLayout.razor`
+- Account route composition: `sources/Boodschap/Components/Pages/Account.razor`
 - Account navigation: `sources/Features/Authentication/Presentation/Components/UserMenu.razor`
 - Shopping Lists routes: `sources/Features/ShoppingLists/Presentation/Pages/`
 

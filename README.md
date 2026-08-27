@@ -26,7 +26,10 @@ The canonical architecture reference lives in [docs/architecture/README.md](docs
 That document covers the current repository shape, feature boundaries, shared-code rules, host composition, and SQLite persistence conventions. Feature-specific routes, ownership, and invariants live in:
 
 - [sources/Features/Authentication/FEATURE.md](sources/Features/Authentication/FEATURE.md)
+- [sources/Features/Nutrition/FEATURE.md](sources/Features/Nutrition/FEATURE.md)
+- [sources/Features/Recipes/FEATURE.md](sources/Features/Recipes/FEATURE.md)
 - [sources/Features/ShoppingLists/FEATURE.md](sources/Features/ShoppingLists/FEATURE.md)
+- [sources/Features/Updates/FEATURE.md](sources/Features/Updates/FEATURE.md)
 
 ## Local Run
 
@@ -36,10 +39,10 @@ From the repository root:
 
 ```powershell
 # Terminal 1
-npm --prefix sources run watch:css
+npm --prefix sources/Boodschap run watch:css
 
 # Terminal 2
-dotnet run --project sources/Boodschap.csproj --launch-profile http
+dotnet run --project sources/Boodschap/Boodschap.csproj --launch-profile http
 ```
 
 The app will be available at `http://localhost:5091`.

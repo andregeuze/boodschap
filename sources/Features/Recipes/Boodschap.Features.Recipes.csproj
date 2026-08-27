@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\..\Shared\Boodschap.Shared.csproj" />
+    <ProjectReference Include="..\Nutrition\Boodschap.Features.Nutrition.csproj" />
+  </ItemGroup>
+</Project>

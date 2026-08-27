@@ -6,16 +6,16 @@ PowerShell:
 
 ```powershell
 $env:ConnectionStrings__Boodschap='Data Source=App_Data/smoke-test.db'
-Remove-Item .\sources\App_Data\smoke-test.db, .\sources\App_Data\smoke-test.db-shm, .\sources\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
-dotnet run --project sources/Boodschap.csproj --launch-profile http
+Remove-Item .\sources\Boodschap\App_Data\smoke-test.db, .\sources\Boodschap\App_Data\smoke-test.db-shm, .\sources\Boodschap\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
+dotnet run --project sources/Boodschap/Boodschap.csproj --launch-profile http
 ```
 
 For Docker/startup configuration regressions, rerun the same smoke flow once with a raw database path instead of a full SQLite connection string:
 
 ```powershell
 $env:ConnectionStrings__Boodschap='App_Data/docker-path-smoke.db'
-Remove-Item .\sources\App_Data\docker-path-smoke.db, .\sources\App_Data\docker-path-smoke.db-shm, .\sources\App_Data\docker-path-smoke.db-wal -ErrorAction SilentlyContinue
-dotnet run --project sources/Boodschap.csproj --launch-profile http
+Remove-Item .\sources\Boodschap\App_Data\docker-path-smoke.db, .\sources\Boodschap\App_Data\docker-path-smoke.db-shm, .\sources\Boodschap\App_Data\docker-path-smoke.db-wal -ErrorAction SilentlyContinue
+dotnet run --project sources/Boodschap/Boodschap.csproj --launch-profile http
 ```
 
 The app listens on `http://localhost:5091`.

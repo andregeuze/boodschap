@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
+    <DefaultItemExcludes>$(DefaultItemExcludes);tests\**\*</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Boodschap.Shared.csproj" />
+    <ProjectReference Include="..\Features\Authentication\Boodschap.Features.Authentication.csproj" />
+    <ProjectReference Include="..\Features\ShoppingLists\Boodschap.Features.ShoppingLists.csproj" />
+    <ProjectReference Include="..\Features\Nutrition\Boodschap.Features.Nutrition.csproj" />
+    <ProjectReference Include="..\Features\Recipes\Boodschap.Features.Recipes.csproj" />
+    <ProjectReference Include="..\Features\Updates\Boodschap.Features.Updates.csproj" />
+  </ItemGroup>
+
+  <Target Name="BuildTailwindCss"
+          BeforeTargets="Build"
+      Condition="'$(Configuration)' == 'Debug' and '$(DesignTimeBuild)' != 'true' and '$(ContinuousIntegrationBuild)' != 'true'">
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css" />
+  </Target>
+
+</Project>

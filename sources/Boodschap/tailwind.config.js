@@ -4,10 +4,8 @@ module.exports = {
   content: [
     "./*.razor",
     "./Components/**/*.{razor,html}",
-    "./Features/**/*.{razor,html}",
-    "./Shared/**/*.{razor,html}",
-    "./Pages/**/*.{razor,html}",
-    "./Layout/**/*.{razor,html}",
+    "../Features/**/*.{razor,html}",
+    "../Shared/**/*.{razor,html}",
     "./wwwroot/**/*.html",
     "./wwwroot/js/**/*.js"
   ],

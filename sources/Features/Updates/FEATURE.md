@@ -13,7 +13,7 @@ Configuration lives under `Features:Updates`:
 - `CurrentCommit` can explicitly override the running commit.
 - `CacheDurationMinutes` controls both the successful-result cache and the background check interval. The minimum effective duration is one minute.
 
-The build embeds `RepositoryCommit` assembly metadata. Local builds resolve it from `git rev-parse HEAD`. CI can provide `GITHUB_SHA` or `BUILD_COMMIT`; Docker builds can use `--build-arg BUILD_COMMIT=<sha>`. The GitHub Actions publication workflow passes `github.sha` as `BUILD_COMMIT`, so published images identify the exact workflow commit.
+The Updates project embeds `RepositoryCommit` assembly metadata in `Boodschap.Features.Updates.dll`, where the update service reads it. Local builds resolve it from `git rev-parse HEAD`. CI can provide `GITHUB_SHA` or `BUILD_COMMIT`; Docker builds can use `--build-arg BUILD_COMMIT=<sha>`. The GitHub Actions publication workflow passes `github.sha` as `BUILD_COMMIT`, so published images identify the exact workflow commit.
 
 ## Behavior
 

@@ -63,7 +63,7 @@ This feature follows Onion/Clean Architecture:
 - `Infrastructure` depends on `Application` and `Domain`
 - `Domain` stays free of Blazor, EF Core, and transport concerns
 
-The app shell composes this feature through `sources/Program.cs` and `NutritionModule`.
+The app shell composes this feature through `sources/Boodschap/Program.cs` and `NutritionModule`. The Nutrition project references Authentication's application contract for current-user access; it does not reference Authentication infrastructure or presentation.
 
 ## Invariants
 

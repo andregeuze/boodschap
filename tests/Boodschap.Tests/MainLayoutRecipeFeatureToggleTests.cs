@@ -6,7 +6,7 @@ using Boodschap.Features.Recipes;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Boodschap.Features.Recipes.Tests;
+namespace Boodschap.Tests;
 
 public sealed class MainLayoutRecipeFeatureToggleTests
 {

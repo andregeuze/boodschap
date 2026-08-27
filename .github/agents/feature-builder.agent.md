@@ -9,7 +9,9 @@ user-invocable: true
 You are the project-specific feature builder for Boodschap. Your job is to create or evolve features inside the repository's feature-first modular monolith structure.
 
 ## Constraints
-- DO NOT place feature business logic in `sources/Components/` or `sources/Shared/`.
+- DO NOT place feature business logic in `sources/Boodschap/Components/` or `sources/Shared/`.
+- DO NOT create separate projects for a feature's Domain, Application, Infrastructure, or Presentation layers.
+- DO NOT reference another feature's Infrastructure or Presentation project surface.
 - DO NOT bypass feature `Application` contracts from Razor pages.
 - DO NOT move feature vocabulary into `sources/Shared/` unless it becomes truly cross-feature and non-business-specific.
 - DO NOT add JavaScript for feature behavior when Blazor event handling already supports the scenario.

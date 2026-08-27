@@ -91,6 +91,12 @@ app.UseAntiforgery();
 app.MapAuthenticationFeature();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(
+        typeof(AuthenticationModule).Assembly,
+        typeof(ShoppingListsModule).Assembly,
+        typeof(NutritionModule).Assembly,
+        typeof(RecipesModule).Assembly,
+        typeof(UpdatesModule).Assembly);
 
 app.Run();

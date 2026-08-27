@@ -15,15 +15,15 @@
 
 ```
 sources/
-  Components/        App shell only: App.razor, Routes.razor, Layout/
+  Boodschap/          Web host, app shell, configuration, Tailwind, static assets
   Features/          Feature-first vertical slices
-    Authentication/  Domain, Application/{Contracts,Services}, Infrastructure, Presentation
-    ShoppingLists/   Domain, Application/{Contracts,Services}, Infrastructure, Presentation
-  Shared/            Cross-feature UI and technical building blocks only
-  Styles/            app.tailwind.css  ← Tailwind source (edit this, not app.css)
-  wwwroot/
-    app.css          ← Tailwind output (generated, do not edit manually)
-  Program.cs         ASP.NET host setup and composition root
+    Authentication/  One Razor project containing Domain, Application, Infrastructure, Presentation
+    ShoppingLists/   One Razor project containing Domain, Application, Infrastructure, Presentation
+    Nutrition/       One Razor project containing Domain, Application, Infrastructure, Presentation
+    Recipes/         One Razor project containing Domain, Application, Infrastructure, Presentation
+    Updates/         One Razor project containing Domain, Application, Infrastructure, Presentation
+  Shared/            Shared Razor project for cross-feature technical building blocks
+  Directory.Build.props
 tests/               Feature-aligned test projects and smoke-test docs
 docs/                Architecture and development plans
 Dockerfile           Multi-stage container build
@@ -33,11 +33,12 @@ Dockerfile           Multi-stage container build
 
 - **Razor components**: co-locate `@code { }` blocks at the bottom of `.razor` files; no separate `.razor.cs` code-behind unless the file grows very large.
 - **C# style**: modern C# — primary constructors, collection expressions `[...]`, pattern matching, `var` where the type is obvious, nullable reference types enabled.
-- **Feature boundaries**: new business functionality belongs under `sources/Features/<FeatureName>/` with `Domain`, `Application`, `Infrastructure`, and `Presentation` folders. Follow the current feature layout by splitting richer application layers into `Application/Contracts/` and `Application/Services/`.
+- **Feature boundaries**: new business functionality belongs in one `sources/Features/<FeatureName>/Boodschap.Features.<FeatureName>.csproj` Razor project with `Domain`, `Application`, `Infrastructure`, and `Presentation` folders. Do not create projects per layer. Follow the current feature layout by splitting richer application layers into `Application/Contracts/` and `Application/Services/`.
+- **Project dependencies**: Shared references no feature. Features must not reference another feature's Infrastructure or Presentation. Nutrition may reference Authentication Application contracts; Recipes may reference Nutrition Application/Domain. The Web host composes all features explicitly.
 - **Shared code**: only move code into `sources/Shared/` when it is truly used by multiple features and contains no feature-specific business language.
 - **Language**: write source code, identifiers, comments, documentation, and tests in English. User-facing UI text must be Dutch through .NET localization resources; only Dutch resources are implemented for now. Treat `Boodschap` as the product name and do not localize it unless the user explicitly asks for another language.
 - **JavaScript** — none. Do not add JavaScript files unless strictly necessary for a browser API unavailable in Blazor.
-- **Tailwind**: write utility classes directly in markup. From the repository root, run `npm --prefix sources run watch:css` during development to auto-rebuild `sources/wwwroot/app.css`. Run `npm --prefix sources run build:css` for a minified production build.
+- **Tailwind**: write utility classes directly in markup. From the repository root, run `npm --prefix sources/Boodschap run watch:css` during development to auto-rebuild `sources/Boodschap/wwwroot/app.css`. Run `npm --prefix sources/Boodschap run build:css` for a minified production build.
 - **Circular icon buttons**: use Tailwind utility classes with `inline-flex`, fixed equal `h-*`/`w-*`, `rounded-full`, subtle `ring-*`/`shadow-*`, hover and `focus-visible` states, and a real inline SVG icon. Keep visible text out of icon-only buttons; use `aria-label` for the accessible name. Do not use raw text glyphs like `+`, `×`, or `✓` for polished action buttons.
 - **No magic strings for item state** — use the existing filter values `"All"`, `"Needed"`, `"Purchased"`.
 
@@ -45,10 +46,10 @@ Dockerfile           Multi-stage container build
 
 ```bash
 # Terminal 1 — watch Tailwind
-npm --prefix sources run watch:css
+npm --prefix sources/Boodschap run watch:css
 
 # Terminal 2 — run the app
-dotnet run --project sources/Boodschap.csproj
+dotnet run --project sources/Boodschap/Boodschap.csproj
 ```
 
 ## Running Tests
@@ -87,6 +88,6 @@ docker run -p 8080:8080 boodschap
 - Blazor Server circuits should stay synchronized across sessions. When a list or item changes, prefer store-level notifications so all connected sessions refresh over the existing SignalR/WebSocket connection.
 - Drag-and-drop reordering uses HTML5 DnD entirely in C# via Blazor event handlers on the `<li>` elements in `sources/Features/ShoppingLists/Presentation/Pages/ShoppingListPage.razor`. There is no JavaScript file for this.
 - Shopping list persistence lives in `sources/Features/ShoppingLists/Infrastructure/Persistence/` and should stay behind feature-level application contracts in `sources/Features/ShoppingLists/Application/Contracts/`.
-- Do **not** modify `sources/wwwroot/app.css` directly — it is overwritten by Tailwind on every build.
-- The app runs behind a reverse proxy; `UseForwardedHeaders` is configured in `sources/Program.cs`.
+- Do **not** modify `sources/Boodschap/wwwroot/app.css` directly — it is overwritten by Tailwind on every build.
+- The app runs behind a reverse proxy; `UseForwardedHeaders` is configured in `sources/Boodschap/Program.cs`.
 - After implementing any feature, bugfix, or behavioral change, run the smoke test against the disposable smoke-test database before considering the task complete.

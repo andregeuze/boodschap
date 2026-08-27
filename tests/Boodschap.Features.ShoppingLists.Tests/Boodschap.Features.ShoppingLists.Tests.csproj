@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\sources\Boodschap.csproj" />
+    <ProjectReference Include="..\..\sources\Features\ShoppingLists\Boodschap.Features.ShoppingLists.csproj" />
   </ItemGroup>
 
 </Project>

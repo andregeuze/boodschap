@@ -1,0 +1,18 @@
+@page "/account"
+@using Boodschap.Features.Authentication.Presentation.Components
+@using Boodschap.Features.Updates
+@using Boodschap.Features.Updates.Presentation.Components
+@using Microsoft.Extensions.Options
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IStringLocalizer<AppStrings> Localizer
+@inject IOptions<UpdateFeatureOptions> UpdateFeatureOptions
+
+<PageTitle>@Localizer["Account.PageTitle"]</PageTitle>
+
+<AccountSettings>
+	@if (UpdateFeatureOptions.Value.Enabled)
+	{
+		<UpdateStatus />
+	}
+</AccountSettings>
