@@ -54,6 +54,21 @@ public sealed class GitHubUpdateCheckServiceTests
 		var result = await service.CheckAsync();
 
 		Assert.Equal(UpdateAvailability.Unavailable, result.Availability);
+		Assert.Equal(2, handler.RequestCount);
+	}
+
+	[Fact]
+	public async Task CheckAsync_WhenGatewayTimesOutOnce_RetriesAndReturnsLatestCommit()
+	{
+		var handler = new StubHttpMessageHandler(
+			(HttpStatusCode.GatewayTimeout, "{}"),
+			(HttpStatusCode.OK, CreateCommitJson("abcdef123456")));
+		var service = CreateService(handler, "abcdef123456");
+
+		var result = await service.CheckAsync();
+
+		Assert.Equal(UpdateAvailability.UpToDate, result.Availability);
+		Assert.Equal(2, handler.RequestCount);
 	}
 
 	[Fact]
@@ -103,8 +118,22 @@ public sealed class GitHubUpdateCheckServiceTests
 		}
 	}
 
-	private sealed class StubHttpMessageHandler(HttpStatusCode statusCode, string content) : HttpMessageHandler
+	private sealed class StubHttpMessageHandler : HttpMessageHandler
 	{
+		private readonly Queue<(HttpStatusCode StatusCode, string Content)> responses;
+		private (HttpStatusCode StatusCode, string Content) lastResponse;
+
+		public StubHttpMessageHandler(HttpStatusCode statusCode, string content)
+			: this((statusCode, content))
+		{
+		}
+
+		public StubHttpMessageHandler(params (HttpStatusCode StatusCode, string Content)[] responses)
+		{
+			this.responses = new Queue<(HttpStatusCode StatusCode, string Content)>(responses);
+			lastResponse = responses[^1];
+		}
+
 		public int RequestCount { get; private set; }
 
 		protected override Task<HttpResponseMessage> SendAsync(
@@ -112,9 +141,11 @@ public sealed class GitHubUpdateCheckServiceTests
 			CancellationToken cancellationToken)
 		{
 			RequestCount++;
-			return Task.FromResult(new HttpResponseMessage(statusCode)
+			var response = responses.TryDequeue(out var nextResponse) ? nextResponse : lastResponse;
+			lastResponse = response;
+			return Task.FromResult(new HttpResponseMessage(response.StatusCode)
 			{
-				Content = new StringContent(content)
+				Content = new StringContent(response.Content)
 			});
 		}
 	}

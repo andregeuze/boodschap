@@ -20,10 +20,12 @@ public static class UpdatesModule
 		services.AddHttpClient(HttpClientName, client =>
 		{
 			client.BaseAddress = new Uri("https://api.github.com/");
+			client.Timeout = TimeSpan.FromSeconds(10);
 			client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Boodschap", "1.0"));
 			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
 		});
 		services.AddSingleton<IUpdateCheckService, GitHubUpdateCheckService>();
+		services.AddHostedService<UpdateCheckBackgroundService>();
 
 		return services;
 	}

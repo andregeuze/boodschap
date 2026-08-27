@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -13,6 +14,8 @@ public sealed class GitHubUpdateCheckService(
 	IOptions<UpdateFeatureOptions> options,
 	ILogger<GitHubUpdateCheckService> logger) : IUpdateCheckService
 {
+	private const int MaxAttempts = 2;
+	private static readonly TimeSpan RetryDelay = TimeSpan.FromMilliseconds(250);
 	private readonly SemaphoreSlim checkLock = new(1, 1);
 	private UpdateCheckResult? cachedResult;
 	private DateTimeOffset cachedAt;
@@ -33,9 +36,14 @@ public sealed class GitHubUpdateCheckService(
 				return cachedResult;
 			}
 
-			cachedResult = await CheckGitHubAsync(cancellationToken);
-			cachedAt = DateTimeOffset.UtcNow;
-			return cachedResult;
+			var result = await CheckGitHubAsync(cancellationToken);
+			if (result.Availability != UpdateAvailability.Unavailable)
+			{
+				cachedResult = result;
+				cachedAt = DateTimeOffset.UtcNow;
+			}
+
+			return result;
 		}
 		finally
 		{
@@ -58,7 +66,8 @@ public sealed class GitHubUpdateCheckService(
 			var repository = Uri.EscapeDataString(options.Value.Repository);
 			var branch = Uri.EscapeDataString(options.Value.Branch);
 			var client = httpClientFactory.CreateClient(UpdatesModule.HttpClientName);
-			var latest = await client.GetFromJsonAsync<GitHubCommit>(
+			var latest = await GetLatestCommitAsync(
+				client,
 				$"repos/{owner}/{repository}/commits/{branch}",
 				cancellationToken);
 
@@ -79,9 +88,54 @@ public sealed class GitHubUpdateCheckService(
 		}
 		catch (Exception exception) when (exception is HttpRequestException or JsonException)
 		{
-			logger.LogWarning(exception, "Checking GitHub for a newer Boodschap commit failed.");
+			logger.LogInformation("Checking GitHub for a newer Boodschap commit failed: {Message}", exception.Message);
 			return new UpdateCheckResult(UpdateAvailability.Unavailable, currentCommit);
 		}
+		catch (OperationCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+		{
+			logger.LogInformation("Checking GitHub for a newer Boodschap commit timed out: {Message}", exception.Message);
+			return new UpdateCheckResult(UpdateAvailability.Unavailable, currentCommit);
+		}
+	}
+
+	private async Task<GitHubCommit?> GetLatestCommitAsync(
+		HttpClient client,
+		string requestUri,
+		CancellationToken cancellationToken)
+	{
+		for (var attempt = 1; attempt <= MaxAttempts; attempt++)
+		{
+			try
+			{
+				using var response = await client.GetAsync(
+					requestUri,
+					HttpCompletionOption.ResponseHeadersRead,
+					cancellationToken);
+
+				if (response.IsSuccessStatusCode)
+				{
+					return await response.Content.ReadFromJsonAsync<GitHubCommit>(cancellationToken);
+				}
+
+				if (!IsTransient(response.StatusCode) || attempt == MaxAttempts)
+				{
+					logger.LogInformation(
+						"Checking GitHub for a newer Boodschap commit returned HTTP {StatusCode}.",
+						(int)response.StatusCode);
+					return null;
+				}
+			}
+			catch (HttpRequestException) when (attempt < MaxAttempts)
+			{
+			}
+			catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested && attempt < MaxAttempts)
+			{
+			}
+
+			await Task.Delay(RetryDelay, cancellationToken);
+		}
+
+		return null;
 	}
 
 	private string? ResolveCurrentCommit()
@@ -107,6 +161,16 @@ public sealed class GitHubUpdateCheckService(
 	{
 		return commit is { Length: >= 7 and <= 64 }
 			&& commit.All(character => char.IsAsciiHexDigit(character));
+	}
+
+	private static bool IsTransient(HttpStatusCode statusCode)
+	{
+		return statusCode is HttpStatusCode.RequestTimeout
+			or HttpStatusCode.TooManyRequests
+			or HttpStatusCode.InternalServerError
+			or HttpStatusCode.BadGateway
+			or HttpStatusCode.ServiceUnavailable
+			or HttpStatusCode.GatewayTimeout;
 	}
 
 	private sealed record GitHubCommit(
