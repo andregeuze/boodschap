@@ -24,6 +24,14 @@ public sealed class ShoppingListPageComponentTests
 
 		cut.WaitForAssertion(() =>
 		{
+			var pageHeader = cut.Find("header");
+			var backButton = FindButton(cut, "Terug");
+
+			Assert.Equal("Weekly groceries", pageHeader.QuerySelector("h1")?.TextContent.Trim());
+			Assert.Contains("Fresh produce, dairy, and pantry basics.", pageHeader.TextContent);
+			Assert.NotNull(backButton.QuerySelector("svg"));
+			Assert.Contains("bg-emerald-400", backButton.ClassList);
+			Assert.Empty(cut.FindAll("h2"));
 			Assert.Contains("Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen.", cut.Markup);
 			Assert.Contains("Milk", cut.Markup);
 			Assert.Contains("Coffee", cut.Markup);

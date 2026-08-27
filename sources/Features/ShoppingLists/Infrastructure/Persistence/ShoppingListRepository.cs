@@ -53,13 +53,14 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 		return await GetListRequiredAsync(shoppingList.Id, cancellationToken);
 	}
 
-	public async Task<MutationResult<ShoppingList>> RenameListAsync(int listId, string name, CancellationToken cancellationToken = default)
+	public async Task<MutationResult<ShoppingList>> UpdateListDetailsAsync(int listId, string name, string description, CancellationToken cancellationToken = default)
 	{
 		var normalizedName = name.Trim();
 		if (string.IsNullOrWhiteSpace(normalizedName))
 		{
 			return new(await GetListAsync(listId, cancellationToken), false);
 		}
+		var normalizedDescription = description.Trim();
 
 		await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 		var shoppingList = await dbContext.ShoppingLists
@@ -69,12 +70,14 @@ public sealed class ShoppingListRepository(IDbContextFactory<BoodschapDbContext>
 			return new(null, false);
 		}
 
-		if (string.Equals(shoppingList.Name, normalizedName, StringComparison.Ordinal))
+		if (string.Equals(shoppingList.Name, normalizedName, StringComparison.Ordinal) &&
+			string.Equals(shoppingList.Description, normalizedDescription, StringComparison.Ordinal))
 		{
 			return new(await GetListAsync(listId, cancellationToken), false);
 		}
 
 		shoppingList.Name = normalizedName;
+		shoppingList.Description = normalizedDescription;
 		MarkUpdated(shoppingList);
 		await dbContext.SaveChangesAsync(cancellationToken);
 

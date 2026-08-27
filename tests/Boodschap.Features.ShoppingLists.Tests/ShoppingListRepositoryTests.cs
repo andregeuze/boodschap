@@ -144,13 +144,14 @@ public sealed class ShoppingListRepositoryTests
 	}
 
 	[Fact]
-	public async Task RenameListAsync_UpdatesPersistedTrimmedName()
+	public async Task UpdateListDetailsAsync_UpdatesPersistedTrimmedDetails()
 	{
 		await using var harness = await ShoppingListsSqliteTestHarness.CreateAsync();
 		await harness.SeedAsync(
 			new ShoppingList
 			{
 				Name = "Weekly groceries",
+				Description = "Fresh groceries",
 				Archived = false,
 				SortOrder = 0,
 				Items = []
@@ -159,15 +160,44 @@ public sealed class ShoppingListRepositoryTests
 		var repository = new ShoppingListRepository(harness.DbContextFactory);
 		var list = (await repository.GetListsAsync()).Single();
 
-		var result = await repository.RenameListAsync(list.Id, "  Dinner prep  ");
+		var result = await repository.UpdateListDetailsAsync(list.Id, "  Dinner prep  ", "  Weekend meals  ");
 
 		Assert.True(result.Changed);
 		Assert.NotNull(result.Value);
 		Assert.Equal("Dinner prep", result.Value.Name);
+		Assert.Equal("Weekend meals", result.Value.Description);
 
 		var persisted = await harness.GetListAsync(list.Id);
 		Assert.NotNull(persisted);
 		Assert.Equal("Dinner prep", persisted.Name);
+		Assert.Equal("Weekend meals", persisted.Description);
+	}
+
+	[Fact]
+	public async Task UpdateListDetailsAsync_UpdatesDescriptionWhenNameIsUnchanged()
+	{
+		await using var harness = await ShoppingListsSqliteTestHarness.CreateAsync();
+		await harness.SeedAsync(
+			new ShoppingList
+			{
+				Name = "Weekly groceries",
+				Description = "Fresh groceries",
+				Archived = false,
+				SortOrder = 0,
+				Items = []
+			});
+
+		var repository = new ShoppingListRepository(harness.DbContextFactory);
+		var list = (await repository.GetListsAsync()).Single();
+
+		var result = await repository.UpdateListDetailsAsync(list.Id, "Weekly groceries", "  Pantry staples  ");
+
+		Assert.True(result.Changed);
+		Assert.Equal("Pantry staples", result.Value?.Description);
+
+		var persisted = await harness.GetListAsync(list.Id);
+		Assert.Equal("Weekly groceries", persisted?.Name);
+		Assert.Equal("Pantry staples", persisted?.Description);
 	}
 
 	[Fact]

@@ -93,15 +93,16 @@ public sealed class ShoppingListServiceTests
 	}
 
 	[Fact]
-	public async Task RenameListAsync_NotifiesRenamedListId()
+	public async Task UpdateListDetailsAsync_NotifiesUpdatedListId()
 	{
 		var repository = new FakeShoppingListRepository
 		{
-			RenameListResult = new MutationResult<ShoppingList>(
+			UpdateListDetailsResult = new MutationResult<ShoppingList>(
 				new ShoppingList
 				{
 					Id = 13,
 					Name = "Party supplies",
+					Description = "Dinner and decorations",
 					Items = []
 				},
 				Changed: true)
@@ -116,10 +117,11 @@ public sealed class ShoppingListServiceTests
 
 		var service = new ShoppingListService(repository, notifier);
 
-		var result = await service.RenameListAsync(13, "Party supplies");
+		var result = await service.UpdateListDetailsAsync(13, "Party supplies", "Dinner and decorations");
 
 		Assert.NotNull(result);
-		Assert.Equal("Party supplies", repository.LastRenamedName);
+		Assert.Equal("Party supplies", repository.LastUpdatedName);
+		Assert.Equal("Dinner and decorations", repository.LastUpdatedDescription);
 		Assert.Single(observedChanges);
 		Assert.Equal(13, observedChanges[0].ListId);
 	}
@@ -170,13 +172,14 @@ public sealed class ShoppingListServiceTests
 		};
 
 		public MutationResult<ShoppingList> ArchiveResult { get; set; }
-		public MutationResult<ShoppingList> RenameListResult { get; set; }
+		public MutationResult<ShoppingList> UpdateListDetailsResult { get; set; }
 		public MutationResult<ShoppingList> RenameItemResult { get; set; }
 		public MutationResult<ShoppingList> RemoveArchivedListResult { get; set; }
 
 		public string? LastCreatedName { get; private set; }
 		public string? LastCreatedDescription { get; private set; }
-		public string? LastRenamedName { get; private set; }
+		public string? LastUpdatedName { get; private set; }
+		public string? LastUpdatedDescription { get; private set; }
 		public int? LastRenamedItemId { get; private set; }
 		public string? LastRenamedItemName { get; private set; }
 
@@ -202,10 +205,11 @@ public sealed class ShoppingListServiceTests
 			return Task.FromResult(ArchiveResult);
 		}
 
-		public Task<MutationResult<ShoppingList>> RenameListAsync(int listId, string name, CancellationToken cancellationToken = default)
+		public Task<MutationResult<ShoppingList>> UpdateListDetailsAsync(int listId, string name, string description, CancellationToken cancellationToken = default)
 		{
-			LastRenamedName = name;
-			return Task.FromResult(RenameListResult);
+			LastUpdatedName = name;
+			LastUpdatedDescription = description;
+			return Task.FromResult(UpdateListDetailsResult);
 		}
 
 		public Task<MutationResult<ShoppingList>> RemoveArchivedListAsync(int listId, CancellationToken cancellationToken = default)

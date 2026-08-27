@@ -39,15 +39,29 @@ Expected:
 - Clicking "Nieuwe lijst toevoegen" opens inputs with placeholders "Titel" and "Beschrijving"
 - No Nieuw or Archief status tabs are shown
 - Active list cards Etentje and Weekboodschappen are shown first, with the most recently updated list first
-- Active list cards show an edit icon button with tooltip "Hernoemen" and an Archiveren button
+- Active list cards show an edit icon button with tooltip "Bewerken" and an Archiveren button
 - The "Archief" heading and archived list card Kampeerweekend are shown below the active cards
-- Archived list cards show an edit icon button with tooltip "Hernoemen", plus Uit archief halen and Verwijderen buttons
+- Archived list cards show an edit icon button with tooltip "Bewerken", plus Uit archief halen and Verwijderen buttons
 
 ## 3. Test archived section
 
 Expected:
 - Archived list card "Kampeerweekend" remains visible below all active cards
-- Archived list cards show an edit icon button with tooltip "Hernoemen", plus Uit archief halen and Verwijderen buttons
+- Archived list cards show an edit icon button with tooltip "Bewerken", plus Uit archief halen and Verwijderen buttons
+
+## 3a. Test list details editing
+
+```
+mcp_playwright_browser_click → button "Weekboodschappen bewerken"
+mcp_playwright_browser_snapshot
+```
+
+Expected:
+- Inputs with placeholders "Lijstnaam" and "Beschrijving" appear on the card
+- Both inputs contain the current list values
+- "Opslaan" and "Annuleren" buttons are visible
+
+Click "Annuleren" before continuing with the list flow.
 
 ## 4. Open a shopping list
 
@@ -58,10 +72,11 @@ mcp_playwright_browser_snapshot
 
 Expected:
 - URL ends with `/lists/1`
-- "Terug" button is visible
-- Heading "Weekboodschappen"
+- A prominent emerald "Terug" button with a left arrow is visible
+- Heading "Weekboodschappen" and its description identify the current list in the compact header
 - No list-management buttons are shown in the list view
-- The icon-only "Nieuwe boodschap" button appears under the "Boodschappen" heading
+- No redundant "Boodschappen" section heading is shown
+- The icon-only "Nieuwe boodschap" button appears in the compact controls row
 - Paragraph: "Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen."
 - No item filter buttons are shown
 - Each item row shows the edit icon button before the remove icon button

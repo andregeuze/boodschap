@@ -32,10 +32,10 @@ public sealed class HomePageComponentTests
 			Assert.Contains("Weekly groceries", cut.Markup);
 			Assert.Contains("Dinner party", cut.Markup);
 			Assert.Contains("Camping weekend", cut.Markup);
-			Assert.Single(cut.FindAll("button[aria-label='Nieuwe lijst toevoegen']"));
-			Assert.Single(cut.FindAll("button[aria-label='Weekly groceries bewerken'][title='Hernoemen']"));
-			Assert.Single(cut.FindAll("button[aria-label='Dinner party bewerken'][title='Hernoemen']"));
-			Assert.Single(cut.FindAll("button[aria-label='Camping weekend bewerken'][title='Hernoemen']"));
+			Assert.Single(cut.FindAll("section.overflow-visible button[aria-label='Nieuwe lijst toevoegen']"));
+			Assert.Single(cut.FindAll("button[aria-label='Weekly groceries bewerken'][title='Bewerken']"));
+			Assert.Single(cut.FindAll("button[aria-label='Dinner party bewerken'][title='Bewerken']"));
+			Assert.Single(cut.FindAll("button[aria-label='Camping weekend bewerken'][title='Bewerken']"));
 			Assert.Equal(2, cut.FindAll("button").Count(button => button.TextContent.Trim() == "Archiveren"));
 			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Uit archief halen");
 			Assert.Single(cut.FindAll("button"), button => button.TextContent.Trim() == "Verwijderen");
@@ -53,7 +53,7 @@ public sealed class HomePageComponentTests
 	}
 
 	[Fact]
-	public void RenameList_UpdatesCardName()
+	public void EditList_UpdatesCardNameAndDescription()
 	{
 		var service = new FakeShoppingListService([CreateList(1, "Weekly groceries", archived: false)]);
 
@@ -62,12 +62,14 @@ public sealed class HomePageComponentTests
 
 		FindButtonByLabel(cut, "Weekly groceries bewerken").Click();
 		cut.Find("input[placeholder='Lijstnaam']").Input("Weekly staples");
+		cut.Find("input[placeholder='Beschrijving']").Input("Pantry and household staples");
 		cut.Find("form").Submit();
 
 		cut.WaitForAssertion(() =>
 		{
-			Assert.Equal((1, "Weekly staples"), service.LastRenamedList);
+			Assert.Equal((1, "Weekly staples", "Pantry and household staples"), service.LastUpdatedList);
 			Assert.Contains("Weekly staples", cut.Find("h2").TextContent);
+			Assert.Contains("Pantry and household staples", cut.Find("article").TextContent);
 		});
 	}
 

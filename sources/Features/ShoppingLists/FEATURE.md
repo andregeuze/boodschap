@@ -54,7 +54,7 @@ The app shell should only compose this feature through `sources/Program.cs` and 
 - Shopping list routes require an authenticated user.
 - Lists may only be permanently removed after they are archived.
 - New items are inserted before the first purchased item when a list contains both needed and purchased items.
-- List names are user-provided at creation time and can be renamed later from the overview page.
+- List names and descriptions are user-provided at creation time and can be edited later from the overview page.
 - The overview shows active lists first and archived lists in a section below them, without separate status tabs.
 - Lists within each overview section are ordered by their most recent successful list or item update.
 - Item names are user-provided and can be renamed inline from the list page without leaving the current list.

@@ -11,7 +11,7 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 
 	public string? LastCreatedListName { get; private set; }
 	public string? LastCreatedListDescription { get; private set; }
-	public (int ListId, string Name)? LastRenamedList { get; private set; }
+	public (int ListId, string Name, string Description)? LastUpdatedList { get; private set; }
 	public int? LastArchivedListId { get; private set; }
 	public int? LastUnarchivedListId { get; private set; }
 	public int? LastRemovedArchivedListId { get; private set; }
@@ -64,7 +64,7 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 		return Task.FromResult(CloneList(shoppingList));
 	}
 
-	public Task<ShoppingList?> RenameListAsync(int listId, string name, CancellationToken cancellationToken = default)
+	public Task<ShoppingList?> UpdateListDetailsAsync(int listId, string name, string description, CancellationToken cancellationToken = default)
 	{
 		var shoppingList = storedLists.SingleOrDefault(list => list.Id == listId);
 		if (shoppingList is null)
@@ -73,10 +73,12 @@ public sealed class FakeShoppingListService(IEnumerable<ShoppingList>? shoppingL
 		}
 
 		var normalizedName = name.Trim();
-		LastRenamedList = (listId, normalizedName);
+		var normalizedDescription = description.Trim();
+		LastUpdatedList = (listId, normalizedName, normalizedDescription);
 		if (!string.IsNullOrWhiteSpace(normalizedName))
 		{
 			shoppingList.Name = normalizedName;
+			shoppingList.Description = normalizedDescription;
 		}
 
 		return Task.FromResult<ShoppingList?>(CloneList(shoppingList));

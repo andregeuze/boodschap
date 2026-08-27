@@ -7,7 +7,7 @@ public interface IShoppingListRepository
 	Task<IReadOnlyList<ShoppingList>> GetListsAsync(CancellationToken cancellationToken = default);
 	Task<ShoppingList?> GetListAsync(int id, CancellationToken cancellationToken = default);
 	Task<ShoppingList> CreateListAsync(string name, string description, CancellationToken cancellationToken = default);
-	Task<MutationResult<ShoppingList>> RenameListAsync(int listId, string name, CancellationToken cancellationToken = default);
+	Task<MutationResult<ShoppingList>> UpdateListDetailsAsync(int listId, string name, string description, CancellationToken cancellationToken = default);
 	Task<MutationResult<ShoppingList>> SetListArchivedStateAsync(int listId, bool archived, CancellationToken cancellationToken = default);
 	Task<MutationResult<ShoppingList>> RemoveArchivedListAsync(int listId, CancellationToken cancellationToken = default);
 	Task<MutationResult<ShoppingList>> AddItemAsync(int listId, string itemName, CancellationToken cancellationToken = default);

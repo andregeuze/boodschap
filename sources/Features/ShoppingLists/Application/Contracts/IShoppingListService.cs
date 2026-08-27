@@ -7,7 +7,7 @@ public interface IShoppingListService
 	Task<IReadOnlyList<ShoppingList>> GetListsAsync(CancellationToken cancellationToken = default);
 	Task<ShoppingList?> GetListAsync(int id, CancellationToken cancellationToken = default);
 	Task<ShoppingList> CreateListAsync(string name, string description, CancellationToken cancellationToken = default);
-	Task<ShoppingList?> RenameListAsync(int listId, string name, CancellationToken cancellationToken = default);
+	Task<ShoppingList?> UpdateListDetailsAsync(int listId, string name, string description, CancellationToken cancellationToken = default);
 	Task<ShoppingList?> ArchiveListAsync(int listId, CancellationToken cancellationToken = default);
 	Task<ShoppingList?> UnarchiveListAsync(int listId, CancellationToken cancellationToken = default);
 	Task<bool> RemoveArchivedListAsync(int listId, CancellationToken cancellationToken = default);

@@ -24,9 +24,11 @@ public sealed class ShoppingListService(
 		return shoppingList;
 	}
 
-	public Task<ShoppingList?> RenameListAsync(int listId, string name, CancellationToken cancellationToken = default)
+	public Task<ShoppingList?> UpdateListDetailsAsync(int listId, string name, string description, CancellationToken cancellationToken = default)
 	{
-		return ExecuteMutationAsync(() => shoppingListRepository.RenameListAsync(listId, name, cancellationToken), listId);
+		return ExecuteMutationAsync(
+			() => shoppingListRepository.UpdateListDetailsAsync(listId, name, description, cancellationToken),
+			listId);
 	}
 
 	public Task<ShoppingList?> ArchiveListAsync(int listId, CancellationToken cancellationToken = default)
