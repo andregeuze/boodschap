@@ -1,6 +1,7 @@
 bin/
 obj/
 node_modules/
+sources/App_Data/
 .github/
 .vs/
 *.user

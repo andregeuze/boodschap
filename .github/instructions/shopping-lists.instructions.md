@@ -1,11 +1,11 @@
 ---
 name: "Shopping Lists Feature"
 description: "Use when working on the Shopping Lists feature, including list routes, filters, item add/remove, archiving, reorder behavior, realtime refresh, SQLite persistence, and Shopping Lists feature tests."
-applyTo: "Features/ShoppingLists/**,tests/Boodschap.Features.ShoppingLists.Tests/**"
+applyTo: "sources/Features/ShoppingLists/**,tests/Boodschap.Features.ShoppingLists.Tests/**"
 ---
 # Shopping Lists Feature Guidelines
 
-- Preserve the feature boundary defined in `Features/ShoppingLists/FEATURE.md`.
+- Preserve the feature boundary defined in `sources/Features/ShoppingLists/FEATURE.md`.
 - Keep realtime notifications in `ShoppingListService` orchestration through `StoreChangeNotifier`, not in Razor pages or repository code.
 - Keep drag-and-drop reorder behavior implemented with Blazor C# event handlers in `Presentation/Pages/ShoppingListPage.razor`.
 - Keep SQLite persistence behind `IShoppingListRepository` and `IShoppingListService`.

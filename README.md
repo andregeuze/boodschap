@@ -25,21 +25,21 @@ The canonical architecture reference lives in [docs/architecture/README.md](docs
 
 That document covers the current repository shape, feature boundaries, shared-code rules, host composition, and SQLite persistence conventions. Feature-specific routes, ownership, and invariants live in:
 
-- [Features/Authentication/FEATURE.md](Features/Authentication/FEATURE.md)
-- [Features/ShoppingLists/FEATURE.md](Features/ShoppingLists/FEATURE.md)
+- [sources/Features/Authentication/FEATURE.md](sources/Features/Authentication/FEATURE.md)
+- [sources/Features/ShoppingLists/FEATURE.md](sources/Features/ShoppingLists/FEATURE.md)
 
 ## Local Run
 
 Local username/password authentication is now required before the shopping-list routes render.
 
-From the project root:
+From the repository root:
 
 ```powershell
 # Terminal 1
-npm run watch:css
+npm --prefix sources run watch:css
 
 # Terminal 2
-dotnet run --launch-profile http
+dotnet run --project sources/Boodschap.csproj --launch-profile http
 ```
 
 The app will be available at `http://localhost:5091`.

@@ -388,9 +388,9 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Project-specific
-/appsettings.Development.json
+/sources/appsettings.Development.json
 *.lscache
 .playwright-mcp/
-wwwroot/*.css
-/App_Data/
+sources/wwwroot/*.css
+/sources/App_Data/
 .artifacts/

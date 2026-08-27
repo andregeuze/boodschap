@@ -63,7 +63,7 @@ This feature follows Onion/Clean Architecture:
 - `Infrastructure` depends on `Application` and `Domain`
 - `Domain` stays free of Blazor, EF Core, and transport concerns
 
-The app shell composes this feature through `Program.cs` and `NutritionModule`.
+The app shell composes this feature through `sources/Program.cs` and `NutritionModule`.
 
 ## Invariants
 

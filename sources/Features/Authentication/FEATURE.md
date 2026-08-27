@@ -63,7 +63,7 @@ This feature follows the same feature-first boundary as the rest of the app:
 
 - `Presentation` depends on `Application`
 - `Infrastructure` depends on `Application`
-- `Program.cs` composes the feature through `AuthenticationModule`
+- `sources/Program.cs` composes the feature through `AuthenticationModule`
 
 ## Invariants
 
@@ -80,10 +80,10 @@ This feature follows the same feature-first boundary as the rest of the app:
 
 ## Integration Points
 
-- Host composition: `Program.cs`
-- App shell: `Components/App.razor`, `Components/Routes.razor`, `Components/Layout/MainLayout.razor`
-- Account navigation: `Features/Authentication/Presentation/Components/UserMenu.razor`
-- Shopping Lists routes: `Features/ShoppingLists/Presentation/Pages/`
+- Host composition: `sources/Program.cs`
+- App shell: `sources/Components/App.razor`, `sources/Components/Routes.razor`, `sources/Components/Layout/MainLayout.razor`
+- Account navigation: `sources/Features/Authentication/Presentation/Components/UserMenu.razor`
+- Shopping Lists routes: `sources/Features/ShoppingLists/Presentation/Pages/`
 
 ## Evolution Rules
 

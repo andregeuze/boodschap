@@ -6,16 +6,16 @@ PowerShell:
 
 ```powershell
 $env:ConnectionStrings__Boodschap='Data Source=App_Data/smoke-test.db'
-Remove-Item .\App_Data\smoke-test.db, .\App_Data\smoke-test.db-shm, .\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
-dotnet run --launch-profile http
+Remove-Item .\sources\App_Data\smoke-test.db, .\sources\App_Data\smoke-test.db-shm, .\sources\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
+dotnet run --project sources/Boodschap.csproj --launch-profile http
 ```
 
 For Docker/startup configuration regressions, rerun the same smoke flow once with a raw database path instead of a full SQLite connection string:
 
 ```powershell
 $env:ConnectionStrings__Boodschap='App_Data/docker-path-smoke.db'
-Remove-Item .\App_Data\docker-path-smoke.db, .\App_Data\docker-path-smoke.db-shm, .\App_Data\docker-path-smoke.db-wal -ErrorAction SilentlyContinue
-dotnet run --launch-profile http
+Remove-Item .\sources\App_Data\docker-path-smoke.db, .\sources\App_Data\docker-path-smoke.db-shm, .\sources\App_Data\docker-path-smoke.db-wal -ErrorAction SilentlyContinue
+dotnet run --project sources/Boodschap.csproj --launch-profile http
 ```
 
 The app listens on `http://localhost:5091`.
@@ -222,7 +222,7 @@ kill_terminal → <terminal-id from step 0>
 Optional cleanup:
 
 ```powershell
-Remove-Item .\App_Data\smoke-test.db, .\App_Data\smoke-test.db-shm, .\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
+Remove-Item .\sources\App_Data\smoke-test.db, .\sources\App_Data\smoke-test.db-shm, .\sources\App_Data\smoke-test.db-wal -ErrorAction SilentlyContinue
 ```
 
 If cleanup runs immediately after stopping the host and SQLite still has the files open, retry the `Remove-Item` command once after the process has fully exited.

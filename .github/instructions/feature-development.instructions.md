@@ -1,16 +1,16 @@
 ---
 name: "Feature Development"
 description: "Use when creating or refactoring features, vertical slices, DDD modules, clean architecture layers, application contracts, feature docs, and feature tests in this repository."
-applyTo: "Features/**,tests/**"
+applyTo: "sources/Features/**,tests/**"
 ---
 # Feature Development Guidelines
 
-- Build features under `Features/<FeatureName>/` with `Domain`, `Application`, `Infrastructure`, and `Presentation` folders.
-- Keep the app shell thin: `Components/` is for composition only.
+- Build features under `sources/Features/<FeatureName>/` with `Domain`, `Application`, `Infrastructure`, and `Presentation` folders.
+- Keep the app shell thin: `sources/Components/` is for composition only.
 - Keep `Domain` free from Blazor, EF Core, and infrastructure details.
 - Put orchestration and use-case behavior behind `Application` contracts.
 - Put EF Core, SQLite, migrations, and external integration details in `Infrastructure`.
-- Move code into `Shared/` only when multiple features need it and it contains no feature-specific business language.
+- Move code into `sources/Shared/` only when multiple features need it and it contains no feature-specific business language.
 - Use English for source code, identifiers, comments, documentation, and tests. User-facing UI text must be Dutch through .NET localization resources; only Dutch resources are implemented for now.
 - Add or update a feature-local `FEATURE.md` when a feature's scope, invariants, routes, or dependencies change.
 - Keep tests aligned with the feature boundary rather than the old layer-first structure.

@@ -1,23 +1,23 @@
 # Stage 1: Build Tailwind CSS
 FROM node:22-alpine AS tailwind
 WORKDIR /src
-COPY package.json package-lock.json ./
+COPY sources/package.json sources/package-lock.json ./
 RUN npm install
-COPY tailwind.config.js ./
-COPY Styles/ ./Styles/
-COPY Components/ ./Components/
-COPY Features/ ./Features/
-COPY Shared/ ./Shared/
-COPY wwwroot/ ./wwwroot/
+COPY sources/tailwind.config.js ./
+COPY sources/Styles/ ./Styles/
+COPY sources/Components/ ./Components/
+COPY sources/Features/ ./Features/
+COPY sources/Shared/ ./Shared/
+COPY sources/wwwroot/ ./wwwroot/
 RUN npm run build:css
 
 # Stage 2: Build and publish .NET application
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_COMMIT
 WORKDIR /src
-COPY Boodschap.csproj ./
+COPY sources/Boodschap.csproj ./
 RUN dotnet restore
-COPY . .
+COPY sources/. .
 # Overwrite with the Tailwind-compiled CSS
 COPY --from=tailwind /src/wwwroot/app.css ./wwwroot/app.css
 RUN dotnet publish Boodschap.csproj -c Release -o /app/publish --no-restore

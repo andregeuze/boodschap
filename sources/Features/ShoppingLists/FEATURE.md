@@ -36,7 +36,7 @@ Shopping Lists renders only for authenticated users and depends on the Authentic
 - `ShoppingList`
 - `ShoppingListItem`
 
-Keep these terms inside the feature. Do not move them into `Shared/`.
+Keep these terms inside the feature. Do not move them into `sources/Shared/`.
 
 ## Architectural Boundary
 
@@ -47,7 +47,7 @@ This feature follows Onion/Clean Architecture:
 - `Infrastructure` depends on `Application` and `Domain`
 - `Domain` stays free of Blazor, EF Core, and transport concerns
 
-The app shell should only compose this feature through `Program.cs` and `ShoppingListsModule`.
+The app shell should only compose this feature through `sources/Program.cs` and `ShoppingListsModule`.
 
 ## Invariants
 
@@ -66,9 +66,9 @@ The app shell should only compose this feature through `Program.cs` and `Shoppin
 
 ## Integration Points
 
-- Authentication gate and current user context: `Features/Authentication/`
-- Shared realtime notifications: `Shared/Realtime/StoreChangeNotifier.cs`
-- Host composition: `Program.cs`
+- Authentication gate and current user context: `sources/Features/Authentication/`
+- Shared realtime notifications: `sources/Shared/Realtime/StoreChangeNotifier.cs`
+- Host composition: `sources/Program.cs`
 
 ## Test Strategy
 
@@ -80,7 +80,7 @@ Current focus:
 - repository ordering and mutation semantics
 - feature invariants that should survive refactors
 
-When adding a new use case, extend tests in the same feature test project before broadening `Shared/` or host-level wiring.
+When adding a new use case, extend tests in the same feature test project before broadening `sources/Shared/` or host-level wiring.
 
 ## Evolution Rules
 

@@ -8,52 +8,50 @@ Boodschap is a feature-first modular monolith built with Blazor Server on .NET 1
 
 - Keep one Blazor Server application, not micro-frontends or multiple deployables.
 - Organize code by business feature first, then by `Domain`, `Application`, `Infrastructure`, and `Presentation` inside each feature.
-- Keep `Shared/` limited to cross-feature technical building blocks.
+- Keep `sources/Shared/` limited to cross-feature technical building blocks.
 - Persist to one SQLite database file while letting each feature own its own EF Core `DbContext` and migrations history table.
-- Keep host startup thin by composing features through module extension methods in `Program.cs`.
+- Keep host startup thin by composing features through module extension methods in `sources/Program.cs`.
 - Keep feature-specific rules, routes, and invariants in feature-local `FEATURE.md` files.
 
 ## Current Repository Shape
 
 ```text
-Components/
-  App.razor
-  Routes.razor
-  Layout/
-
-Features/
-  Authentication/
-    Application/
-      Contracts/
-      Services/
-    Domain/
+sources/
+  Components/
+    App.razor
+    Routes.razor
+    Layout/
+  Features/
+    Authentication/
+      Application/
+        Contracts/
+        Services/
+      Domain/
+      Infrastructure/
+        Persistence/
+      Presentation/
+    ShoppingLists/
+      Application/
+        Contracts/
+        Services/
+      Domain/
+      Infrastructure/
+        Persistence/
+      Presentation/
+  Shared/
     Infrastructure/
       Persistence/
     Presentation/
-  ShoppingLists/
-    Application/
-      Contracts/
-      Services/
-    Domain/
-    Infrastructure/
-      Persistence/
-    Presentation/
-
-Shared/
-  Infrastructure/
-    Persistence/
-  Presentation/
-    Components/
-  Realtime/
-
-Styles/
+      Components/
+    Realtime/
+  Styles/
+  Program.cs
 tests/
-Program.cs
 ```
 
 ## System Composition
 
-`Program.cs` is the composition root.
+`sources/Program.cs` is the composition root.
 
 At startup the host:
 
@@ -82,7 +80,7 @@ Rules that follow from that:
 - `Presentation` contains routable pages and feature-local UI.
 - Features must not depend directly on another feature's `Presentation` or `Infrastructure`.
 
-`Shared/` is not a second application layer. It exists only for cross-feature technical pieces that do not carry feature-specific business language.
+`sources/Shared/` is not a second application layer. It exists only for cross-feature technical pieces that do not carry feature-specific business language.
 
 ## Feature Ownership
 
@@ -105,7 +103,7 @@ Implementation choices already present in the codebase:
 - the ASP.NET Core data-protection key ring is persisted in the authentication SQLite store in the `DataProtectionKeys` table
 - anonymous self-service registration closes after the first account is created
 
-Feature-specific details live in `Features/Authentication/FEATURE.md`.
+Feature-specific details live in `sources/Features/Authentication/FEATURE.md`.
 
 ### Shopping Lists
 
@@ -124,17 +122,17 @@ Implementation choices already present in the codebase:
 - SQLite persistence stays behind `IShoppingListRepository` and `IShoppingListService`
 - routes are available only to authenticated users
 
-Feature-specific details live in `Features/ShoppingLists/FEATURE.md`.
+Feature-specific details live in `sources/Features/ShoppingLists/FEATURE.md`.
 
 ## Shared Cross-Feature Pieces
 
-`Shared/` currently holds technical building blocks used across feature boundaries:
+`sources/Shared/` currently holds technical building blocks used across feature boundaries:
 
-- `Shared/Infrastructure/Persistence/SqliteConnectionStringResolver.cs` for normalized SQLite connection handling
-- `Shared/Realtime/StoreChangeNotifier.cs` for cross-circuit refresh notifications
+- `sources/Shared/Infrastructure/Persistence/SqliteConnectionStringResolver.cs` for normalized SQLite connection handling
+- `sources/Shared/Realtime/StoreChangeNotifier.cs` for cross-circuit refresh notifications
 - shared presentation components that are not specific to a single feature
 
-If code contains business language that belongs to one feature, it should stay in that feature instead of moving to `Shared/`.
+If code contains business language that belongs to one feature, it should stay in that feature instead of moving to `sources/Shared/`.
 
 ## Persistence Model
 
@@ -156,11 +154,11 @@ The authentication store also persists the ASP.NET Core data-protection key ring
 
 ## UI And Runtime Choices
 
-- The app shell lives under `Components/` and should remain free of feature behavior.
+- The app shell lives under `sources/Components/` and should remain free of feature behavior.
 - The app uses Blazor Server with `InteractiveServer` render mode.
-- Tailwind CSS is authored in `Styles/app.tailwind.css` and built into `wwwroot/app.css`.
+- Tailwind CSS is authored in `sources/Styles/app.tailwind.css` and built into `sources/wwwroot/app.css`.
 - Shopping-list interactivity should stay in C# when Blazor event handlers are sufficient.
-- The app is expected to run behind a reverse proxy, and forwarded headers are enabled in `Program.cs`.
+- The app is expected to run behind a reverse proxy, and forwarded headers are enabled in `sources/Program.cs`.
 
 ## Tests And Documentation
 
@@ -173,12 +171,12 @@ The authentication store also persists the ASP.NET Core data-protection key ring
 
 When adding or refactoring a feature:
 
-1. Start with `Features/<FeatureName>/`.
+1. Start with `sources/Features/<FeatureName>/`.
 2. Keep business language inside that feature's `Domain` and `Application` layers.
 3. Hide persistence and external integration details in the feature's `Infrastructure` layer.
 4. Keep feature UI in `Presentation/Pages/` and `Presentation/Components/`.
 5. Add or update the feature's `FEATURE.md`.
 6. Add focused tests in the matching feature test project.
-7. Move code to `Shared/` only after a second feature truly needs the same technical building block.
+7. Move code to `sources/Shared/` only after a second feature truly needs the same technical building block.
 
 If a feature eventually needs stronger isolation, preserve the existing boundary first and extract from the route boundary later. The current architecture is designed to allow that path without paying the complexity cost today.
