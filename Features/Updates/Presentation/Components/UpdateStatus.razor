@@ -1,0 +1,100 @@
+@using Boodschap.Features.Updates.Application.Contracts
+@using Boodschap.Features.Updates.Domain
+@implements IDisposable
+@inject IUpdateCheckService UpdateCheckService
+@inject IStringLocalizer<AppStrings> Localizer
+
+<section class="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm shadow-lg shadow-black/5" aria-labelledby="update-status-title">
+	<div class="flex flex-wrap items-center justify-between gap-3">
+		<h2 id="update-status-title" class="font-semibold text-neutral-200">@Localizer["Updates.Title"]</h2>
+		<span class="@StatusClasses" role="status">
+			@if (result is null)
+			{
+				<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+					<path d="M20 12a8 8 0 1 1-5.4-7.57" />
+				</svg>
+			}
+			else if (result.Availability == UpdateAvailability.UpToDate)
+			{
+				<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+					<path d="m5 12 4 4L19 6" />
+				</svg>
+			}
+			else
+			{
+				<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+					<path d="M12 8v4" />
+					<path d="M12 16h.01" />
+					<circle cx="12" cy="12" r="9" />
+				</svg>
+			}
+			@StatusText
+		</span>
+	</div>
+
+	<dl class="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+		<div class="flex items-center justify-between gap-4 rounded-lg bg-black/15 px-3 py-2">
+			<dt class="text-neutral-400">@Localizer["Updates.CurrentVersion"]</dt>
+			<dd class="font-mono text-neutral-200" title="@result?.CurrentCommit">@ShortCommit(result?.CurrentCommit)</dd>
+		</div>
+		<div class="flex items-center justify-between gap-4 rounded-lg bg-black/15 px-3 py-2">
+			<dt class="text-neutral-400">@Localizer["Updates.RemoteVersion"]</dt>
+			<dd class="font-mono text-neutral-200" title="@result?.LatestCommit">
+				@if (result?.LatestCommitUrl is not null)
+				{
+					<a class="underline decoration-neutral-600 underline-offset-2 transition hover:text-white"
+					   href="@result.LatestCommitUrl"
+					   target="_blank"
+					   rel="noopener noreferrer">@ShortCommit(result.LatestCommit)</a>
+				}
+				else
+				{
+					@ShortCommit(result?.LatestCommit)
+				}
+			</dd>
+		</div>
+	</dl>
+</section>
+
+@code {
+	private readonly CancellationTokenSource cancellationTokenSource = new();
+	private UpdateCheckResult? result;
+
+	private string StatusText => result?.Availability switch
+	{
+		UpdateAvailability.UpToDate => Localizer["Updates.UpToDate"],
+		UpdateAvailability.UpdateAvailable => Localizer["Updates.Available"],
+		UpdateAvailability.Unavailable => Localizer["Updates.Unavailable"],
+		_ => Localizer["Updates.Checking"]
+	};
+
+	private string StatusClasses => result?.Availability switch
+	{
+		UpdateAvailability.UpToDate => "inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-xs font-medium text-emerald-300",
+		UpdateAvailability.UpdateAvailable => "inline-flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-400/10 px-2.5 py-1 text-xs font-medium text-amber-300",
+		UpdateAvailability.Unavailable => "inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-neutral-400",
+		_ => "inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-neutral-300"
+	};
+
+	private static string ShortCommit(string? commit)
+	{
+		return string.IsNullOrWhiteSpace(commit) ? "-" : commit[..Math.Min(7, commit.Length)];
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			result = await UpdateCheckService.CheckAsync(cancellationTokenSource.Token);
+		}
+		catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
+		{
+		}
+	}
+
+	public void Dispose()
+	{
+		cancellationTokenSource.Cancel();
+		cancellationTokenSource.Dispose();
+	}
+}

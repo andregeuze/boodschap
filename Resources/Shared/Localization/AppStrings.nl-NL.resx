@@ -231,4 +231,11 @@
   <data name="Shopping.ShoppingList" xml:space="preserve"><value>Boodschappenlijst</value></data>
   <data name="Shopping.ShoppingListStatus" xml:space="preserve"><value>Status van boodschappenlijst</value></data>
   <data name="Shopping.TitlePlaceholder" xml:space="preserve"><value>Titel</value></data>
+  <data name="Updates.Available" xml:space="preserve"><value>Nieuwe versie beschikbaar op GitHub</value></data>
+  <data name="Updates.Checking" xml:space="preserve"><value>Controleren op updates...</value></data>
+  <data name="Updates.CurrentVersion" xml:space="preserve"><value>Huidige versie</value></data>
+  <data name="Updates.RemoteVersion" xml:space="preserve"><value>Versie op GitHub</value></data>
+  <data name="Updates.Title" xml:space="preserve"><value>Versiecontrole</value></data>
+  <data name="Updates.Unavailable" xml:space="preserve"><value>Updatecontrole niet beschikbaar</value></data>
+  <data name="Updates.UpToDate" xml:space="preserve"><value>Je gebruikt de nieuwste versie</value></data>
 </root>

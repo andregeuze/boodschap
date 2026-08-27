@@ -1,9 +1,13 @@
 @page "/account"
+@using Boodschap.Features.Updates
+@using Boodschap.Features.Updates.Presentation.Components
+@using Microsoft.Extensions.Options
 @attribute [Authorize]
 @rendermode InteractiveServer
 @inject ICurrentUserAccessor CurrentUserAccessor
 @inject ILocalAuthenticationService LocalAuthentication
 @inject IStringLocalizer<AppStrings> Localizer
+@inject IOptions<UpdateFeatureOptions> UpdateFeatureOptions
 
 <PageTitle>@Localizer["Account.PageTitle"]</PageTitle>
 
@@ -113,6 +117,11 @@ else
 						@Localizer["Account.CreateUser"]
 					</button>
 				</form>
+			}
+
+			@if (UpdateFeatureOptions.Value.Enabled)
+			{
+				<UpdateStatus />
 			}
 		</section>
 	</div>

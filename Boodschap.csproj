@@ -7,6 +7,8 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
     <RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
     <DefaultItemExcludes>$(DefaultItemExcludes);tests\**\*</DefaultItemExcludes>
+    <RepositoryCommit Condition="'$(RepositoryCommit)' == '' and '$(GITHUB_SHA)' != ''">$(GITHUB_SHA)</RepositoryCommit>
+    <RepositoryCommit Condition="'$(RepositoryCommit)' == '' and '$(BUILD_COMMIT)' != ''">$(BUILD_COMMIT)</RepositoryCommit>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +27,29 @@
           BeforeTargets="Build"
       Condition="'$(Configuration)' == 'Debug' and '$(DesignTimeBuild)' != 'true' and '$(ContinuousIntegrationBuild)' != 'true'">
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css" />
+  </Target>
+
+  <Target Name="ResolveRepositoryCommit" BeforeTargets="CoreCompile">
+    <Exec Command="git rev-parse HEAD"
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          ConsoleToMsBuild="true"
+          StandardOutputImportance="Low"
+          IgnoreExitCode="true"
+          Condition="'$(RepositoryCommit)' == ''">
+      <Output TaskParameter="ConsoleOutput" PropertyName="RepositoryCommit" />
+    </Exec>
+    <ItemGroup Condition="'$(RepositoryCommit)' != ''">
+      <_RepositoryCommitAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>RepositoryCommit</_Parameter1>
+        <_Parameter2>$(RepositoryCommit)</_Parameter2>
+      </_RepositoryCommitAttribute>
+    </ItemGroup>
+    <WriteCodeFragment Language="C#"
+                       OutputFile="$(IntermediateOutputPath)RepositoryCommit.AssemblyInfo.cs"
+                       AssemblyAttributes="@(_RepositoryCommitAttribute)"
+                       Condition="'$(RepositoryCommit)' != ''">
+      <Output TaskParameter="OutputFile" ItemName="Compile" />
+    </WriteCodeFragment>
   </Target>
 
 </Project>

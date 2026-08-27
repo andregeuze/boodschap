@@ -13,6 +13,7 @@ RUN npm run build:css
 
 # Stage 2: Build and publish .NET application
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+ARG BUILD_COMMIT
 WORKDIR /src
 COPY Boodschap.csproj ./
 RUN dotnet restore

@@ -6,6 +6,7 @@ using Boodschap.Features.Nutrition.Infrastructure.Persistence;
 using Boodschap.Features.Recipes;
 using Boodschap.Features.ShoppingLists;
 using Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
+using Boodschap.Features.Updates;
 using Boodschap.Shared.Infrastructure.Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
@@ -40,6 +41,7 @@ builder.Services.AddAuthenticationFeature(sqliteConnectionString);
 builder.Services.AddShoppingListsFeature(sqliteConnectionString);
 builder.Services.AddNutritionFeature(builder.Configuration, sqliteConnectionString);
 builder.Services.AddRecipesFeature(builder.Configuration);
+builder.Services.AddUpdatesFeature(builder.Configuration);
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
