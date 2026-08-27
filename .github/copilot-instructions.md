@@ -61,6 +61,16 @@ dotnet test tests/Boodschap.Features.ShoppingLists.Tests/Boodschap.Features.Shop
 
 Use the same `/p:OutputPath="$out\"` pattern for focused test runs and future feature work. Do not stop `dotnet watch` or `dotnet run` just to run tests unless a task explicitly requires validating the normal publish/build output.
 
+## Playwright MCP Artifacts
+
+- Always run browser-based testing in a visible VS Code integrated browser tab so the user can watch the test. After the app is ready, use `open_browser_page` as the first browser action and keep that tab open for the entire test run.
+- Do not launch an external browser window or use a headless browser session. Do not silently fall back to either mode; if the VS Code integrated browser is unavailable, report the blocker before continuing with browser testing.
+- Prefer the VS Code integrated browser automation tools for navigation and interaction. Only use `mcp_playwright_browser_*` tools when they operate on the visible VS Code browser page rather than starting a separate hidden or external browser session.
+- Before taking the first Playwright MCP screenshot in a test run, create one run directory using `.artifacts/<YYYY-MM-DD>-<test-run-id>/screenshots/`. Use the current local date and a short unique test-run ID, for example `.artifacts/2026-08-27-a1b2c3/screenshots/`.
+- Pass a path inside that run's `screenshots/` directory to every Playwright MCP screenshot call. Use concise, descriptive file names such as `shopping-list-after-add.png`.
+- Reuse the same dated test-run directory for all screenshots from the same browser test run. Start a new test-run ID for each separate run.
+- Do not store Playwright MCP screenshots in the repository root, `.playwright-mcp/`, or directly under `.artifacts/`.
+
 ## Building the Docker Image
 
 ```bash
