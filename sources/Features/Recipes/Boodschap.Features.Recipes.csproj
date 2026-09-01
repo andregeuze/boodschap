@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" PrivateAssets="all" />
     <ProjectReference Include="..\..\Shared\Boodschap.Shared.csproj" />
     <ProjectReference Include="..\Nutrition\Boodschap.Features.Nutrition.csproj" />
   </ItemGroup>

@@ -15,6 +15,14 @@ Authentication owns sign-in, sign-out, first-user bootstrap registration, local 
 - `/account/register`
 - `/account/logout`
 
+### Mobile API
+
+- `POST /api/auth/login`
+- `POST /api/auth/refresh`
+- `GET /api/auth/me`
+
+The API does not expose registration, account creation, or password management. Mobile sign-out removes the protected access and refresh tokens from device SecureStorage. The built-in opaque bearer-token handler has no revocation store, so there is no server-side logout or revoke endpoint.
+
 ### Presentation
 
 - `Presentation/Pages/SignIn.razor`
@@ -33,6 +41,7 @@ Authentication owns sign-in, sign-out, first-user bootstrap registration, local 
 - `Application/Contracts/LocalAuthenticationErrorCodes`
 - `Application/Contracts/LocalAuthenticationResult`
 - `Application/Contracts/LocalPasswordChangeResult`
+- `Application/Contracts/Api/` transport and token-store contracts
 - `Application/Services/LocalAuthenticationService`
 
 ### Infrastructure
@@ -43,6 +52,7 @@ Authentication owns sign-in, sign-out, first-user bootstrap registration, local 
 - `Persistence/AuthenticationDbContext`
 - `Persistence/AuthenticationStoreInitializer`
 - `Persistence/LocalUserRepository`
+- `Remote/RemoteAuthenticationClient`
 - `Infrastructure/Persistence/Migrations/`
 - SQLite-backed ASP.NET Core data-protection key storage for auth cookie and antiforgery continuity across restarts/redeployments
 
@@ -78,10 +88,16 @@ This feature follows the same feature-first boundary as the rest of the app:
 - Signing out clears the local application cookie before returning the user to a signed-out or sign-in surface.
 - The data-protection key ring is persisted in the authentication SQLite store in the `DataProtectionKeys` table so existing valid auth cookies remain decryptable after app restarts or redeployments that keep the database.
 - Development startup seeds a local admin login for quick local access when the account is missing.
+- Mobile credential verification uses the same `ILocalAuthenticationService` as cookie sign-in; the mobile API never reads password hashes directly.
+- Mobile API routes explicitly require the `Boodschap.MobileBearer` scheme. Cookie authentication remains the default for the hosted Blazor UI.
+- Access tokens expire after one hour and refresh tokens after 30 days. Both are opaque Data Protection tickets protected by the persisted authentication key ring.
+- Login and refresh are limited to ten requests per minute per forwarded client IP.
+- Mobile registration is always closed and administrator account management remains hosted-web-only.
 
 ## Integration Points
 
 - Host composition: `sources/Boodschap/Program.cs`
+- Native client composition: `sources/Boodschap.Mobile/MauiProgram.cs`
 - App shell: `sources/Boodschap/Components/App.razor`, `sources/Boodschap/Components/Routes.razor`, `sources/Boodschap/Components/Layout/MainLayout.razor`
 - Account route composition: `sources/Boodschap/Components/Pages/Account.razor`
 - Account navigation: `sources/Features/Authentication/Presentation/Components/UserMenu.razor`
@@ -90,6 +106,8 @@ This feature follows the same feature-first boundary as the rest of the app:
 ## Evolution Rules
 
 - Keep local credential validation and password hashing inside this feature.
+- Keep bearer tickets opaque and Data Protection-backed; do not introduce separate JWT signing without a concrete interoperability requirement.
+- Keep mobile token persistence behind `IApiTokenStore`; the MAUI implementation stores tokens only in platform SecureStorage.
 - Expose authenticated-user data through `ICurrentUserAccessor` instead of reading claims throughout the codebase.
 - Keep EF Core credential persistence in this feature and avoid leaking password-hash details outside it.
 - Keep persisted data-protection keys in the same durable store as the authentication feature when changing hosting or deployment topology; if the SQLite database is replaced, existing cookies will no longer be valid.

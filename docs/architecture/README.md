@@ -76,8 +76,9 @@ At startup the host:
 3. Registers the Shopping Lists feature through `AddShoppingListsFeature(sqliteConnectionString)`.
 4. Registers Nutrition, Recipes, and Updates through their feature module extension methods and applies their configured feature flags.
 5. Runs the Authentication, Shopping Lists, and enabled Nutrition initializers before serving requests.
-6. Maps authentication endpoints separately, then maps the Blazor app shell with `InteractiveServer` render mode.
-7. Registers every feature assembly for Razor endpoint discovery; `Components/Routes.razor` registers the same assemblies with the Blazor router.
+6. Maps cookie authentication endpoints, feature-owned bearer-authenticated JSON APIs, the Shopping Lists store-change SignalR hub, and its access-key-authenticated MCP endpoint.
+7. Maps the Blazor app shell with `InteractiveServer` render mode.
+8. Registers every feature assembly for Razor endpoint discovery; `Components/Routes.razor` registers the same assemblies with the Blazor router.
 
 This keeps the host responsible for composition and middleware, while feature behavior stays inside the owning feature.
 
@@ -146,6 +147,7 @@ Shopping Lists owns:
 - item add, remove, rename, purchase, and reorder flows
 - filter behavior for `All`, `Needed`, and `Purchased`
 - realtime refresh across connected Blazor Server sessions
+- Copilot tools for listing and creating shopping lists
 
 Implementation choices already present in the codebase:
 
@@ -153,6 +155,7 @@ Implementation choices already present in the codebase:
 - application services publish refresh events through `StoreChangeNotifier`
 - SQLite persistence stays behind `IShoppingListRepository` and `IShoppingListService`
 - routes are available only to authenticated users
+- the Streamable HTTP MCP endpoint is available at `/mcp`, uses a dedicated access key, and invokes only `IShoppingListService`
 
 Feature-specific details live in `sources/Features/ShoppingLists/FEATURE.md`.
 
@@ -194,6 +197,27 @@ The authentication store also persists the ASP.NET Core data-protection key ring
 - Tailwind CSS is authored in `sources/Boodschap/Styles/app.tailwind.css` and built into `sources/Boodschap/wwwroot/app.css`. Its content configuration scans the host, Shared, and every feature project.
 - Shopping-list interactivity should stay in C# when Blazor event handlers are sufficient.
 - The app is expected to run behind a reverse proxy, and forwarded headers are enabled in `sources/Boodschap/Program.cs`.
+
+## Native Mobile Client
+
+`sources/Boodschap.Mobile/` is a .NET MAUI Blazor Hybrid client that reuses the Authentication, Shopping Lists, Updates, and Shared Razor surfaces. Its authoritative backend defaults to `https://boodschap.geuze.dev/` and must use HTTPS.
+
+- It does not register feature DbContexts, repositories, SQLite initializers, or local authentication persistence.
+- Authentication uses Data Protection-backed opaque bearer access and refresh tokens stored in platform SecureStorage.
+- Shopping-list operations use the feature-owned `HttpShoppingListService` adapter.
+- Store changes arrive through the authenticated `/hubs/store-changes` SignalR hub and are translated into the process-local `StoreChangeNotifier`.
+- Nutrition and Recipes routes are disabled in the native client. Updates may remain enabled because they do not create the Boodschap database.
+- The hosted Blazor Server application continues to use cookie authentication as its default scheme.
+
+## GitHub Copilot MCP
+
+The hosted process also serves Shopping Lists as a remote MCP server at `/mcp`.
+
+- `list_shopping_lists` exposes the current list and item state.
+- `create_shopping_list` creates a list with an optional description and initial items.
+- The endpoint requires the `BoodschapMcp` authentication scheme and the deployment-only `Mcp:AccessKey` secret.
+- Browser cookies and short-lived mobile bearer tokens cannot authorize MCP requests.
+- `.vscode/mcp.json` configures GitHub Copilot to connect over HTTPS and prompt for the key without storing it in the repository.
 
 ## Tests And Documentation
 

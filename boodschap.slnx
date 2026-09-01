@@ -13,6 +13,7 @@
     <Project Path="tests/Boodschap.Features.Updates.Tests/Boodschap.Features.Updates.Tests.csproj" />
   </Folder>
   <Folder Name="/sources/">
+    <Project Path="sources/Boodschap.Mobile/Boodschap.Mobile.csproj" />
     <Project Path="sources/Boodschap/Boodschap.csproj" />
     <Project Path="sources/Features/Authentication/Boodschap.Features.Authentication.csproj" />
     <Project Path="sources/Features/Nutrition/Boodschap.Features.Nutrition.csproj" />

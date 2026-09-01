@@ -1,6 +1,9 @@
 @using System.Security.Claims
+@using Boodschap.Features.Authentication.Application
 @using Boodschap.Features.Authentication.Infrastructure
 @inject IStringLocalizer<AppStrings> Localizer
+@inject IServiceProvider Services
+@inject NavigationManager Navigation
 
 <AuthorizeView>
 	<Authorized Context="authenticationState">
@@ -16,33 +19,58 @@
 					<p class="text-xs text-neutral-500 dark:text-neutral-400">@ResolveEmail(authenticationState.User)</p>
 				}
 			</div>
-			<NavLink class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
-					 href="/account"
-					 Match="NavLinkMatch.All"
-					 ActiveClass="!border-emerald-400 !bg-emerald-400 !text-neutral-950 dark:!border-emerald-400 dark:!bg-emerald-400 dark:!text-neutral-950"
-					 aria-label="@Localizer["Account.AccountLink"]"
-					 title="@Localizer["Account.AccountLink"]">
-				<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-					<path d="M20 21a8 8 0 0 0-16 0" />
-					<circle cx="12" cy="8" r="4" />
-				</svg>
-			</NavLink>
-			<a class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
-			   data-enhance-nav="false"
-			   href="/account/logout?returnUrl=/signed-out"
-			   aria-label="@Localizer["Account.SignOut"]"
-			   title="@Localizer["Account.SignOut"]">
-				<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-					<path d="M14 3h5v18h-5" />
-					<path d="M10 17l5-5-5-5" />
-					<path d="M15 12H3" />
-				</svg>
-			</a>
+			@if (InteractiveSession is null)
+			{
+				<NavLink class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
+						 href="/account"
+						 Match="NavLinkMatch.All"
+						 ActiveClass="!border-emerald-400 !bg-emerald-400 !text-neutral-950 dark:!border-emerald-400 dark:!bg-emerald-400 dark:!text-neutral-950"
+						 aria-label="@Localizer["Account.AccountLink"]"
+						 title="@Localizer["Account.AccountLink"]">
+					<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+						<path d="M20 21a8 8 0 0 0-16 0" />
+						<circle cx="12" cy="8" r="4" />
+					</svg>
+				</NavLink>
+			}
+			@if (InteractiveSession is null)
+			{
+				<a class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
+				   data-enhance-nav="false"
+				   href="/account/logout?returnUrl=/signed-out"
+				   aria-label="@Localizer["Account.SignOut"]"
+				   title="@Localizer["Account.SignOut"]">
+					@SignOutIcon
+				</a>
+			}
+			else
+			{
+				<button type="button"
+						class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-800 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f8f3ea] dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-neutral-950"
+						@onclick="SignOut"
+						aria-label="@Localizer["Account.SignOut"]"
+						title="@Localizer["Account.SignOut"]">
+					@SignOutIcon
+				</button>
+			}
 		</div>
 	</Authorized>
 </AuthorizeView>
 
 @code {
+	private ILocalAuthenticationSession? InteractiveSession => Services.GetService<ILocalAuthenticationSession>();
+
+	private async Task SignOut()
+	{
+		if (InteractiveSession is null)
+		{
+			return;
+		}
+
+		await InteractiveSession.SignOutAsync();
+		Navigation.NavigateTo("/signed-out", replace: true);
+	}
+
 	private string ResolveDisplayName(ClaimsPrincipal user)
 	{
 		return user.Identity?.Name
@@ -55,4 +83,17 @@
 	{
 		return user.FindFirst(ClaimTypes.Email)?.Value;
 	}
+}
+
+@code {
+	private static RenderFragment SignOutIcon => builder =>
+	{
+		builder.AddMarkupContent(0, """
+			<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+				<path d="M14 3h5v18h-5"></path>
+				<path d="M10 17l5-5-5-5"></path>
+				<path d="M15 12H3"></path>
+			</svg>
+			""");
+	};
 }

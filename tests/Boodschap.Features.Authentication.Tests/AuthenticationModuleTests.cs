@@ -1,6 +1,9 @@
 using Boodschap.Features.Authentication.Application;
 using Boodschap.Features.Authentication.Infrastructure;
 using Boodschap.Features.Authentication.Infrastructure.Persistence;
+using Boodschap.Shared.Infrastructure.Authentication;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +29,25 @@ public sealed class AuthenticationModuleTests
 
 		Assert.Equal(LocalAuthenticationDefaults.PersistentSignInLifetime, options.ExpireTimeSpan);
 		Assert.True(options.SlidingExpiration);
+	}
+
+	[Fact]
+	public void AddAuthenticationFeature_KeepsCookieDefaultAndConfiguresOpaqueBearerTokens()
+	{
+		var services = new ServiceCollection();
+		services.AddLogging();
+		services.AddAuthenticationFeature("Data Source=:memory:");
+
+		using var serviceProvider = services.BuildServiceProvider();
+		var authenticationOptions = serviceProvider.GetRequiredService<IOptions<AuthenticationOptions>>().Value;
+		var bearerOptions = serviceProvider
+			.GetRequiredService<IOptionsMonitor<BearerTokenOptions>>()
+			.Get(ApiAuthenticationDefaults.BearerScheme);
+
+		Assert.Equal(CookieAuthenticationDefaults.AuthenticationScheme, authenticationOptions.DefaultAuthenticateScheme);
+		Assert.Equal(CookieAuthenticationDefaults.AuthenticationScheme, authenticationOptions.DefaultChallengeScheme);
+		Assert.Equal(LocalAuthenticationDefaults.BearerTokenLifetime, bearerOptions.BearerTokenExpiration);
+		Assert.Equal(LocalAuthenticationDefaults.RefreshTokenLifetime, bearerOptions.RefreshTokenExpiration);
 	}
 
 	[Fact]

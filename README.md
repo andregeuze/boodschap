@@ -52,6 +52,29 @@ If no accounts exist yet, use the register form on the sign-in page to create th
 
 Authenticated users can open `/account` to change their password. Administrators also use `/account` to create additional users and optionally mark them as administrators.
 
+## GitHub Copilot MCP
+
+The hosted app exposes an authenticated Streamable HTTP MCP server at `/mcp`. It lets GitHub Copilot list existing shopping lists and create a new list with optional initial grocery items.
+
+Generate a dedicated 256-bit access key once:
+
+```powershell
+$keyBytes = [byte[]]::new(32)
+[Security.Cryptography.RandomNumberGenerator]::Fill($keyBytes)
+[Convert]::ToBase64String($keyBytes)
+```
+
+Provide that value to the hosted process as `Mcp__AccessKey`. For Docker Compose, keep the value in the deployment environment or an untracked `.env` file:
+
+```yaml
+services:
+  boodschap:
+    environment:
+      Mcp__AccessKey: ${BOODSCHAP_MCP_ACCESS_KEY}
+```
+
+The workspace MCP configuration in `.vscode/mcp.json` points Copilot at `https://boodschap.geuze.dev/mcp` and securely prompts for the same key. The endpoint returns `401 Unauthorized` when the key is missing, incorrect, or not configured on the server.
+
 ## Docker
 
 By default, the container uses SQLite at `/app/App_Data/boodschap.db`.

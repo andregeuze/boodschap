@@ -2,6 +2,7 @@
 @using Boodschap.Features.Authentication.Application
 @inject ILocalAuthenticationService LocalAuthentication
 @inject IStringLocalizer<AppStrings> Localizer
+@inject IServiceProvider Services
 
 <div class="mx-auto flex min-h-screen w-full max-w-lg items-center justify-center px-4 py-10">
 	<div class="w-full rounded-[2rem] border border-neutral-200 bg-white p-8 text-neutral-900 shadow-2xl shadow-black/10 dark:border-white/10 dark:bg-neutral-950/90 dark:text-neutral-100 dark:shadow-black/20">
@@ -17,8 +18,15 @@
 		}
 
 		<div class="mt-6 grid gap-4">
-			<form method="post" action="/account/login" class="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 dark:border-white/10 dark:bg-white/5">
-				<AntiforgeryToken />
+			<form method="post"
+				  action="/account/login"
+				  class="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 dark:border-white/10 dark:bg-white/5"
+				  @onsubmit="SignIn"
+				  @onsubmit:preventDefault="@(InteractiveSession is not null)">
+				@if (InteractiveSession is null)
+				{
+					<AntiforgeryToken />
+				}
 				<input type="hidden" name="returnUrl" value="@NormalizedReturnUrl" />
 				<h2 class="text-lg font-semibold text-neutral-950 dark:text-white">@Localizer["Account.SignIn"]</h2>
 				<p class="mt-1 text-sm text-neutral-600 dark:text-neutral-400">@Localizer["Account.SignInDescription"]</p>
@@ -30,7 +38,7 @@
 							   name="username"
 							   autocomplete="username"
 							   class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-emerald-500/30 placeholder:text-neutral-400 focus:ring-2 dark:border-white/10 dark:bg-white/5 dark:text-white dark:ring-emerald-400/40 dark:placeholder:text-neutral-500"
-							   value="@SuggestedUsername" />
+							   @bind="username" />
 					</div>
 					<div class="space-y-1">
 						<label class="text-sm font-medium text-neutral-700 dark:text-neutral-300" for="login-password">@Localizer["Account.Password"]</label>
@@ -38,7 +46,8 @@
 							   name="password"
 							   type="password"
 							   autocomplete="current-password"
-							   class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-emerald-500/30 placeholder:text-neutral-400 focus:ring-2 dark:border-white/10 dark:bg-white/5 dark:text-white dark:ring-emerald-400/40 dark:placeholder:text-neutral-500" />
+							   class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-emerald-500/30 placeholder:text-neutral-400 focus:ring-2 dark:border-white/10 dark:bg-white/5 dark:text-white dark:ring-emerald-400/40 dark:placeholder:text-neutral-500"
+							   @bind="password" />
 					</div>
 				</div>
 
@@ -49,8 +58,15 @@
 
 			@if (isBootstrapRegistrationOpen)
 			{
-				<form method="post" action="/account/register" class="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 dark:border-white/10 dark:bg-white/5">
-					<AntiforgeryToken />
+				<form method="post"
+					  action="/account/register"
+					  class="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 dark:border-white/10 dark:bg-white/5"
+					  @onsubmit="Register"
+					  @onsubmit:preventDefault="@(InteractiveSession is not null)">
+					@if (InteractiveSession is null)
+					{
+						<AntiforgeryToken />
+					}
 					<input type="hidden" name="returnUrl" value="@NormalizedReturnUrl" />
 					<h2 class="text-lg font-semibold text-neutral-950 dark:text-white">@Localizer["Account.CreateFirstAccount"]</h2>
 					<p class="mt-1 text-sm text-neutral-600 dark:text-neutral-400">@Localizer["Account.CreateFirstAccountDescription"]</p>
@@ -62,7 +78,7 @@
 								   name="username"
 								   autocomplete="username"
 								   class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-emerald-500/30 placeholder:text-neutral-400 focus:ring-2 dark:border-white/10 dark:bg-white/5 dark:text-white dark:ring-emerald-400/40 dark:placeholder:text-neutral-500"
-								   value="@SuggestedUsername" />
+								   @bind="username" />
 						</div>
 						<div class="space-y-1">
 							<label class="text-sm font-medium text-neutral-700 dark:text-neutral-300" for="register-password">@Localizer["Account.Password"]</label>
@@ -70,7 +86,8 @@
 								   name="password"
 								   type="password"
 								   autocomplete="new-password"
-								   class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-emerald-500/30 placeholder:text-neutral-400 focus:ring-2 dark:border-white/10 dark:bg-white/5 dark:text-white dark:ring-emerald-400/40 dark:placeholder:text-neutral-500" />
+								   class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-emerald-500/30 placeholder:text-neutral-400 focus:ring-2 dark:border-white/10 dark:bg-white/5 dark:text-white dark:ring-emerald-400/40 dark:placeholder:text-neutral-500"
+								   @bind="password" />
 						</div>
 						<div class="space-y-1">
 							<label class="text-sm font-medium text-neutral-700 dark:text-neutral-300" for="register-confirm-password">@Localizer["Account.ConfirmPassword"]</label>
@@ -78,7 +95,8 @@
 								   name="confirmPassword"
 								   type="password"
 								   autocomplete="new-password"
-								   class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-emerald-500/30 placeholder:text-neutral-400 focus:ring-2 dark:border-white/10 dark:bg-white/5 dark:text-white dark:ring-emerald-400/40 dark:placeholder:text-neutral-500" />
+								   class="w-full rounded-2xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 outline-none ring-emerald-500/30 placeholder:text-neutral-400 focus:ring-2 dark:border-white/10 dark:bg-white/5 dark:text-white dark:ring-emerald-400/40 dark:placeholder:text-neutral-500"
+								   @bind="confirmPassword" />
 						</div>
 					</div>
 
@@ -101,6 +119,11 @@
 
 @code {
 	private bool isBootstrapRegistrationOpen;
+	private string username = string.Empty;
+	private string password = string.Empty;
+	private string confirmPassword = string.Empty;
+	private string? interactiveErrorCode;
+	private bool usernameInitialized;
 
 	[Parameter]
 	public string? Title { get; set; }
@@ -120,7 +143,9 @@
 	private string ResolvedTitle => string.IsNullOrWhiteSpace(Title) ? Localizer["Account.DefaultTitle"].Value : Title;
 	private string ResolvedDescription => string.IsNullOrWhiteSpace(Description) ? Localizer["Account.DefaultDescription"].Value : Description;
 
-	private string? ErrorMessage => ErrorCode switch
+	private ILocalAuthenticationSession? InteractiveSession => Services.GetService<ILocalAuthenticationSession>();
+
+	private string? ErrorMessage => (interactiveErrorCode ?? ErrorCode) switch
 	{
 		LocalAuthenticationErrorCodes.InvalidCredentials => Localizer["Account.Error.InvalidCredentials"].Value,
 		LocalAuthenticationErrorCodes.AdminRequired => Localizer["Account.Error.AdminRequired"].Value,
@@ -135,7 +160,49 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
+		if (!usernameInitialized)
+		{
+			username = SuggestedUsername ?? string.Empty;
+			usernameInitialized = true;
+		}
+
 		isBootstrapRegistrationOpen = await LocalAuthentication.IsBootstrapRegistrationOpenAsync();
+	}
+
+	private async Task SignIn()
+	{
+		if (InteractiveSession is null)
+		{
+			return;
+		}
+
+		var result = await LocalAuthentication.LoginAsync(username, password);
+		interactiveErrorCode = result.ErrorCode;
+		if (!result.Succeeded || result.User is null)
+		{
+			return;
+		}
+
+		await InteractiveSession.SignInAsync(result.User);
+		Navigation.NavigateTo(NormalizedReturnUrl, replace: true);
+	}
+
+	private async Task Register()
+	{
+		if (InteractiveSession is null)
+		{
+			return;
+		}
+
+		var result = await LocalAuthentication.RegisterAsync(username, password, confirmPassword);
+		interactiveErrorCode = result.ErrorCode;
+		if (!result.Succeeded || result.User is null)
+		{
+			return;
+		}
+
+		await InteractiveSession.SignInAsync(result.User);
+		Navigation.NavigateTo(NormalizedReturnUrl, replace: true);
 	}
 
 	private string NormalizedReturnUrl

@@ -5,11 +5,15 @@ using Boodschap.Features.Nutrition;
 using Boodschap.Features.Nutrition.Infrastructure.Persistence;
 using Boodschap.Features.Recipes;
 using Boodschap.Features.ShoppingLists;
+using Boodschap.Features.ShoppingLists.Infrastructure.Mcp;
 using Boodschap.Features.ShoppingLists.Infrastructure.Persistence;
+using Boodschap.Features.ShoppingLists.Presentation.Mcp;
 using Boodschap.Features.Updates;
 using Boodschap.Shared.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
+using ModelContextProtocol;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +34,7 @@ builder.Services.AddRazorComponents()
     .AddHubOptions(options => options.MaximumReceiveMessageSize = maxNevoImportFileSize);
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddOpenApi();
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     options.DefaultRequestCulture = new RequestCulture(supportedCultures[0]);
@@ -39,6 +44,9 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 builder.Services.AddAuthenticationFeature(sqliteConnectionString);
 builder.Services.AddShoppingListsFeature(sqliteConnectionString);
+builder.Services.AddMcpServer()
+    .WithHttpTransport()
+    .WithTools<ShoppingListMcpTools>();
 builder.Services.AddNutritionFeature(builder.Configuration, sqliteConnectionString);
 builder.Services.AddRecipesFeature(builder.Configuration);
 builder.Services.AddUpdatesFeature(builder.Configuration);
@@ -65,6 +73,7 @@ if (nutritionFeatureEnabled)
 
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApi();
     await AuthenticationDevelopmentSeeder.SeedAsync(app.Services);
 
     if (nutritionFeatureEnabled)
@@ -83,12 +92,19 @@ if (!app.Environment.IsDevelopment())
 
 app.MapStaticAssets();
 app.UseStaticFiles();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseWebSockets();
 app.UseAntiforgery();
 app.MapAuthenticationFeature();
+app.MapShoppingListsFeature();
+var mcpPolicy = new AuthorizationPolicyBuilder(ShoppingListsMcpDefaults.AuthenticationScheme)
+    .RequireAuthenticatedUser()
+    .Build();
+app.MapMcp(ShoppingListsMcpDefaults.Route)
+    .RequireAuthorization(mcpPolicy);
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

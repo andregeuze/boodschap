@@ -1,0 +1,36 @@
+@inject NavigationManager Navigation
+
+<Router AppAssembly="typeof(MobileApp).Assembly"
+		AdditionalAssemblies="FeatureAssemblies">
+	<Found Context="routeData">
+		<AuthorizeRouteView RouteData="routeData">
+			<NotAuthorized>
+				<SignInGate ReturnUrl="@CurrentPath" />
+			</NotAuthorized>
+		</AuthorizeRouteView>
+		<FocusOnNavigate RouteData="routeData" Selector="h1" />
+	</Found>
+	<NotFound>
+		<main class="flex min-h-screen items-center justify-center bg-neutral-950 px-6 text-center text-neutral-100">
+			<h1 class="text-2xl font-bold">Pagina niet gevonden</h1>
+		</main>
+	</NotFound>
+</Router>
+
+@code {
+	private static readonly IReadOnlyList<System.Reflection.Assembly> FeatureAssemblies =
+	[
+		typeof(ILocalAuthenticationService).Assembly,
+		typeof(IShoppingListService).Assembly,
+		typeof(UpdatesModule).Assembly
+	];
+
+	private string CurrentPath
+	{
+		get
+		{
+			var relativePath = Navigation.ToBaseRelativePath(Navigation.Uri);
+			return string.IsNullOrWhiteSpace(relativePath) ? "/" : $"/{relativePath}";
+		}
+	}
+}
