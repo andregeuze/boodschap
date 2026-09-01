@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace Boodschap.Features.ShoppingLists.Presentation;
 
 [Authorize(AuthenticationSchemes = ApiAuthenticationDefaults.BearerScheme)]
-public sealed class ShoppingListUpdatesHub : Hub;
+internal sealed class ShoppingListUpdatesHub : Hub;
 
 public static class ShoppingListUpdatesHubEndpoints
 {

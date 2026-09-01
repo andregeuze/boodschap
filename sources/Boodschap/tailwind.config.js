@@ -4,6 +4,7 @@ module.exports = {
   content: [
     "./*.razor",
     "./Components/**/*.{razor,html}",
+    "../Boodschap.Mobile/**/*.{razor,html}",
     "../Features/**/*.{razor,html}",
     "../Shared/**/*.{razor,html}",
     "./wwwroot/**/*.html",

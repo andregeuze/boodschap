@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Boodschap.Features.ShoppingLists.Presentation;
 
-public sealed class StoreChangeBroadcastService(
+internal sealed class StoreChangeBroadcastService(
 	StoreChangeNotifier notifier,
 	IHubContext<ShoppingListUpdatesHub> hubContext) : IHostedService
 {

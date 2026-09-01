@@ -13,4 +13,8 @@
   input {
     @apply font-sans;
   }
+
+  #blazor-error-ui {
+    display: none;
+  }
 }

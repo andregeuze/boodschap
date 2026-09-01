@@ -14,7 +14,7 @@ public static class ShoppingListsMcpDefaults
 	public const string Route = "/mcp";
 }
 
-public sealed class McpAccessKeyAuthenticationHandler(
+internal sealed class McpAccessKeyAuthenticationHandler(
 	IOptionsMonitor<AuthenticationSchemeOptions> options,
 	ILoggerFactory logger,
 	UrlEncoder encoder,

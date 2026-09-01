@@ -33,7 +33,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<MauiIcon Include="..\Boodschap\wwwroot\favicon.png" Link="Resources\AppIcon\appicon.png" />
+		<AndroidResource Include="..\Boodschap\wwwroot\favicon.png" Link="Resources\mipmap-xxxhdpi\appicon.png" />
 
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#070708" BaseSize="128,128" />
 
