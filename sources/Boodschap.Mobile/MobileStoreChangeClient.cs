@@ -1,7 +1,7 @@
 using Boodschap.Features.Authentication.Application;
+using Boodschap.Features.Authentication.Domain;
 using Boodschap.Features.ShoppingLists.Application;
 using Boodschap.Shared.Realtime;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Boodschap.Mobile;
@@ -9,56 +9,57 @@ namespace Boodschap.Mobile;
 public sealed class MobileStoreChangeClient : IAsyncDisposable
 {
 	private readonly IRemoteAuthenticationClient authenticationClient;
-	private readonly MobileAuthenticationStateProvider authenticationStateProvider;
+	private readonly MobileSessionState sessionState;
 	private readonly StoreChangeNotifier notifier;
 	private readonly BackendOptions backendOptions;
 	private HubConnection? connection;
 
 	public MobileStoreChangeClient(
 		IRemoteAuthenticationClient authenticationClient,
-		MobileAuthenticationStateProvider authenticationStateProvider,
+		MobileSessionState sessionState,
 		StoreChangeNotifier notifier,
 		BackendOptions backendOptions)
 	{
 		this.authenticationClient = authenticationClient;
-		this.authenticationStateProvider = authenticationStateProvider;
+		this.sessionState = sessionState;
 		this.notifier = notifier;
 		this.backendOptions = backendOptions;
-		authenticationStateProvider.AuthenticationStateChanged += HandleAuthenticationStateChanged;
+		sessionState.Changed += HandleSessionChangedAsync;
 	}
 
 	public async Task StartAsync()
 	{
-		var state = await authenticationStateProvider.GetAuthenticationStateAsync();
-		await SynchronizeConnectionAsync(state);
+		await sessionState.InitializeAsync();
+		await SynchronizeConnectionAsync(sessionState.CurrentUser);
 	}
 
 	public async ValueTask DisposeAsync()
 	{
-		authenticationStateProvider.AuthenticationStateChanged -= HandleAuthenticationStateChanged;
+		sessionState.Changed -= HandleSessionChangedAsync;
 		if (connection is not null)
 		{
 			await connection.DisposeAsync();
 		}
 	}
 
-	private void HandleAuthenticationStateChanged(Task<AuthenticationState> stateTask)
+	private Task HandleSessionChangedAsync(LocalUser? user)
 	{
-		_ = SynchronizeConnectionAsync(stateTask);
+		return SynchronizeConnectionAsync(user);
 	}
 
-	private async Task SynchronizeConnectionAsync(Task<AuthenticationState> stateTask)
+	private async Task SynchronizeConnectionAsync(LocalUser? user)
 	{
-		await SynchronizeConnectionAsync(await stateTask);
-	}
-
-	private async Task SynchronizeConnectionAsync(AuthenticationState state)
-	{
-		if (state.User.Identity?.IsAuthenticated != true)
+		if (user is null)
 		{
 			if (connection?.State is HubConnectionState.Connected or HubConnectionState.Connecting or HubConnectionState.Reconnecting)
 			{
-				await connection.StopAsync();
+				try
+				{
+					await connection.StopAsync();
+				}
+				catch
+				{
+				}
 			}
 			return;
 		}
@@ -66,7 +67,14 @@ public sealed class MobileStoreChangeClient : IAsyncDisposable
 		connection ??= CreateConnection();
 		if (connection.State == HubConnectionState.Disconnected)
 		{
-			await connection.StartAsync();
+			try
+			{
+				await connection.StartAsync();
+			}
+			catch
+			{
+				// The native app still works without live refresh; retries happen on the next auth or data change.
+			}
 		}
 	}
 

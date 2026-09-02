@@ -64,11 +64,13 @@
   <data name="Common.Back" xml:space="preserve"><value>Terug</value></data>
   <data name="Common.Cancel" xml:space="preserve"><value>Annuleren</value></data>
   <data name="Common.Create" xml:space="preserve"><value>Aanmaken</value></data>
+  <data name="Common.Down" xml:space="preserve"><value>Omlaag</value></data>
   <data name="Common.Edit" xml:space="preserve"><value>Bewerken</value></data>
   <data name="Common.New" xml:space="preserve"><value>Nieuw</value></data>
   <data name="Common.Remove" xml:space="preserve"><value>Verwijderen</value></data>
   <data name="Common.Rename" xml:space="preserve"><value>Hernoemen</value></data>
   <data name="Common.Save" xml:space="preserve"><value>Opslaan</value></data>
+  <data name="Common.Up" xml:space="preserve"><value>Omhoog</value></data>
   <data name="Common.Unarchive" xml:space="preserve"><value>Uit archief halen</value></data>
   <data name="Error.DevelopmentEnvironmentWarning" xml:space="preserve"><value>De Development-omgeving mag niet zijn ingeschakeld voor gedeployde apps.</value></data>
   <data name="Error.DevelopmentMode" xml:space="preserve"><value>Ontwikkelmodus</value></data>
@@ -212,6 +214,8 @@
   <data name="Shopping.CreateList" xml:space="preserve"><value>Lijst aanmaken</value></data>
   <data name="Shopping.DescriptionPlaceholder" xml:space="preserve"><value>Beschrijving</value></data>
   <data name="Shopping.EmptyState" xml:space="preserve"><value>Nog geen lijsten in deze weergave.</value></data>
+  <data name="Shopping.Error.ItemNameRequired" xml:space="preserve"><value>Geef een naam voor de boodschap op.</value></data>
+  <data name="Shopping.Error.ListNameRequired" xml:space="preserve"><value>Geef een naam voor de lijst op.</value></data>
   <data name="Shopping.Groceries" xml:space="preserve"><value>Boodschappen</value></data>
   <data name="Shopping.HomeDescription" xml:space="preserve"><value>Je actieve lijsten staan vooraan, terwijl gearchiveerde lijsten makkelijk terug te vinden blijven.</value></data>
   <data name="Shopping.HomeEyebrow" xml:space="preserve"><value>Boodschappenlijsten</value></data>

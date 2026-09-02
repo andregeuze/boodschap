@@ -40,7 +40,7 @@ Expected:
 - No Nieuw or Archief status tabs are shown
 - Active list cards Etentje and Weekboodschappen are shown first, with the most recently updated list first
 - Active list cards show an edit icon button with tooltip "Bewerken" and an Archiveren button
-- The "Archief" heading and archived list card Kampeerweekend are shown below the active cards
+- The "ARCHIEF" heading and archived list card Kampeerweekend are shown below the active cards
 - Archived list cards show an edit icon button with tooltip "Bewerken", plus Uit archief halen and Verwijderen buttons
 
 ## 3. Test archived section

@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Components.Authorization;
-
 namespace Boodschap.Mobile;
 
 public sealed class AppInitializationService(
-	AuthenticationStateProvider authenticationStateProvider,
+	MobileSessionState sessionState,
 	MobileStoreChangeClient storeChangeClient)
 {
 	private readonly SemaphoreSlim initializationLock = new(1, 1);
@@ -24,7 +22,7 @@ public sealed class AppInitializationService(
 				return;
 			}
 
-			await authenticationStateProvider.GetAuthenticationStateAsync();
+			await sessionState.InitializeAsync();
 			await storeChangeClient.StartAsync();
 			initialized = true;
 		}

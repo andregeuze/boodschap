@@ -6,7 +6,7 @@ namespace Boodschap.Mobile;
 
 public sealed class AuthenticatedHttpMessageHandler(
 	IRemoteAuthenticationClient authenticationClient,
-	MobileAuthenticationStateProvider authenticationStateProvider) : DelegatingHandler
+	MobileSessionState sessionState) : DelegatingHandler
 {
 	protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 	{
@@ -27,7 +27,7 @@ public sealed class AuthenticatedHttpMessageHandler(
 		if (!await authenticationClient.RefreshAsync(cancellationToken))
 		{
 			retryRequest.Dispose();
-			authenticationStateProvider.SetAnonymous();
+			await sessionState.SetAnonymousAsync();
 			return response;
 		}
 
