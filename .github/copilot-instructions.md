@@ -63,6 +63,18 @@ dotnet test tests/Boodschap.Features.ShoppingLists.Tests/Boodschap.Features.Shop
 
 Use the same `/p:OutputPath="$out\"` pattern for focused test runs and future feature work. Do not stop `dotnet watch` or `dotnet run` just to run tests unless a task explicitly requires validating the normal publish/build output.
 
+## Mobile Deploy And Launch
+
+When a task changes files under `sources/Boodschap.Mobile/`, treat Android deployment as part of the required finish step.
+
+- Check for an authorized USB-connected Android device with `adb devices` before ending the task.
+- If at least one device is connected, use the first authorized device unless the user specifies another one.
+- If a USB device is connected and the Debug mobile app targets `http://127.0.0.1:5091/`, make sure the local Boodschap host is running on this dev PC before install. Reuse an existing listener on port `5091` when present; otherwise start it with `dotnet run --project sources/Boodschap/Boodschap.csproj --launch-profile http`.
+- Before installing the Debug app to a connected device, create the Android reverse tunnel with `& $adb -s $deviceId reverse tcp:5091 tcp:5091` so the device can reach the local API at `http://127.0.0.1:5091/`.
+- For mobile project changes, the required final validation step is `dotnet build sources/Boodschap.Mobile/Boodschap.Mobile.csproj -f net10.0-android -t:Install`.
+- After a successful install, immediately launch the Debug app on that same device with `adb`, for example: `& $adb -s $deviceId shell monkey -p nl.andregeuze.boodschap.debug -c android.intent.category.LAUNCHER 1`.
+- If `adb` is unavailable, no authorized USB device is connected, the local host cannot be started or reached on port `5091`, the reverse tunnel fails, or install/launch fails, report that blocker explicitly instead of silently skipping deployment.
+
 ## Playwright MCP Artifacts
 
 - Always run browser-based testing in a visible VS Code integrated browser tab so the user can watch the test. After the app is ready, use `open_browser_page` as the first browser action and keep that tab open for the entire test run.
