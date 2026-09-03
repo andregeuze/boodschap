@@ -75,7 +75,7 @@ Open `http://localhost:5091` in the VS Code integrated browser and sign in with 
 
 Expected:
 
-- Heading `Kies een lijst en ga door.` is visible.
+- Eyebrow `Boodschappenlijsten` and the active/archive description are visible without an additional overview heading.
 - The seeded active and archived lists match the MCP result from step 4.
 - No list named `MCP smoketest` exists yet.
 

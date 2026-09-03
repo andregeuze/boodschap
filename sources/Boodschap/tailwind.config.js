@@ -11,7 +11,11 @@ module.exports = {
     "./wwwroot/js/**/*.js"
   ],
   theme: {
-    extend: {}
+    extend: {
+      fontFamily: {
+        sans: ['Inter', '"Segoe UI"', 'Arial', 'sans-serif']
+      }
+    }
   },
   plugins: []
 };

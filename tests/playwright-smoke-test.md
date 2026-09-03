@@ -34,7 +34,7 @@ mcp_playwright_browser_snapshot
 
 Expected:
 - Header feature navigation shows icon-only links for "Boodschappenlijsten" and "Voeding"
-- Heading "Kies een lijst en ga door."
+- Eyebrow "Boodschappenlijsten" and the active/archive description are shown without an additional overview heading
 - Icon-only "Nieuwe lijst toevoegen" button appears directly below the page introduction
 - Clicking "Nieuwe lijst toevoegen" opens inputs with placeholders "Titel" and "Beschrijving"
 - No Nieuw or Archief status tabs are shown

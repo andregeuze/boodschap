@@ -1,8 +1,11 @@
 ﻿using System.Globalization;
+using Boodschap.Mobile.Presentation.Services;
+using Boodschap.Mobile.Presentation.ViewModels;
 using Boodschap.Features.Authentication.Application;
 using Boodschap.Features.Authentication.Infrastructure.Remote;
 using Boodschap.Features.ShoppingLists.Application;
 using Boodschap.Features.ShoppingLists.Infrastructure.Remote;
+using Boodschap.Features.Updates;
 using Boodschap.Shared.Realtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -22,18 +25,22 @@ public static class MauiProgram
 			.UseMauiApp<App>()
 			.ConfigureFonts(fonts =>
 			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				fonts.AddFont("Inter-Regular.ttf", "InterRegular");
+				fonts.AddFont("Inter-Medium.ttf", "InterMedium");
+				fonts.AddFont("Inter-SemiBold.ttf", "InterSemiBold");
+				fonts.AddFont("Inter-Black.ttf", "InterBlack");
 			});
 
 		builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
 		{
-			[$"{BackendOptions.SectionName}:BaseUrl"] = BackendOptions.DefaultBaseUrl
+			[$"{BackendOptions.SectionName}:BaseUrl"] = BackendOptions.DefaultBaseUrl,
+			[$"{BackendOptions.SectionName}:StoreChangesBaseUrl"] = BackendOptions.DefaultStoreChangesBaseUrl
 		});
 
 		var backendOptions = new BackendOptions
 		{
-			BaseUrl = builder.Configuration[$"{BackendOptions.SectionName}:BaseUrl"] ?? BackendOptions.DefaultBaseUrl
+			BaseUrl = builder.Configuration[$"{BackendOptions.SectionName}:BaseUrl"] ?? BackendOptions.DefaultBaseUrl,
+			StoreChangesBaseUrl = builder.Configuration[$"{BackendOptions.SectionName}:StoreChangesBaseUrl"] ?? BackendOptions.DefaultStoreChangesBaseUrl
 		};
 		var backendUri = backendOptions.GetValidatedBaseUri();
 
@@ -42,14 +49,17 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IApiTokenStore, SecureStorageApiTokenStore>();
 		builder.Services.AddSingleton<MobileSessionState>();
 		builder.Services.AddSingleton<ILocalAuthenticationSession>(services => services.GetRequiredService<MobileSessionState>());
+		builder.Services.AddSingleton<IMobileDialogService, PageDialogService>();
 		builder.Services.AddHttpClient<IRemoteAuthenticationClient, RemoteAuthenticationClient>(client => client.BaseAddress = backendUri);
 		builder.Services.AddScoped<ILocalAuthenticationService>(services => services.GetRequiredService<IRemoteAuthenticationClient>());
 		builder.Services.AddTransient<AuthenticatedHttpMessageHandler>();
 		builder.Services.AddHttpClient<IShoppingListService, HttpShoppingListService>(client => client.BaseAddress = backendUri)
 			.AddHttpMessageHandler<AuthenticatedHttpMessageHandler>();
+		builder.Services.AddUpdatesFeature(builder.Configuration);
 		builder.Services.AddSingleton<StoreChangeNotifier>();
 		builder.Services.AddSingleton<MobileStoreChangeClient>();
 		builder.Services.AddSingleton<AppInitializationService>();
+		builder.Services.AddSingleton<MainPageViewModel>();
 		builder.Services.AddSingleton<MainPage>();
 
 #if DEBUG

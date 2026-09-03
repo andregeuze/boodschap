@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+	<Style x:Key="PageHeadingStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#F5F5F5" />
+		<Setter Property="FontSize" Value="28" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+	</Style>
+
+	<Style x:Key="SectionHeadingStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#F5F5F5" />
+		<Setter Property="FontSize" Value="18" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+		<Setter Property="LineHeight" Value="1.5556" />
+	</Style>
+
+	<Style x:Key="EyebrowStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#34D399" />
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+	</Style>
+
+	<Style x:Key="HeaderBrandStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#F5F5F5" />
+		<Setter Property="FontSize" Value="18" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+		<Setter Property="CharacterSpacing" Value="4" />
+		<Setter Property="TextTransform" Value="Uppercase" />
+	</Style>
+
+	<Style x:Key="OverviewEyebrowStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#34D399" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+		<Setter Property="CharacterSpacing" Value="3.92" />
+		<Setter Property="LineHeight" Value="1.4286" />
+		<Setter Property="TextTransform" Value="Uppercase" />
+	</Style>
+
+	<Style x:Key="OverviewIntroStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#D4D4D4" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="FontFamily" Value="InterRegular" />
+		<Setter Property="LineHeight" Value="1.7143" />
+		<Setter Property="LineBreakMode" Value="WordWrap" />
+	</Style>
+
+	<Style x:Key="ListCardTitleStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#FFFFFF" />
+		<Setter Property="FontSize" Value="18" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+		<Setter Property="LineHeight" Value="1.5556" />
+		<Setter Property="LineBreakMode" Value="TailTruncation" />
+	</Style>
+
+	<Style x:Key="ListCardDescriptionStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#A3A3A3" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="FontFamily" Value="InterRegular" />
+		<Setter Property="LineHeight" Value="1.4286" />
+		<Setter Property="LineBreakMode" Value="TailTruncation" />
+	</Style>
+
+	<Style x:Key="ListSummaryBadgeStyle" TargetType="Border">
+		<Setter Property="BackgroundColor" Value="#34D399" />
+		<Setter Property="StrokeThickness" Value="0" />
+		<Setter Property="Padding" Value="12,5" />
+		<Setter Property="StrokeShape" Value="RoundRectangle 14" />
+	</Style>
+
+	<Style x:Key="ListSummaryTextStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#171717" />
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="FontFamily" Value="InterMedium" />
+	</Style>
+
+	<Style x:Key="BodyStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#A3A3A3" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="LineHeight" Value="1.4286" />
+		<Setter Property="LineBreakMode" Value="WordWrap" />
+	</Style>
+
+	<Style x:Key="LoginEyebrowStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#34D399" />
+		<Setter Property="FontSize" Value="12" />
+		<Setter Property="FontFamily" Value="InterMedium" />
+		<Setter Property="CharacterSpacing" Value="2.88" />
+		<Setter Property="LineHeight" Value="1.3333" />
+		<Setter Property="TextTransform" Value="Uppercase" />
+	</Style>
+
+	<Style x:Key="LoginTitleStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#F5F5F5" />
+		<Setter Property="FontSize" Value="30" />
+		<Setter Property="FontFamily" Value="InterBlack" />
+		<Setter Property="LineHeight" Value="1.2" />
+		<Setter Property="LineBreakMode" Value="WordWrap" />
+	</Style>
+
+	<Style x:Key="LoginIntroStyle" TargetType="Label" BasedOn="{StaticResource BodyStyle}">
+		<Setter Property="LineHeight" Value="1.7143" />
+	</Style>
+
+	<Style x:Key="FormLabelStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#D4D4D4" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="FontFamily" Value="InterMedium" />
+		<Setter Property="LineHeight" Value="1.4286" />
+	</Style>
+
+	<Style x:Key="InputStyle" TargetType="Entry">
+		<Setter Property="BackgroundColor" Value="#171717" />
+		<Setter Property="TextColor" Value="#F5F5F5" />
+		<Setter Property="PlaceholderColor" Value="#737373" />
+		<Setter Property="ClearButtonVisibility" Value="WhileEditing" />
+		<Setter Property="Margin" Value="0,6,0,0" />
+	</Style>
+
+	<Style x:Key="PrimaryButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#34D399" />
+		<Setter Property="TextColor" Value="#171717" />
+		<Setter Property="CornerRadius" Value="18" />
+		<Setter Property="Padding" Value="16,12" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+	</Style>
+
+	<Style x:Key="SecondaryButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#171717" />
+		<Setter Property="TextColor" Value="#F5F5F5" />
+		<Setter Property="CornerRadius" Value="18" />
+		<Setter Property="Padding" Value="14,10" />
+		<Setter Property="BorderColor" Value="#262626" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+	</Style>
+
+	<Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+		<Setter Property="TextColor" Value="#FCA5A5" />
+		<Setter Property="BorderColor" Value="#7F1D1D" />
+	</Style>
+
+	<Style x:Key="TitleButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="TextColor" Value="#F5F5F5" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="HorizontalOptions" Value="Start" />
+		<Setter Property="FontSize" Value="22" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+	</Style>
+
+	<Style x:Key="NavigationIconButtonStyle" TargetType="ImageButton">
+		<Setter Property="BackgroundColor" Value="#0DFFFFFF" />
+		<Setter Property="BorderColor" Value="#1AFFFFFF" />
+		<Setter Property="BorderWidth" Value="1" />
+		<Setter Property="CornerRadius" Value="20" />
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="WidthRequest" Value="40" />
+		<Setter Property="MinimumHeightRequest" Value="40" />
+		<Setter Property="MinimumWidthRequest" Value="40" />
+		<Setter Property="Padding" Value="10" />
+	</Style>
+
+	<Style x:Key="HeaderMenuButtonStyle" TargetType="ImageButton" BasedOn="{StaticResource NavigationIconButtonStyle}">
+		<Setter Property="BackgroundColor" Value="#6EE7B7" />
+		<Setter Property="BorderColor" Value="#6EE7B7" />
+		<Setter Property="CornerRadius" Value="24" />
+		<Setter Property="HeightRequest" Value="48" />
+		<Setter Property="WidthRequest" Value="48" />
+		<Setter Property="MinimumHeightRequest" Value="48" />
+		<Setter Property="MinimumWidthRequest" Value="48" />
+		<Setter Property="Padding" Value="14" />
+	</Style>
+
+	<Style x:Key="BottomNavigationIconButtonStyle" TargetType="ImageButton">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="BorderColor" Value="Transparent" />
+		<Setter Property="BorderWidth" Value="0" />
+		<Setter Property="CornerRadius" Value="16" />
+		<Setter Property="HeightRequest" Value="32" />
+		<Setter Property="WidthRequest" Value="56" />
+		<Setter Property="MinimumHeightRequest" Value="32" />
+		<Setter Property="MinimumWidthRequest" Value="56" />
+		<Setter Property="Padding" Value="7" />
+	</Style>
+
+	<Style x:Key="BottomNavigationActiveIconButtonStyle" TargetType="ImageButton" BasedOn="{StaticResource BottomNavigationIconButtonStyle}">
+		<Setter Property="BackgroundColor" Value="#34D399" />
+	</Style>
+
+	<Style x:Key="BottomNavigationLabelStyle" TargetType="Label">
+		<Setter Property="TextColor" Value="#D4D4D4" />
+		<Setter Property="FontSize" Value="11" />
+		<Setter Property="HorizontalTextAlignment" Value="Center" />
+		<Setter Property="HorizontalOptions" Value="Center" />
+	</Style>
+
+	<Style x:Key="BottomNavigationActiveLabelStyle" TargetType="Label" BasedOn="{StaticResource BottomNavigationLabelStyle}">
+		<Setter Property="TextColor" Value="#34D399" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+	</Style>
+
+	<Style x:Key="OverflowMenuItemButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="TextColor" Value="#F5F5F5" />
+		<Setter Property="BorderWidth" Value="0" />
+		<Setter Property="CornerRadius" Value="8" />
+		<Setter Property="HeightRequest" Value="48" />
+		<Setter Property="Padding" Value="12,0" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="HorizontalOptions" Value="Fill" />
+		<Setter Property="ContentLayout" Value="Left,10" />
+	</Style>
+
+	<Style x:Key="AddIconButtonStyle" TargetType="ImageButton" BasedOn="{StaticResource NavigationIconButtonStyle}">
+		<Setter Property="CornerRadius" Value="24" />
+		<Setter Property="HeightRequest" Value="48" />
+		<Setter Property="WidthRequest" Value="48" />
+		<Setter Property="MinimumHeightRequest" Value="48" />
+		<Setter Property="MinimumWidthRequest" Value="48" />
+		<Setter Property="Padding" Value="12" />
+	</Style>
+
+	<Style x:Key="OverviewAddButtonStyle" TargetType="ImageButton" BasedOn="{StaticResource AddIconButtonStyle}">
+		<Setter Property="HorizontalOptions" Value="Start" />
+	</Style>
+
+	<Style x:Key="OverviewEditButtonStyle" TargetType="ImageButton" BasedOn="{StaticResource NavigationIconButtonStyle}">
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="WidthRequest" Value="40" />
+		<Setter Property="MinimumHeightRequest" Value="40" />
+		<Setter Property="MinimumWidthRequest" Value="40" />
+		<Setter Property="CornerRadius" Value="20" />
+		<Setter Property="Padding" Value="10" />
+	</Style>
+
+	<Style x:Key="ListActionButtonStyle" TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="MinimumHeightRequest" Value="40" />
+		<Setter Property="CornerRadius" Value="20" />
+		<Setter Property="Padding" Value="16,0" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="FontFamily" Value="InterMedium" />
+	</Style>
+
+	<Style x:Key="ItemIconButtonStyle" TargetType="ImageButton" BasedOn="{StaticResource NavigationIconButtonStyle}" />
+
+	<Style x:Key="DangerIconButtonStyle" TargetType="ImageButton" BasedOn="{StaticResource NavigationIconButtonStyle}">
+		<Setter Property="BackgroundColor" Value="Transparent" />
+		<Setter Property="BorderColor" Value="Transparent" />
+	</Style>
+
+	<Style x:Key="BackPillButtonStyle" TargetType="Button">
+		<Setter Property="BackgroundColor" Value="#34D399" />
+		<Setter Property="TextColor" Value="#171717" />
+		<Setter Property="CornerRadius" Value="20" />
+		<Setter Property="HeightRequest" Value="40" />
+		<Setter Property="MinimumHeightRequest" Value="40" />
+		<Setter Property="Padding" Value="14,0" />
+		<Setter Property="FontSize" Value="14" />
+		<Setter Property="FontFamily" Value="InterSemiBold" />
+		<Setter Property="ContentLayout" Value="Left,8" />
+	</Style>
+
+	<Style x:Key="BackIconButtonStyle" TargetType="ImageButton" BasedOn="{StaticResource NavigationIconButtonStyle}">
+		<Setter Property="BackgroundColor" Value="#34D399" />
+		<Setter Property="BorderColor" Value="#34D399" />
+		<Setter Property="Padding" Value="12" />
+	</Style>
+</ResourceDictionary>

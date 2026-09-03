@@ -20,8 +20,10 @@ Authentication owns sign-in, sign-out, first-user bootstrap registration, local 
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
 - `GET /api/auth/me`
+- `POST /api/auth/password`
+- `POST /api/auth/users`
 
-The API does not expose registration, account creation, or password management. Mobile sign-out removes the protected access and refresh tokens from device SecureStorage. The built-in opaque bearer-token handler has no revocation store, so there is no server-side logout or revoke endpoint.
+The API does not expose self-service registration. Authenticated mobile users can change their own password, and administrators can create additional accounts. Mobile sign-out removes the protected access and refresh tokens from device SecureStorage. The built-in opaque bearer-token handler has no revocation store, so there is no server-side logout or revoke endpoint.
 
 ### Presentation
 
@@ -92,12 +94,13 @@ This feature follows the same feature-first boundary as the rest of the app:
 - Mobile API routes explicitly require the `Boodschap.MobileBearer` scheme. Cookie authentication remains the default for the hosted Blazor UI.
 - Access tokens expire after one hour and refresh tokens after 30 days. Both are opaque Data Protection tickets protected by the persisted authentication key ring.
 - Login and refresh are limited to ten requests per minute per forwarded client IP.
-- Mobile registration is always closed and administrator account management remains hosted-web-only.
+- Mobile registration is always closed; additional account creation remains administrator-only on both hosted web and mobile.
 
 ## Integration Points
 
 - Host composition: `sources/Boodschap/Program.cs`
 - Native client composition: `sources/Boodschap.Mobile/MauiProgram.cs`
+- Native sign-in parity: `sources/Boodschap.Mobile/Presentation/Views/LoginView.xaml`
 - App shell: `sources/Boodschap/Components/App.razor`, `sources/Boodschap/Components/Routes.razor`, `sources/Boodschap/Components/Layout/MainLayout.razor`
 - Account route composition: `sources/Boodschap/Components/Pages/Account.razor`
 - Account navigation: `sources/Features/Authentication/Presentation/Components/UserMenu.razor`

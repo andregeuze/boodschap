@@ -34,7 +34,6 @@
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
 		<ApplicationId>nl.andregeuze.boodschap.debug</ApplicationId>
-		<AndroidUseCleartextTraffic>true</AndroidUseCleartextTraffic>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -48,7 +47,7 @@
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
 		
 		<!-- Custom Fonts -->
-		<MauiFont Include="Resources\Fonts\*" />
+		<MauiFont Include="Resources\Fonts\*.ttf" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
@@ -66,6 +65,7 @@
 		<ProjectReference Include="..\Shared\Boodschap.Shared.csproj" />
 		<ProjectReference Include="..\Features\Authentication\Boodschap.Features.Authentication.csproj" />
 		<ProjectReference Include="..\Features\ShoppingLists\Boodschap.Features.ShoppingLists.csproj" />
+		<ProjectReference Include="..\Features\Updates\Boodschap.Features.Updates.csproj" />
 	</ItemGroup>
 
 </Project>

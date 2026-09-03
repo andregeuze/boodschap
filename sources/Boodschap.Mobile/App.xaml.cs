@@ -2,17 +2,18 @@
 
 public partial class App : Application
 {
-	private readonly MainPage mainPage;
+	private readonly IServiceProvider services;
 
-	public App(MainPage mainPage)
+	public App(IServiceProvider services)
 	{
 		InitializeComponent();
 		UserAppTheme = AppTheme.Dark;
-		this.mainPage = mainPage;
+		this.services = services;
 	}
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
+		var mainPage = services.GetRequiredService<MainPage>();
 		return new Window(mainPage);
 	}
 }

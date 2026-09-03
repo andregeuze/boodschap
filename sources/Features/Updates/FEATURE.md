@@ -24,4 +24,4 @@ The Updates project embeds `RepositoryCommit` assembly metadata in `Boodschap.Fe
 - Unavailable results are not cached, so a later visit can recover after a temporary GitHub failure.
 - A hosted background service checks immediately when the application starts and then every configured cache interval.
 - Results are cached process-wide for the configured duration. The account page normally reads that shared cached result instead of generating extra GitHub traffic.
-- In a future MAUI host, each running app installation can register the same services and maintain its own cache. Android may suspend in-process timers while the app is fully backgrounded, so closed-app scheduling requires an Android-specific scheduler.
+- The MAUI host registers the same update service and displays its status on the native account screen. Android may suspend in-process timers while the app is fully backgrounded, so closed-app scheduling requires an Android-specific scheduler.

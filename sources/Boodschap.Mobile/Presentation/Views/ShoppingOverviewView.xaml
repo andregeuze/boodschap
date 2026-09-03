@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Boodschap.Mobile.Presentation.Views"
+             x:Class="Boodschap.Mobile.Presentation.Views.ShoppingOverviewView"
+             x:Name="OverviewRoot"
+             IsVisible="{Binding IsVisible}">
+	<VerticalStackLayout Spacing="20">
+		<VerticalStackLayout Spacing="12">
+			<Label Text="{Binding Eyebrow}" Style="{StaticResource OverviewEyebrowStyle}" />
+			<Label Text="{Binding Description}" Style="{StaticResource OverviewIntroStyle}" />
+		</VerticalStackLayout>
+
+		<ImageButton Source="plus.svg"
+					 AutomationId="CreateListButton"
+					 Style="{StaticResource OverviewAddButtonStyle}"
+					 Command="{Binding CreateListCommand}"
+					 SemanticProperties.Description="{Binding CreateListText}" />
+
+		<VerticalStackLayout Spacing="12"
+						 BindableLayout.ItemsSource="{Binding ActiveLists}">
+			<BindableLayout.ItemTemplate>
+				<DataTemplate>
+					<Border BackgroundColor="#171717"
+							Stroke="#1AFFFFFF"
+							StrokeThickness="1"
+							Padding="20">
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="24" />
+						</Border.StrokeShape>
+						<VerticalStackLayout Spacing="16">
+							<Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4" ColumnSpacing="12">
+								<Grid.GestureRecognizers>
+									<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.OpenListCommand}"
+													  CommandParameter="{Binding .}" />
+								</Grid.GestureRecognizers>
+								<Label Text="{Binding Name}" Style="{StaticResource ListCardTitleStyle}" />
+								<Border Grid.Column="1" Style="{StaticResource ListSummaryBadgeStyle}">
+									<Label Text="{Binding Summary}" Style="{StaticResource ListSummaryTextStyle}" />
+								</Border>
+								<Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" Style="{StaticResource ListCardDescriptionStyle}" />
+							</Grid>
+							<HorizontalStackLayout Spacing="8">
+								<ImageButton Source="edit.svg"
+											 Style="{StaticResource OverviewEditButtonStyle}"
+											 SemanticProperties.Description="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.EditText}"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.EditListCommand}"
+										CommandParameter="{Binding .}" />
+								<Button Text="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.ArchiveText}"
+										Style="{StaticResource ListActionButtonStyle}"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.ArchiveListCommand}"
+										CommandParameter="{Binding .}" />
+							</HorizontalStackLayout>
+						</VerticalStackLayout>
+					</Border>
+				</DataTemplate>
+			</BindableLayout.ItemTemplate>
+		</VerticalStackLayout>
+		<Label Text="{Binding ActiveEmptyText}"
+			   Style="{StaticResource BodyStyle}"
+			   IsVisible="{Binding IsActiveEmptyVisible}" />
+
+		<Label Text="{Binding ArchivedHeading}"
+			   Style="{StaticResource SectionHeadingStyle}"
+			   IsVisible="{Binding IsArchivedHeadingVisible}" />
+		<VerticalStackLayout Spacing="12"
+						 BindableLayout.ItemsSource="{Binding ArchivedLists}">
+			<BindableLayout.ItemTemplate>
+				<DataTemplate>
+					<Border BackgroundColor="#171717"
+							Stroke="#1AFFFFFF"
+							StrokeThickness="1"
+							Padding="20">
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="24" />
+						</Border.StrokeShape>
+						<VerticalStackLayout Spacing="16">
+							<Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="4" ColumnSpacing="12">
+								<Label Text="{Binding Name}" Style="{StaticResource ListCardTitleStyle}" />
+								<Border Grid.Column="1" Style="{StaticResource ListSummaryBadgeStyle}">
+									<Label Text="{Binding Summary}" Style="{StaticResource ListSummaryTextStyle}" />
+								</Border>
+								<Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" Style="{StaticResource ListCardDescriptionStyle}" />
+							</Grid>
+							<FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start" AlignItems="Center">
+								<ImageButton Source="edit.svg"
+											 Style="{StaticResource OverviewEditButtonStyle}"
+											 SemanticProperties.Description="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.EditText}"
+										Margin="0,0,8,8"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.EditListCommand}"
+										CommandParameter="{Binding .}" />
+								<Button Text="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.UnarchiveText}"
+										Style="{StaticResource ListActionButtonStyle}"
+										Margin="0,0,8,8"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.UnarchiveListCommand}"
+										CommandParameter="{Binding .}" />
+								<Button Text="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.RemoveText}"
+										Style="{StaticResource DangerButtonStyle}"
+										Margin="0,0,8,8"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingOverviewView}}, Path=BindingContext.RemoveArchivedListCommand}"
+										CommandParameter="{Binding .}" />
+							</FlexLayout>
+						</VerticalStackLayout>
+					</Border>
+				</DataTemplate>
+			</BindableLayout.ItemTemplate>
+		</VerticalStackLayout>
+	</VerticalStackLayout>
+</ContentView>

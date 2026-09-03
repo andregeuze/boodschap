@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Boodschap.Mobile.Presentation.Views"
+             x:Class="Boodschap.Mobile.Presentation.Views.ShoppingListDetailView"
+             x:Name="DetailRoot"
+             IsVisible="{Binding IsVisible}">
+	<VerticalStackLayout Spacing="18">
+		<Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+			<ImageButton Source="chevron_left.svg"
+					AutomationId="BackToOverviewButton"
+					Style="{StaticResource BackIconButtonStyle}"
+					HorizontalOptions="Start"
+					VerticalOptions="Center"
+					Command="{Binding BackCommand}"
+					SemanticProperties.Description="{Binding BackText}" />
+			<VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+				<Label Text="{Binding Heading}"
+						TextColor="#F5F5F5"
+						FontSize="20"
+						FontFamily="InterSemiBold"
+						LineBreakMode="TailTruncation" />
+				<Label Text="{Binding Description}"
+						Style="{StaticResource BodyStyle}"
+						FontSize="12"
+						LineBreakMode="TailTruncation" />
+			</VerticalStackLayout>
+		</Grid>
+
+		<Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+			<ImageButton Source="plus.svg"
+						 AutomationId="AddItemButton"
+						 Style="{StaticResource AddIconButtonStyle}"
+						 Command="{Binding AddItemCommand}"
+						 SemanticProperties.Description="{Binding AddItemText}" />
+			<Label Grid.Column="1"
+				   Text="{Binding ItemHint}"
+				   Style="{StaticResource BodyStyle}"
+				   HorizontalTextAlignment="End"
+				   HorizontalOptions="End"
+				   VerticalOptions="Center"
+				   MaximumWidthRequest="330" />
+		</Grid>
+
+		<VerticalStackLayout Spacing="8"
+						 BindableLayout.ItemsSource="{Binding Items}">
+			<BindableLayout.ItemTemplate>
+				<DataTemplate>
+					<Border BackgroundColor="#171717"
+							Stroke="#1AFFFFFF"
+							StrokeThickness="1"
+							Padding="12">
+						<Border.GestureRecognizers>
+							<DragGestureRecognizer CanDrag="True"
+											   DragStarting="HandleItemDragStarting" />
+							<DropGestureRecognizer AllowDrop="True"
+											   Drop="HandleItemDropped" />
+						</Border.GestureRecognizers>
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="24" />
+						</Border.StrokeShape>
+						<Grid ColumnDefinitions="40,*,40,40" ColumnSpacing="8">
+								<CheckBox IsChecked="{Binding IsDone, Mode=OneWay}"
+									  HeightRequest="32"
+									  WidthRequest="32"
+									  MinimumHeightRequest="32"
+									  MinimumWidthRequest="32"
+									  HorizontalOptions="Center"
+									  VerticalOptions="Center"
+									  Color="#34D399"
+									  CheckedChanged="HandleItemCheckedChanged" />
+								<Label Grid.Column="1"
+									   Text="{Binding Name}"
+									   VerticalOptions="Center"
+									   TextColor="#F5F5F5"
+									   FontSize="14"
+									   FontFamily="InterSemiBold"
+									   LineBreakMode="TailTruncation">
+									<Label.Triggers>
+										<DataTrigger TargetType="Label" Binding="{Binding IsDone}" Value="True">
+											<Setter Property="TextColor" Value="#737373" />
+											<Setter Property="TextDecorations" Value="Strikethrough" />
+										</DataTrigger>
+									</Label.Triggers>
+								</Label>
+								<ImageButton Grid.Column="2"
+										Source="edit.svg"
+										Style="{StaticResource ItemIconButtonStyle}"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingListDetailView}}, Path=BindingContext.RenameItemCommand}"
+										CommandParameter="{Binding .}" />
+								<ImageButton Grid.Column="3"
+										Source="trash.svg"
+										Style="{StaticResource DangerIconButtonStyle}"
+										Command="{Binding Source={RelativeSource AncestorType={x:Type local:ShoppingListDetailView}}, Path=BindingContext.RemoveItemCommand}"
+										CommandParameter="{Binding .}" />
+						</Grid>
+					</Border>
+				</DataTemplate>
+			</BindableLayout.ItemTemplate>
+		</VerticalStackLayout>
+		<Label Text="{Binding EmptyText}"
+			   Style="{StaticResource BodyStyle}"
+			   IsVisible="{Binding IsEmptyVisible}" />
+	</VerticalStackLayout>
+</ContentView>

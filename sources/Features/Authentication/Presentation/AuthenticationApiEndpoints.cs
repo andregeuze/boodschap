@@ -29,6 +29,12 @@ public static class AuthenticationApiEndpoints
 
 		group.MapGet("/me", GetCurrentUser)
 			.RequireAuthorization(CreateBearerPolicy());
+
+		group.MapPost("/password", ChangePasswordAsync)
+			.RequireAuthorization(CreateBearerPolicy());
+
+		group.MapPost("/users", CreateUserAsync)
+			.RequireAuthorization(CreateBearerPolicy());
 	}
 
 	internal static async Task<IResult> LoginAsync(
@@ -88,11 +94,67 @@ public static class AuthenticationApiEndpoints
 			principal.IsInRole(LocalAuthenticationDefaults.AdminRole)));
 	}
 
+	internal static async Task<IResult> ChangePasswordAsync(
+		AuthenticationChangePasswordRequest request,
+		ClaimsPrincipal principal,
+		ILocalAuthenticationService authenticationService,
+		CancellationToken cancellationToken)
+	{
+		if (!TryGetUserId(principal, out var userId))
+		{
+			return Results.Unauthorized();
+		}
+
+		var result = await authenticationService.ChangePasswordAsync(
+			userId,
+			request.CurrentPassword,
+			request.NewPassword,
+			request.ConfirmPassword,
+			cancellationToken);
+
+		return result.Succeeded
+			? Results.NoContent()
+			: Results.BadRequest(new AuthenticationErrorResponse(result.ErrorCode!));
+	}
+
+	internal static async Task<IResult> CreateUserAsync(
+		AuthenticationCreateUserRequest request,
+		ClaimsPrincipal principal,
+		ILocalAuthenticationService authenticationService,
+		CancellationToken cancellationToken)
+	{
+		if (!TryGetUserId(principal, out var userId))
+		{
+			return Results.Unauthorized();
+		}
+
+		var result = await authenticationService.CreateUserAsync(
+			userId,
+			request.Username,
+			request.Password,
+			request.ConfirmPassword,
+			request.IsAdmin,
+			cancellationToken);
+
+		return result.Succeeded
+			? Results.NoContent()
+			: Results.BadRequest(new AuthenticationErrorResponse(result.ErrorCode!));
+	}
+
 	private static AuthorizationPolicy CreateBearerPolicy()
 	{
 		return new AuthorizationPolicyBuilder(ApiAuthenticationDefaults.BearerScheme)
 			.RequireAuthenticatedUser()
 			.Build();
+	}
+
+	private static bool TryGetUserId(ClaimsPrincipal principal, out int userId)
+	{
+		return int.TryParse(
+			principal.FindFirstValue(ClaimTypes.NameIdentifier),
+			NumberStyles.None,
+			CultureInfo.InvariantCulture,
+			out userId);
 	}
 
 	private static ClaimsPrincipal CreatePrincipal(LocalUser user)

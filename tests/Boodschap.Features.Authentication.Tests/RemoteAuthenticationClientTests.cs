@@ -76,11 +76,53 @@ public sealed class RemoteAuthenticationClientTests
 		Assert.Equal(2, handler.RequestCount);
 	}
 
+	[Fact]
+	public async Task ChangePasswordAsync_SendsAuthenticatedRequestAndReturnsSuccess()
+	{
+		var handler = new StubHttpMessageHandler(request =>
+		{
+			Assert.Equal(HttpMethod.Post, request.Method);
+			Assert.Equal("/api/auth/password", request.RequestUri!.AbsolutePath);
+			Assert.Equal(new AuthenticationHeaderValue("Bearer", "access-1"), request.Headers.Authorization);
+			return new HttpResponseMessage(HttpStatusCode.NoContent);
+		});
+		var tokenStore = CreateAuthenticatedTokenStore();
+		var client = CreateClient(handler, tokenStore);
+
+		var result = await client.ChangePasswordAsync(7, "current-value", "new-password", "new-password");
+
+		Assert.True(result.Succeeded);
+	}
+
+	[Fact]
+	public async Task CreateUserAsync_ReturnsServerValidationError()
+	{
+		var handler = new StubHttpMessageHandler(request =>
+		{
+			Assert.Equal("/api/auth/users", request.RequestUri!.AbsolutePath);
+			return Json(HttpStatusCode.BadRequest, """{"code":"username-taken"}""");
+		});
+		var client = CreateClient(handler, CreateAuthenticatedTokenStore());
+
+		var result = await client.CreateUserAsync(7, "existing", "new-password", "new-password", false);
+
+		Assert.False(result.Succeeded);
+		Assert.Equal(LocalAuthenticationErrorCodes.UsernameTaken, result.ErrorCode);
+	}
+
 	private static RemoteAuthenticationClient CreateClient(HttpMessageHandler handler, IApiTokenStore tokenStore)
 	{
 		return new RemoteAuthenticationClient(
 			new HttpClient(handler) { BaseAddress = new Uri("https://boodschap.example/") },
 			tokenStore);
+	}
+
+	private static MemoryTokenStore CreateAuthenticatedTokenStore()
+	{
+		return new MemoryTokenStore
+		{
+			Tokens = new ApiTokenSet("access-1", "refresh-1", DateTimeOffset.UtcNow.AddHours(1))
+		};
 	}
 
 	private static HttpResponseMessage Json(HttpStatusCode statusCode, string json)

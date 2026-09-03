@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Boodschap.Mobile.Presentation.Views.AccountView"
+             IsVisible="{Binding IsVisible}">
+	<VerticalStackLayout Spacing="20">
+		<Border BackgroundColor="#111111" Stroke="#202020" StrokeThickness="1" Padding="20">
+			<Border.StrokeShape>
+				<RoundRectangle CornerRadius="24" />
+			</Border.StrokeShape>
+			<VerticalStackLayout Spacing="8">
+				<Label Text="{Binding Title}" Style="{StaticResource EyebrowStyle}" />
+				<Label Text="{Binding DisplayName}" Style="{StaticResource PageHeadingStyle}" />
+				<Label Text="{Binding Description}" Style="{StaticResource BodyStyle}" />
+			</VerticalStackLayout>
+		</Border>
+
+		<Border BackgroundColor="#0DFFFFFF" Stroke="#1AFFFFFF" StrokeThickness="1" Padding="20">
+			<Border.StrokeShape>
+				<RoundRectangle CornerRadius="24" />
+			</Border.StrokeShape>
+			<VerticalStackLayout Spacing="14">
+				<VerticalStackLayout Spacing="4">
+					<Label Text="{Binding UpdatePasswordTitle}" Style="{StaticResource SectionHeadingStyle}" />
+					<Label Text="{Binding UpdatePasswordDescription}" Style="{StaticResource BodyStyle}" />
+				</VerticalStackLayout>
+
+				<Border BackgroundColor="{Binding PasswordStatusBackgroundColor}"
+						Stroke="{Binding PasswordStatusBorderColor}"
+						StrokeThickness="1"
+						Padding="14"
+						IsVisible="{Binding IsPasswordStatusVisible}">
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="16" />
+					</Border.StrokeShape>
+					<Label Text="{Binding PasswordStatusMessage}" TextColor="{Binding PasswordStatusTextColor}" />
+				</Border>
+
+				<VerticalStackLayout Spacing="2">
+					<Label Text="{Binding CurrentPasswordLabel}" TextColor="#D4D4D4" FontFamily="InterSemiBold" />
+					<Entry Text="{Binding CurrentPassword}" AutomationId="AccountCurrentPasswordEntry" Placeholder="{Binding CurrentPasswordLabel}" Style="{StaticResource InputStyle}" IsPassword="True" />
+				</VerticalStackLayout>
+				<VerticalStackLayout Spacing="2">
+					<Label Text="{Binding NewPasswordLabel}" TextColor="#D4D4D4" FontFamily="InterSemiBold" />
+					<Entry Text="{Binding NewPassword}" AutomationId="AccountNewPasswordEntry" Placeholder="{Binding NewPasswordLabel}" Style="{StaticResource InputStyle}" IsPassword="True" />
+				</VerticalStackLayout>
+				<VerticalStackLayout Spacing="2">
+					<Label Text="{Binding ConfirmPasswordLabel}" TextColor="#D4D4D4" FontFamily="InterSemiBold" />
+					<Entry Text="{Binding ConfirmNewPassword}" AutomationId="AccountConfirmPasswordEntry" Placeholder="{Binding ConfirmPasswordLabel}" Style="{StaticResource InputStyle}" IsPassword="True" />
+				</VerticalStackLayout>
+				<Button Text="{Binding UpdatePasswordTitle}" AutomationId="UpdatePasswordButton" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ChangePasswordCommand}" />
+			</VerticalStackLayout>
+		</Border>
+
+		<Border BackgroundColor="#0DFFFFFF" Stroke="#1AFFFFFF" StrokeThickness="1" Padding="20" IsVisible="{Binding IsAdmin}">
+			<Border.StrokeShape>
+				<RoundRectangle CornerRadius="24" />
+			</Border.StrokeShape>
+			<VerticalStackLayout Spacing="14">
+				<VerticalStackLayout Spacing="4">
+					<Label Text="{Binding CreateUserTitle}" Style="{StaticResource SectionHeadingStyle}" />
+					<Label Text="{Binding CreateUserDescription}" Style="{StaticResource BodyStyle}" />
+				</VerticalStackLayout>
+
+				<Border BackgroundColor="{Binding CreateUserStatusBackgroundColor}"
+						Stroke="{Binding CreateUserStatusBorderColor}"
+						StrokeThickness="1"
+						Padding="14"
+						IsVisible="{Binding IsCreateUserStatusVisible}">
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="16" />
+					</Border.StrokeShape>
+					<Label Text="{Binding CreateUserStatusMessage}" TextColor="{Binding CreateUserStatusTextColor}" />
+				</Border>
+
+				<VerticalStackLayout Spacing="2">
+					<Label Text="{Binding UsernameLabel}" TextColor="#D4D4D4" FontFamily="InterSemiBold" />
+					<Entry Text="{Binding NewUserUsername}" AutomationId="NewUserUsernameEntry" Placeholder="{Binding UsernameLabel}" Style="{StaticResource InputStyle}" />
+				</VerticalStackLayout>
+				<VerticalStackLayout Spacing="2">
+					<Label Text="{Binding PasswordLabel}" TextColor="#D4D4D4" FontFamily="InterSemiBold" />
+					<Entry Text="{Binding NewUserPassword}" AutomationId="NewUserPasswordEntry" Placeholder="{Binding PasswordLabel}" Style="{StaticResource InputStyle}" IsPassword="True" />
+				</VerticalStackLayout>
+				<VerticalStackLayout Spacing="2">
+					<Label Text="{Binding ConfirmPasswordLabel}" TextColor="#D4D4D4" FontFamily="InterSemiBold" />
+					<Entry Text="{Binding NewUserConfirmPassword}" AutomationId="NewUserConfirmPasswordEntry" Placeholder="{Binding ConfirmPasswordLabel}" Style="{StaticResource InputStyle}" IsPassword="True" />
+				</VerticalStackLayout>
+
+				<HorizontalStackLayout Spacing="8">
+					<CheckBox IsChecked="{Binding NewUserIsAdmin}" AutomationId="NewUserIsAdminCheckBox" Color="#34D399" />
+					<Label Text="{Binding CreateAsAdminLabel}" TextColor="#D4D4D4" VerticalOptions="Center" />
+				</HorizontalStackLayout>
+
+				<Button Text="{Binding CreateUserTitle}" AutomationId="CreateUserButton" Style="{StaticResource SecondaryButtonStyle}" Command="{Binding CreateUserCommand}" />
+			</VerticalStackLayout>
+		</Border>
+
+		<Border BackgroundColor="#08FFFFFF" Stroke="#1AFFFFFF" StrokeThickness="1" Padding="16">
+			<Border.StrokeShape>
+				<RoundRectangle CornerRadius="16" />
+			</Border.StrokeShape>
+			<VerticalStackLayout Spacing="12">
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+					<Label Text="{Binding UpdateStatusTitle}" TextColor="#E5E5E5" FontFamily="InterSemiBold" VerticalOptions="Center" />
+					<Border Grid.Column="1"
+							BackgroundColor="{Binding UpdateStatusBackgroundColor}"
+							Stroke="{Binding UpdateStatusBorderColor}"
+							StrokeThickness="1"
+							Padding="10,5">
+						<Border.StrokeShape>
+							<RoundRectangle CornerRadius="14" />
+						</Border.StrokeShape>
+						<Label Text="{Binding UpdateStatusText}" TextColor="{Binding UpdateStatusTextColor}" FontSize="12" />
+					</Border>
+				</Grid>
+				<Grid ColumnDefinitions="*,Auto" BackgroundColor="#26000000" Padding="12,9">
+					<Label Text="{Binding CurrentVersionLabel}" TextColor="#A3A3A3" FontSize="12" />
+					<Label Grid.Column="1" Text="{Binding CurrentVersion}" TextColor="#E5E5E5" FontSize="12" />
+				</Grid>
+				<Grid ColumnDefinitions="*,Auto" BackgroundColor="#26000000" Padding="12,9">
+					<Label Text="{Binding RemoteVersionLabel}" TextColor="#A3A3A3" FontSize="12" />
+					<Label Grid.Column="1" Text="{Binding RemoteVersion}" TextColor="#E5E5E5" FontSize="12">
+						<Label.GestureRecognizers>
+							<TapGestureRecognizer Command="{Binding OpenLatestVersionCommand}" />
+						</Label.GestureRecognizers>
+					</Label>
+				</Grid>
+			</VerticalStackLayout>
+		</Border>
+	</VerticalStackLayout>
+</ContentView>

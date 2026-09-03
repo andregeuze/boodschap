@@ -51,14 +51,34 @@ public sealed class RemoteAuthenticationClient(HttpClient httpClient, IApiTokenS
 		return Task.FromResult(LocalAuthenticationResult.Failure(LocalAuthenticationErrorCodes.BootstrapRegistrationClosed));
 	}
 
-	public Task<LocalAuthenticationResult> CreateUserAsync(int actorUserId, string username, string password, string confirmPassword, bool isAdmin, CancellationToken cancellationToken = default)
+	public async Task<LocalAuthenticationResult> CreateUserAsync(int actorUserId, string username, string password, string confirmPassword, bool isAdmin, CancellationToken cancellationToken = default)
 	{
-		return Task.FromResult(LocalAuthenticationResult.Failure(LocalAuthenticationErrorCodes.AdminRequired));
+		using var response = await SendAuthenticatedAsync(
+			accessToken => CreateJsonRequest(
+				HttpMethod.Post,
+				"api/auth/users",
+				accessToken,
+				new AuthenticationCreateUserRequest(username, password, confirmPassword, isAdmin)),
+			cancellationToken);
+
+		return response.IsSuccessStatusCode
+			? LocalAuthenticationResult.Success(new LocalUser { Username = username, IsAdmin = isAdmin })
+			: LocalAuthenticationResult.Failure(await ReadErrorCodeAsync(response, cancellationToken));
 	}
 
-	public Task<LocalPasswordChangeResult> ChangePasswordAsync(int actorUserId, string currentPassword, string newPassword, string confirmPassword, CancellationToken cancellationToken = default)
+	public async Task<LocalPasswordChangeResult> ChangePasswordAsync(int actorUserId, string currentPassword, string newPassword, string confirmPassword, CancellationToken cancellationToken = default)
 	{
-		return Task.FromResult(LocalPasswordChangeResult.Failure(LocalAuthenticationErrorCodes.AdminRequired));
+		using var response = await SendAuthenticatedAsync(
+			accessToken => CreateJsonRequest(
+				HttpMethod.Post,
+				"api/auth/password",
+				accessToken,
+				new AuthenticationChangePasswordRequest(currentPassword, newPassword, confirmPassword)),
+			cancellationToken);
+
+		return response.IsSuccessStatusCode
+			? LocalPasswordChangeResult.Success()
+			: LocalPasswordChangeResult.Failure(await ReadErrorCodeAsync(response, cancellationToken));
 	}
 
 	public async Task<LocalUser?> GetCurrentUserAsync(CancellationToken cancellationToken = default)
@@ -159,6 +179,45 @@ public sealed class RemoteAuthenticationClient(HttpClient httpClient, IApiTokenS
 		var request = new HttpRequestMessage(HttpMethod.Get, "api/auth/me");
 		request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 		return httpClient.SendAsync(request, cancellationToken);
+	}
+
+	private async Task<HttpResponseMessage> SendAuthenticatedAsync(
+		Func<string, HttpRequestMessage> createRequest,
+		CancellationToken cancellationToken)
+	{
+		var accessToken = await GetAccessTokenAsync(cancellationToken);
+		if (string.IsNullOrWhiteSpace(accessToken))
+		{
+			return new HttpResponseMessage(HttpStatusCode.Unauthorized);
+		}
+
+		using var request = createRequest(accessToken);
+		var response = await httpClient.SendAsync(request, cancellationToken);
+		if (response.StatusCode != HttpStatusCode.Unauthorized || !await RefreshAsync(cancellationToken))
+		{
+			return response;
+		}
+
+		response.Dispose();
+		accessToken = (await tokenStore.GetAsync())?.AccessToken;
+		using var retryRequest = createRequest(accessToken!);
+		return await httpClient.SendAsync(retryRequest, cancellationToken);
+	}
+
+	private static HttpRequestMessage CreateJsonRequest<T>(HttpMethod method, string path, string accessToken, T body)
+	{
+		var request = new HttpRequestMessage(method, path)
+		{
+			Content = JsonContent.Create(body)
+		};
+		request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+		return request;
+	}
+
+	private static async Task<string> ReadErrorCodeAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+	{
+		var error = await response.Content.ReadFromJsonAsync<AuthenticationErrorResponse>(cancellationToken);
+		return error?.Code ?? LocalAuthenticationErrorCodes.InvalidCredentials;
 	}
 
 	private async Task<LocalUser?> ReadUserAsync(HttpResponseMessage response, CancellationToken cancellationToken)

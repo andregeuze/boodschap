@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Boodschap.Mobile.Presentation.Views.LoginView"
+             IsVisible="{Binding IsVisible}">
+	<VerticalStackLayout Spacing="16">
+		<Border BackgroundColor="#0D0D0E"
+				Stroke="#1AFFFFFF"
+				StrokeThickness="1"
+				Padding="20">
+			<Border.StrokeShape>
+				<RoundRectangle CornerRadius="32" />
+			</Border.StrokeShape>
+			<VerticalStackLayout Spacing="20">
+				<VerticalStackLayout Spacing="8">
+					<Label Text="{Binding Eyebrow}" Style="{StaticResource LoginEyebrowStyle}" />
+					<Label Text="{Binding Title}" Style="{StaticResource LoginTitleStyle}" />
+					<Label Text="{Binding Description}" Style="{StaticResource LoginIntroStyle}" />
+				</VerticalStackLayout>
+
+				<Border BackgroundColor="#0DFFFFFF"
+						Stroke="#1AFFFFFF"
+						StrokeThickness="1"
+						Padding="20">
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="16" />
+					</Border.StrokeShape>
+					<VerticalStackLayout Spacing="14">
+						<VerticalStackLayout Spacing="4">
+							<Label Text="{Binding FormTitle}" Style="{StaticResource SectionHeadingStyle}" />
+							<Label Text="{Binding FormDescription}" Style="{StaticResource BodyStyle}" />
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Spacing="2">
+							<Label Text="{Binding UsernameLabel}" Style="{StaticResource FormLabelStyle}" />
+							<Entry Text="{Binding Username}"
+								   AutomationId="LoginUsernameEntry"
+								   Placeholder="{Binding UsernameLabel}"
+								   Style="{StaticResource InputStyle}" />
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Spacing="2">
+							<Label Text="{Binding PasswordLabel}" Style="{StaticResource FormLabelStyle}" />
+							<Entry Text="{Binding Password}"
+								   AutomationId="LoginPasswordEntry"
+								   Placeholder="{Binding PasswordLabel}"
+								   Style="{StaticResource InputStyle}"
+								   IsPassword="True" />
+						</VerticalStackLayout>
+
+						<Button Text="{Binding LoginText}"
+								AutomationId="LoginButton"
+								HorizontalOptions="Start"
+								Style="{StaticResource PrimaryButtonStyle}"
+								Command="{Binding SignInCommand}" />
+					</VerticalStackLayout>
+				</Border>
+
+				<Border BackgroundColor="#0DFFFFFF"
+						Stroke="#1AFFFFFF"
+						StrokeThickness="1"
+						Padding="20">
+					<Border.StrokeShape>
+						<RoundRectangle CornerRadius="16" />
+					</Border.StrokeShape>
+					<Label Text="{Binding RegisterClosedMessage}" Style="{StaticResource LoginIntroStyle}" />
+				</Border>
+			</VerticalStackLayout>
+		</Border>
+	</VerticalStackLayout>
+</ContentView>

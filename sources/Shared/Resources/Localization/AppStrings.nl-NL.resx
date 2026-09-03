@@ -82,6 +82,9 @@
   <data name="Error.Title" xml:space="preserve"><value>Fout.</value></data>
   <data name="NotFound.Description" xml:space="preserve"><value>Sorry, de inhoud die je zoekt bestaat niet.</value></data>
   <data name="NotFound.Title" xml:space="preserve"><value>Niet gevonden</value></data>
+  <data name="Mobile.Navigation.MoreOptions" xml:space="preserve"><value>Meer opties</value></data>
+  <data name="Mobile.Navigation.Shopping" xml:space="preserve"><value>Boodschappen</value></data>
+  <data name="Mobile.Navigation.Updates" xml:space="preserve"><value>Updates</value></data>
   <data name="Nutrition.Carbohydrates" xml:space="preserve"><value>Koolhydraten</value></data>
   <data name="Nutrition.Description" xml:space="preserve"><value>NEVO-voedingswaarden worden opgeslagen in de database en per 100 gram getoond.</value></data>
   <data name="Nutrition.EmptyState" xml:space="preserve"><value>De lokale NEVO-database bevat nog geen voedingsartikelen.</value></data>
@@ -219,7 +222,6 @@
   <data name="Shopping.Groceries" xml:space="preserve"><value>Boodschappen</value></data>
   <data name="Shopping.HomeDescription" xml:space="preserve"><value>Je actieve lijsten staan vooraan, terwijl gearchiveerde lijsten makkelijk terug te vinden blijven.</value></data>
   <data name="Shopping.HomeEyebrow" xml:space="preserve"><value>Boodschappenlijsten</value></data>
-  <data name="Shopping.HomeHeading" xml:space="preserve"><value>Kies een lijst en ga door.</value></data>
   <data name="Shopping.ItemInteractionHint" xml:space="preserve"><value>Gebruik het bewerkicoon om te hernoemen.</value></data>
   <data name="Shopping.ItemInteractionHintWithReorder" xml:space="preserve"><value>Gebruik het bewerkicoon om te hernoemen. Sleep om de volgorde te wijzigen.</value></data>
   <data name="Shopping.ListNamePlaceholder" xml:space="preserve"><value>Lijstnaam</value></data>

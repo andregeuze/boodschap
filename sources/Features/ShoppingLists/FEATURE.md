@@ -93,7 +93,8 @@ The app shell should only compose this feature through `sources/Boodschap/Progra
 - Drag-and-drop stays implemented in Blazor C# event handlers; do not add JavaScript for it.
 - Realtime updates are published through `StoreChangeNotifier` from the application layer, not from Razor pages.
 - `StoreChangeBroadcastService` subscribes once to `StoreChangeNotifier` and broadcasts successful mutations to mobile clients. It never republishes received client events, so notifications cannot loop.
-- The MAUI SignalR client translates `StoreChanged` messages into its process-local `StoreChangeNotifier`, allowing the existing Razor pages to refresh unchanged.
+- The MAUI SignalR client translates `StoreChanged` messages into its process-local `StoreChangeNotifier`, allowing native view models to refresh from the same notification contract.
+- Native realtime refreshes are coalesced, update only the visible overview or relevant open list, and never enable the global busy overlay.
 - SQLite persistence stays behind feature-level contracts.
 - Android uses only `HttpShoppingListService`; it does not register the SQLite repository, DbContext, or initializer.
 - MCP tools use `IShoppingListService`; they do not access repositories or EF Core directly.

@@ -11,14 +11,33 @@ public sealed class BackendOptions
 #else
 	public const string DefaultBaseUrl = HostedBaseUrl;
 #endif
+	public const string DefaultStoreChangesBaseUrl = DefaultBaseUrl;
 
 	public string BaseUrl { get; set; } = DefaultBaseUrl;
+	public string? StoreChangesBaseUrl { get; set; } = DefaultStoreChangesBaseUrl;
 
 	public Uri GetValidatedBaseUri()
 	{
-		if (!Uri.TryCreate(BaseUrl, UriKind.Absolute, out var uri))
+		return ValidateAbsoluteBaseUri(BaseUrl, "The mobile backend URL must be an absolute URL.");
+	}
+
+	public Uri GetValidatedStoreChangesBaseUri()
+	{
+		var candidate = string.IsNullOrWhiteSpace(StoreChangesBaseUrl)
+			? BaseUrl
+			: StoreChangesBaseUrl;
+
+		return ValidateAbsoluteBaseUri(candidate, "The mobile SignalR hub URL must be an absolute URL.");
+	}
+
+	private static Uri WithTrailingSlash(Uri uri) =>
+		uri.AbsoluteUri.EndsWith("/", StringComparison.Ordinal) ? uri : new Uri($"{uri.AbsoluteUri}/");
+
+	private static Uri ValidateAbsoluteBaseUri(string? value, string invalidAbsoluteMessage)
+	{
+		if (!Uri.TryCreate(value, UriKind.Absolute, out var uri))
 		{
-			throw new InvalidOperationException("The mobile backend URL must be an absolute URL.");
+			throw new InvalidOperationException(invalidAbsoluteMessage);
 		}
 
 		if (uri.Scheme == Uri.UriSchemeHttps)
@@ -35,7 +54,4 @@ public sealed class BackendOptions
 
 		throw new InvalidOperationException("The mobile backend URL must use HTTPS.");
 	}
-
-	private static Uri WithTrailingSlash(Uri uri) =>
-		uri.AbsoluteUri.EndsWith("/", StringComparison.Ordinal) ? uri : new Uri($"{uri.AbsoluteUri}/");
 }
