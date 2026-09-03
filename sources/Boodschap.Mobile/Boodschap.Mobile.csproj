@@ -33,11 +33,17 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<ApplicationTitle>Boodschap Dev</ApplicationTitle>
 		<ApplicationId>nl.andregeuze.boodschap.debug</ApplicationId>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<AndroidResource Include="..\Boodschap\wwwroot\favicon.png" Link="Resources\mipmap-xxxhdpi\appicon.png" />
+		<AndroidResource Include="Resources\AppIcon\appicon_debug.png"
+						 Link="Resources\mipmap-xxxhdpi\appicon.png"
+						 Condition="'$(Configuration)' == 'Debug'" />
+		<AndroidResource Include="..\Boodschap\wwwroot\favicon.png"
+						 Link="Resources\mipmap-xxxhdpi\appicon.png"
+						 Condition="'$(Configuration)' == 'Release'" />
 
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#070708" BaseSize="128,128" />
 

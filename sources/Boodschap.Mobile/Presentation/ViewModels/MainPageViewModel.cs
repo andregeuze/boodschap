@@ -306,7 +306,7 @@ public sealed class MainPageViewModel : ObservableObject
 
 			currentList = null;
 			currentListId = null;
-			_ = RunBusyActionAsync(LoadOverviewAsync);
+			_ = RunNavigationActionAsync(LoadOverviewAsync);
 		});
 	}
 
@@ -454,7 +454,7 @@ public sealed class MainPageViewModel : ObservableObject
 			return;
 		}
 
-		await RunBusyActionAsync(async () =>
+		await RunNavigationActionAsync(async () =>
 		{
 			PushCurrentView();
 			currentList = null;
@@ -476,7 +476,7 @@ public sealed class MainPageViewModel : ObservableObject
 			return;
 		}
 
-		await RunBusyActionAsync(async () =>
+		await RunNavigationActionAsync(async () =>
 		{
 			if (navigationHistory.TryPop(out var destination))
 			{
@@ -553,7 +553,7 @@ public sealed class MainPageViewModel : ObservableObject
 			return;
 		}
 
-		await RunBusyActionAsync(async () =>
+		await RunNavigationActionAsync(async () =>
 		{
 			PushCurrentView();
 			currentListId = listCard.List.Id;
@@ -674,11 +674,32 @@ public sealed class MainPageViewModel : ObservableObject
 			return;
 		}
 
-		await RunBusyActionAsync(async () =>
+		await RunInteractionActionAsync(async () =>
 		{
-			await shoppingListService.ToggleDoneAsync(currentList.Id, item.Item.Id, isDone);
-			await LoadCurrentListAsync(currentList.Id);
-		});
+			var currentItem = Detail.Items.FirstOrDefault(candidate => candidate.Item.Id == item.Item.Id);
+			if (currentList is null || currentItem is null || currentItem.IsDone == isDone)
+			{
+				return;
+			}
+
+			var previousIsDone = currentItem.IsDone;
+			var previousSortOrder = currentItem.Item.SortOrder;
+			ApplyLocalToggle(currentItem, isDone);
+			try
+			{
+				if (await shoppingListService.ToggleDoneAsync(currentList.Id, currentItem.Item.Id, isDone) is null)
+				{
+					throw new InvalidOperationException("The shopping item could not be updated.");
+				}
+			}
+			catch
+			{
+				currentItem.Item.SortOrder = previousSortOrder;
+				currentItem.SetIsDone(previousIsDone);
+				RefreshDetailItems();
+				throw;
+			}
+		}, showBusy: false);
 	}
 
 	private async Task RenameItemAsync(ShoppingItemViewModel? item)
@@ -731,11 +752,88 @@ public sealed class MainPageViewModel : ObservableObject
 			return;
 		}
 
-		await RunBusyActionAsync(async () =>
+		await RunInteractionActionAsync(async () =>
 		{
-			await shoppingListService.ReorderItemAsync(currentList.Id, item.Item.Id, targetItem.Item.Id);
-			await LoadCurrentListAsync(currentList.Id);
-		});
+			var currentItem = Detail.Items.FirstOrDefault(candidate => candidate.Item.Id == item.Item.Id);
+			var currentTargetItem = Detail.Items.FirstOrDefault(candidate => candidate.Item.Id == targetItem.Item.Id);
+			if (currentList is null || currentItem is null || currentTargetItem is null)
+			{
+				return;
+			}
+
+			var previousSortOrders = currentList.Items.ToDictionary(listItem => listItem.Id, listItem => listItem.SortOrder);
+			ApplyLocalReorder(currentItem.Item, currentTargetItem.Item);
+			try
+			{
+				if (await shoppingListService.ReorderItemAsync(currentList.Id, currentItem.Item.Id, currentTargetItem.Item.Id) is null)
+				{
+					throw new InvalidOperationException("The shopping item order could not be updated.");
+				}
+			}
+			catch
+			{
+				foreach (var listItem in currentList.Items)
+				{
+					listItem.SortOrder = previousSortOrders[listItem.Id];
+				}
+
+				RefreshDetailItems();
+				throw;
+			}
+		}, showBusy: false);
+	}
+
+	private void ApplyLocalToggle(ShoppingItemViewModel item, bool isDone)
+	{
+		if (isDone)
+		{
+			item.Item.SortOrder = currentList!.Items.Max(listItem => listItem.SortOrder) + 1;
+		}
+
+		item.SetIsDone(isDone);
+		RefreshDetailItems();
+	}
+
+	private void ApplyLocalReorder(ShoppingListItem item, ShoppingListItem targetItem)
+	{
+		var items = currentList!.Items
+			.OrderBy(listItem => listItem.SortOrder)
+			.ThenBy(listItem => listItem.Id)
+			.ToList();
+		var from = items.IndexOf(item);
+		var to = items.IndexOf(targetItem);
+		items.RemoveAt(from);
+		items.Insert(to, item);
+
+		for (var index = 0; index < items.Count; index++)
+		{
+			items[index].SortOrder = index;
+		}
+
+		RefreshDetailItems();
+	}
+
+	private void RefreshDetailItems()
+	{
+		var itemViewModelsById = Detail.Items.ToDictionary(item => item.Item.Id);
+		var orderedItemViewModels = OrderItems(currentList!)
+			.Select(item => itemViewModelsById[item.Id])
+			.ToList();
+
+		for (var index = 0; index < orderedItemViewModels.Count; index++)
+		{
+			var currentIndex = Detail.Items.IndexOf(orderedItemViewModels[index]);
+			if (currentIndex != index)
+			{
+				Detail.Items.Move(currentIndex, index);
+			}
+		}
+
+		Detail.Summary = string.Format(
+			CultureInfo.CurrentCulture,
+			localizer["Shopping.ListSummary"].Value,
+			currentList!.Items.Count(item => item.IsDone),
+			currentList.Items.Count);
 	}
 
 	private async Task EditListAsync(ShoppingList? list)
@@ -766,8 +864,22 @@ public sealed class MainPageViewModel : ObservableObject
 
 	private async Task RunBusyActionAsync(Func<Task> action)
 	{
+		await RunInteractionActionAsync(action, showBusy: true);
+	}
+
+	private async Task RunNavigationActionAsync(Func<Task> action)
+	{
+		await RunInteractionActionAsync(action, showBusy: false);
+	}
+
+	private async Task RunInteractionActionAsync(Func<Task> action, bool showBusy)
+	{
 		await interactionLock.WaitAsync();
-		IsBusy = true;
+		if (showBusy)
+		{
+			IsBusy = true;
+		}
+
 		try
 		{
 			await action();
@@ -784,7 +896,11 @@ public sealed class MainPageViewModel : ObservableObject
 		}
 		finally
 		{
-			IsBusy = false;
+			if (showBusy)
+			{
+				IsBusy = false;
+			}
+
 			interactionLock.Release();
 		}
 	}
@@ -974,8 +1090,7 @@ public sealed class MainPageViewModel : ObservableObject
 	private static IEnumerable<ShoppingListItem> OrderItems(ShoppingList list)
 	{
 		return list.Items
-			.OrderBy(item => item.IsDone)
-			.ThenBy(item => item.SortOrder)
+			.OrderBy(item => item.SortOrder)
 			.ThenBy(item => item.Id);
 	}
 }
