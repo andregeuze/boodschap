@@ -41,7 +41,7 @@
 		<AndroidResource Include="Resources\AppIcon\appicon_debug.png"
 						 Link="Resources\mipmap-xxxhdpi\appicon.png"
 						 Condition="'$(Configuration)' == 'Debug'" />
-		<AndroidResource Include="..\Boodschap\wwwroot\favicon.png"
+		<AndroidResource Include="Resources\AppIcon\appicon_release.png"
 						 Link="Resources\mipmap-xxxhdpi\appicon.png"
 						 Condition="'$(Configuration)' == 'Release'" />
 
